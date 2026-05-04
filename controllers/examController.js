@@ -18,14 +18,15 @@ export const createExam = async (req, res) => {
       });
     }
 
+    // 🔥 FIX: ensure ObjectId format
     const exam = await Exam.create({
       title,
-      questions,
+      questions: questions.map(q => q.toString()),
       duration,
       examCode: generateCode()
     });
 
-    console.log("CREATED EXAM:", exam); // ✅ correct place
+    console.log("CREATED EXAM:", exam);
 
     res.json(exam);
 
@@ -46,9 +47,14 @@ export const getExam = async (req, res) => {
       return res.status(404).json({ message: "Exam not found" });
     }
 
+    // 🔥 FIX: fetch questions correctly
     const questions = await Question.find({
       _id: { $in: exam.questions }
     });
+
+    if (!questions.length) {
+      return res.status(404).json({ message: "Questions not found" });
+    }
 
     res.json({
       ...exam._doc,
@@ -61,7 +67,6 @@ export const getExam = async (req, res) => {
   }
 };
 
-// ================= SUBMIT EXAM =================
 // ================= SUBMIT EXAM =================
 export const submitExam = async (req, res) => {
   try {
@@ -92,7 +97,6 @@ export const submitExam = async (req, res) => {
       score
     });
 
-    // 🔥 IMPORTANT CHANGE
     res.json({
       score,
       answers,
@@ -104,17 +108,14 @@ export const submitExam = async (req, res) => {
     res.status(500).json({ message: "Submit failed" });
   }
 };
+
 // ================= RANKING =================
 export const getRanking = async (req, res) => {
   try {
     const { code } = req.params;
 
-    console.log("RANKING API HIT:", code); // 🔥 ADD THIS
-
     const data = await Submission.find({ examCode: code })
       .sort({ score: -1 });
-
-    console.log("RANK DATA:", data); // 🔥 ADD THIS
 
     res.json(data);
 
