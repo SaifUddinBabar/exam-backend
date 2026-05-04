@@ -1,0 +1,430 @@
+[
+  {
+    "question": "সংখ্যা প্রকাশ করার পদ্ধতিকে কী বলে?",
+    "options": ["সংখ্যা পদ্ধতি", "বাইনারি", "দশমিক", "অক্টাল"],
+    "correctAnswer": "সংখ্যা পদ্ধতি",
+    "chapter": "Number System & Digital Device",
+    "subject": "ICT"
+  },
+  {
+    "question": "প্রাচীন মানুষ গণনার জন্য কী ব্যবহার করত?",
+    "options": ["৮ ভিত্তিক পদ্ধতি", "৩ ভিত্তিক পদ্ধতি", "২ ভিত্তিক পদ্ধতি", "৫ ভিত্তিক পদ্ধতি"],
+    "correctAnswer": "৫ ভিত্তিক পদ্ধতি",
+    "chapter": "Number System & Digital Device",
+    "subject": "ICT"
+  },
+  {
+    "question": "কম্পিউটার সাধারণত কোন সংখ্যা পদ্ধতি ব্যবহার করে?",
+    "options": ["দশমিক", "বাইনারি", "অক্টাল", "হেক্সাডেসিমেল"],
+    "correctAnswer": "বাইনারি",
+    "chapter": "Number System & Digital Device",
+    "subject": "ICT"
+  },
+  {
+    "question": "MSB-এর পূর্ণরূপ কী?",
+    "options": ["Most Scientific Bit", "Most Significant Byte", "Most Significant Bit", "Most Sign Bit"],
+    "correctAnswer": "Most Significant Bit",
+    "chapter": "Number System & Digital Device",
+    "subject": "ICT"
+  },
+  {
+    "question": "LSB-এর পূর্ণরূপ কী?",
+    "options": ["Latest Significant Bit", "Least Significant Bit", "Least Sign Byte", "Least Scientific Byte"],
+    "correctAnswer": "Least Significant Bit",
+    "chapter": "Number System & Digital Device",
+    "subject": "ICT"
+  },
+  {
+    "question": "বাইনারি ডিজিটকে সংক্ষেপে কী বলে?",
+    "options": ["বিট", "বাইট", "কিলোবাইট", "মেগাবাইট"],
+    "correctAnswer": "বিট",
+    "chapter": "Number System & Digital Device",
+    "subject": "ICT"
+  },
+  {
+    "question": "কম্পিউটার অভ্যন্তরীণ কাজ করে কোন পদ্ধতিতে?",
+    "options": ["দশমিক", "বাইনারি", "অক্টাল", "হেক্সাডেসিমেল"],
+    "correctAnswer": "বাইনারি",
+    "chapter": "Number System & Digital Device",
+    "subject": "ICT"
+  },
+  {
+    "question": "হেক্সাডেসিমেলে A এর মান কত?",
+    "options": ["10", "11", "12", "13"],
+    "correctAnswer": "10",
+    "chapter": "Number System & Digital Device",
+    "subject": "ICT"
+  },
+  {
+    "question": "Unicode কত বিটের?",
+    "options": ["৮", "১৬", "৩২", "৬৪"],
+    "correctAnswer": "১৬",
+    "chapter": "Number System & Digital Device",
+    "subject": "ICT"
+  },
+  {
+    "question": "বাংলা বর্ণমালা কোন কোডে সংরক্ষিত হয়?",
+    "options": ["BCD", "ASCII", "UNICODE", "EBCDIC"],
+    "correctAnswer": "UNICODE",
+    "chapter": "Number System & Digital Device",
+    "subject": "ICT"
+  },
+  {
+    "question": "লজিক গেটের মধ্যে কোনটি মৌলিক?",
+    "options": ["AND", "OR", "NOT", "সবগুলো"],
+    "correctAnswer": "সবগুলো",
+    "chapter": "Number System & Digital Device",
+    "subject": "ICT"
+  },
+  {
+    "question": "Inverter হিসেবে কোন গেট কাজ করে?",
+    "options": ["AND", "NAND", "NOR", "NOT"],
+    "correctAnswer": "NOT",
+    "chapter": "Number System & Digital Device",
+    "subject": "ICT"
+  },
+  {
+    "question": "Half Adder-এ Carry out এর মান কী?",
+    "options": ["C = AB", "C = A+B", "C = A̅B", "C = A + B̅"],
+    "correctAnswer": "C = AB",
+    "chapter": "Number System & Digital Device",
+    "subject": "ICT"
+  },
+  {
+    "question": "বুলিয়ান বীজগণিতে OR অপারেশনকে কী বলা হয়?",
+    "options": ["যোগ", "গুণ", "বিয়োগ", "ভাগ"],
+    "correctAnswer": "যোগ",
+    "chapter": "Number System & Digital Device",
+    "subject": "ICT"
+  },
+  {
+    "question": "বুলিয়ান বীজগণিতে AND অপারেশনকে কী বলা হয়?",
+    "options": ["যোগ", "গুণ", "বিয়োগ", "ভাগ"],
+    "correctAnswer": "গুণ",
+    "chapter": "Number System & Digital Device",
+    "subject": "ICT"
+  },
+
+
+  
+  {
+    "question": "URL দ্বারা কোনটি প্রকাশ করা হয়?",
+    "options": ["ইন্টারনেট", "ডোমেইন নেম", "ইয়াহু", "ফেসবুক"],
+    "correctAnswer": "ডোমেইন নেম",
+    "chapter": "Web & HTML",
+    "subject": "ICT"
+  },
+  {
+    "question": "URL এর তৃতীয় অংশের নাম কী?",
+    "options": ["প্রোটোকল", "পাথ", "প্যারামিটার", "হোস্টনেম"],
+    "correctAnswer": "পাথ",
+    "chapter": "Web & HTML",
+    "subject": "ICT"
+  },
+  {
+    "question": "কোন ওয়েবসাইটকে ইন্টারনেটে যে কমপিউটারে রাখা হয় তাকে কী বলা হয়?",
+    "options": ["হোম কম্পিউটার", "মাদার কম্পিউটার", "হাউজ কম্পিউটার", "হোস্ট কম্পিউটার"],
+    "correctAnswer": "হোস্ট কম্পিউটার",
+    "chapter": "Web & HTML",
+    "subject": "ICT"
+  },
+  {
+    "question": "কোনটি ওয়েব ব্রাউজার?",
+    "options": ["গুগল", "ইয়াহু", "মজিলা", "বিং"],
+    "correctAnswer": "মজিলা",
+    "chapter": "Web & HTML",
+    "subject": "ICT"
+  },
+  {
+    "question": "কোন ওয়েবসাইটকে যেখানে হোস্ট করা হয় তার নাম কী?",
+    "options": ["হোমপেজ", "ওয়েব সার্ভার", "হোস্টার", "মাদার কমপিউটার"],
+    "correctAnswer": "ওয়েব সার্ভার",
+    "chapter": "Web & HTML",
+    "subject": "ICT"
+  },
+  {
+    "question": "HTML হলো",
+    "options": ["ওয়েব ব্রাউজার", "মার্কআপ ল্যাংগুয়েজ", "মেশিন ল্যাংগুয়েজ", "ওয়েবপেজ তৈরির টুলস"],
+    "correctAnswer": "মার্কআপ ল্যাংগুয়েজ",
+    "chapter": "Web & HTML",
+    "subject": "ICT"
+  },
+  {
+    "question": "HTML এ লিংক সিনটেক্স হলো",
+    "options": ["a hot reference", "a hyperlink replace", "a hypertext reference", "a home reference"],
+    "correctAnswer": "a hypertext reference",
+    "chapter": "Web & HTML",
+    "subject": "ICT"
+  },
+  {
+    "question": "HTTP এর পূর্ণরূপ কী?",
+    "options": [
+      "Higher Text Transfer Protocol",
+      "Hyper Text Transfer Protocol",
+      "Hyper Text Transfer Protocol",
+      "Hyper Transfer Text Protocol"
+    ],
+    "correctAnswer": "Hyper Text Transfer Protocol",
+    "chapter": "Web & HTML",
+    "subject": "ICT"
+  },
+  {
+    "question": "ওয়েবপেজ ডিজাইন কোনটি?",
+    "options": [
+      "ওয়েবসার্ভারে তথ্য রাখা",
+      "HTML ডকুমেন্ট তৈরি",
+      "বিশ্বব্যাপী নেটওয়ার্ক",
+      "ডোমেইন রেজিস্ট্রেশন"
+    ],
+    "correctAnswer": "HTML ডকুমেন্ট তৈরি",
+    "chapter": "Web & HTML",
+    "subject": "ICT"
+  },
+  {
+    "question": "http://www.yahoo.com এর সর্বশেষ অংশটির নাম কী?",
+    "options": ["প্রোটোকল", "ডোমেইন নেম", "ফাইল প্রকৃতি", "ডোমেইন প্রকৃতি"],
+    "correctAnswer": "ডোমেইন প্রকৃতি",
+    "chapter": "Web & HTML",
+    "subject": "ICT"
+  },
+  {
+    "question": "ওয়েবসাইটের হায়ারারকিক্যাল কাঠামো কী?",
+    "options": [
+      "হোমপেজ নির্ভর ওয়েবসাইট",
+      "প্রতি পেজের সাথে লিংক",
+      "ওয়েবভিত্তিক যোগাযোগ",
+      "দুটি পেজের মধ্যে লিংক"
+    ],
+    "correctAnswer": "হোমপেজ নির্ভর ওয়েবসাইট",
+    "chapter": "Web & HTML",
+    "subject": "ICT"
+  },
+  {
+    "question": "ওয়েবপেজ তৈরিতে কোন ভাষা ব্যবহৃত হয়?",
+    "options": ["PYTHON", "HTML", "COBOL", "FORTRAN"],
+    "correctAnswer": "HTML",
+    "chapter": "Web & HTML",
+    "subject": "ICT"
+  },
+  {
+    "question": "HTML এ <p> ও </p> ট্যাগ ব্যবহার করা হয়",
+    "options": [
+      "প্যারাগ্রাফ তৈরির জন্য",
+      "নতুন পেজ তৈরির জন্য",
+      "লেখা বোল্ড করার জন্য",
+      "প্রোগ্রাম শুরু করার জন্য"
+    ],
+    "correctAnswer": "প্যারাগ্রাফ তৈরির জন্য",
+    "chapter": "Web & HTML",
+    "subject": "ICT"
+  },
+  {
+    "question": "HTML এ <b> ও </b> ট্যাগ ব্যবহার করা হয়",
+    "options": [
+      "প্যারাগ্রাফ তৈরির জন্য",
+      "নতুন পেজ তৈরির জন্য",
+      "লেখা বোল্ড করার জন্য",
+      "কোনটি নয়"
+    ],
+    "correctAnswer": "লেখা বোল্ড করার জন্য",
+    "chapter": "Web & HTML",
+    "subject": "ICT"
+  },
+  {
+    "question": "ইন্টারনেটকে সংক্ষেপে বলা হয়",
+    "options": ["nt", "net", "Inet", "Int"],
+    "correctAnswer": "net",
+    "chapter": "Web & HTML",
+    "subject": "ICT"
+  },
+  {
+    "question": "দু’টি ওয়েবপেজের মধ্যে যোগাযোগ স্থাপনের জন্য কী ব্যবহার করতে হয়?",
+    "options": ["হাইপার লিঙ্ক", "এলিমেন্ট", "সার্চ ইঞ্জিন", "ব্রাউজার"],
+    "correctAnswer": "হাইপার লিঙ্ক",
+    "chapter": "Web & HTML",
+    "subject": "ICT"
+  },
+  {
+    "question": "প্রতিটি সাইটের স্বতন্ত্র নামকে কী বলে?",
+    "options": ["ফটোশপ", "ডোমেইন", "HTML", "সাইট ডিজাইন"],
+    "correctAnswer": "ডোমেইন",
+    "chapter": "Web & HTML",
+    "subject": "ICT"
+  },
+  {
+    "question": "একটি পেজের সাথে অন্য পেজের সংযোগকে HTML ভাষায় কী বলে?",
+    "options": ["Connection", "Hyperlink", "Link", "Addition"],
+    "correctAnswer": "Hyperlink",
+    "chapter": "Web & HTML",
+    "subject": "ICT"
+  },
+  
+  {
+    "question": "প্রোগ্রাম তৈরিতে প্রোগ্রাম ডিজাইনের পরবর্তী ধাপ কোনটি?",
+    "options": ["সমস্যা বিশ্লেষণ", "প্রোগ্রাম কোডিং", "প্রোগ্রাম বাস্তবায়ন", "প্রোগ্রাম রক্ষণাবেক্ষণ"],
+    "correctAnswer": "প্রোগ্রাম কোডিং",
+    "chapter": "Programming & Language",
+    "subject": "ICT"
+  },
+  {
+    "question": "সি ভাষায় সমজাতীয় ডেটা সংরক্ষণের জন্য কোনটি ব্যবহার করা হয়?",
+    "options": ["ফাংশন", "পয়েন্টার", "স্ট্রাকচর", "অ্যারে"],
+    "correctAnswer": "অ্যারে",
+    "chapter": "Programming & Language",
+    "subject": "ICT"
+  },
+  {
+    "question": "প্রথম প্রজন্মের ভাষা বলা হয় কোনটিকে?",
+    "options": ["যান্ত্রিক ভাষা", "অ্যাসেম্বলি ভাষা", "উচ্চস্তরের ভাষা", "অতি উচ্চস্তরের ভাষা"],
+    "correctAnswer": "যান্ত্রিক ভাষা",
+    "chapter": "Programming & Language",
+    "subject": "ICT"
+  },
+  {
+    "question": "উচ্চস্তরের ভাষাকে যান্ত্রিক ভাষায় রূপান্তরিত করাকে কী বলে?",
+    "options": ["প্রসেসিং", "ডিবাগিং", "অনুবাদ", "মডিউল"],
+    "correctAnswer": "অনুবাদ",
+    "chapter": "Programming & Language",
+    "subject": "ICT"
+  },
+  {
+    "question": "কোনো ভাষা কোনো ধরনের রূপান্তর ছাড়া কম্পিউটার সরাসরি নির্বাহ করতে পারে?",
+    "options": ["মেশিন ভাষা", "অ্যাসেম্বলি ভাষা", "উচ্চস্তরের ভাষা", "মধ্যম স্তরের ভাষা"],
+    "correctAnswer": "মেশিন ভাষা",
+    "chapter": "Programming & Language",
+    "subject": "ICT"
+  },
+  {
+    "question": "মেশিনের ভাষায় রূপান্তরিত প্রোগ্রামকে কী বলা হয়?",
+    "options": ["অ্যাসেম্বলার", "কম্পাইলার", "ইন্টারপ্রেটার", "অবজেক্ট প্রোগ্রাম"],
+    "correctAnswer": "অবজেক্ট প্রোগ্রাম",
+    "chapter": "Programming & Language",
+    "subject": "ICT"
+  },
+  {
+    "question": "মেশিন ভাষায় অনুদিত হয় কোনটি?",
+    "options": ["অপারেন্ট", "লেবেল", "কমেন্ট", "অপারেশন কোড"],
+    "correctAnswer": "অপারেশন কোড",
+    "chapter": "Programming & Language",
+    "subject": "ICT"
+  },
+  {
+    "question": "কোনটি অনুবাদক প্রোগ্রাম?",
+    "options": ["অ্যাসেম্বলি ল্যাংগুয়েজ", "কম্পাইলার", "পাইথন", "ফক্সপ্রো"],
+    "correctAnswer": "কম্পাইলার",
+    "chapter": "Programming & Language",
+    "subject": "ICT"
+  },
+  {
+    "question": "কোনটি স্বাভাবিক ভাষা?",
+    "options": ["4GL", "5GL", "মেশিনভাষা", "অ্যাসিম্বলী ভাষা"],
+    "correctAnswer": "5GL",
+    "chapter": "Programming & Language",
+    "subject": "ICT"
+  },
+  {
+    "question": "কোন অনুবাদক দিয়ে সম্পূর্ণ প্রোগ্রামটি একসাথে অনুবাদ করা সম্ভব?",
+    "options": ["অ্যাসেম্বলার", "কম্পাইলার", "ইন্টারপ্রিটার", "মেশিন ভাষা"],
+    "correctAnswer": "কম্পাইলার",
+    "chapter": "Programming & Language",
+    "subject": "ICT"
+  },
+  {
+    "question": "কোন ভাষা দিয়ে কম্পিউটারের মেমোরি-অ্যাড্রেসের সঙ্গে সরাসরি সংযোগ সাধন সম্ভব?",
+    "options": ["মেশিন ভাষা", "হাই লেভেল ভাষা", "অ্যাসেম্বলি ভাষা", "চতুর্থ প্রজন্মের ভাষা"],
+    "correctAnswer": "অ্যাসেম্বলি ভাষা",
+    "chapter": "Programming & Language",
+    "subject": "ICT"
+  },
+  {
+    "question": "কোনটি উচ্চস্তরের ভাষা?",
+    "options": ["অ্যাডা", "অ্যাসেম্বলি ল্যাংগুয়েজ", "পাইথন", "মেশিন ল্যাংগুয়েজ"],
+    "correctAnswer": "পাইথন",
+    "chapter": "Programming & Language",
+    "subject": "ICT"
+  },
+  {
+    "question": "যান্ত্রিক ভাষাকে কোন স্তরের ভাষা বলা হয়?",
+    "options": ["উচ্চস্তরের", "মধ্যস্তরের", "নিম্নস্তরের", "অতি উচ্চস্তরের"],
+    "correctAnswer": "নিম্নস্তরের",
+    "chapter": "Programming & Language",
+    "subject": "ICT"
+  },
+  {
+    "question": "অ্যাসেম্বলি ভাষা অনুবাদ করে—",
+    "options": ["কম্পাইলার", "ইন্টারপ্রেটার", "অ্যাসেম্বলার", "ভিডিও"],
+    "correctAnswer": "অ্যাসেম্বলার",
+    "chapter": "Programming & Language",
+    "subject": "ICT"
+  },
+  {
+    "question": "মানুষের ভাষার সাথে কোন ভাষার মিল আছে?",
+    "options": ["উচ্চস্তরের", "নিম্নস্তরের", "যান্ত্রিক", "অ্যাসেম্বলি"],
+    "correctAnswer": "উচ্চস্তরের",
+    "chapter": "Programming & Language",
+    "subject": "ICT"
+  },
+  {
+    "question": "মেশিন ভাষার সুবিধা কোনটি?",
+    "options": [
+      "প্রোগ্রাম সহজে লেখা যায়",
+      "সবধরনের মেশিনে ব্যবহার উপযোগী",
+      "প্রোগ্রাম সরাসরি ও দ্রুত কার্যকরি হয়",
+      "প্রোগ্রামের ভুল সহজে শনাক্ত করা যায়"
+    ],
+    "correctAnswer": "প্রোগ্রাম সরাসরি ও দ্রুত কার্যকরি হয়",
+    "chapter": "Programming & Language",
+    "subject": "ICT"
+  },
+  {
+    "question": "কোন ভাষায় লিখিত প্রোগ্রাম কম্পিউটার সরাসরি বুঝতে পারে?",
+    "options": ["মেশিন ভাষা", "উচ্চস্তরের ভাষা", "অ্যাসেম্বলি ভাষা", "চতুর্থ প্রজন্মের ভাষা"],
+    "correctAnswer": "মেশিন ভাষা",
+    "chapter": "Programming & Language",
+    "subject": "ICT"
+  },
+  {
+    "question": "নিচের কোনটি অনুবাদক প্রোগ্রাম?",
+    "options": ["ইন্টারপ্রেটার", "সি++", "পাইথন", "প্যাসকেল"],
+    "correctAnswer": "ইন্টারপ্রেটার",
+    "chapter": "Programming & Language",
+    "subject": "ICT"
+  },
+  {
+    "question": "উৎস প্রোগ্রামকে একত্রে বস্তু প্রোগ্রামে রূপান্তর করে কোনটি?",
+    "options": ["কম্পাইলার", "ইন্টারপ্রেটার", "লিংকার", "অ্যাসেম্বলার"],
+    "correctAnswer": "কম্পাইলার",
+    "chapter": "Programming & Language",
+    "subject": "ICT"
+  },
+  {
+    "question": "অনুবাদক সফটওয়্যার কয় ধরনের?",
+    "options": ["২", "৩", "৪", "৫"],
+    "correctAnswer": "৩",
+    "chapter": "Programming & Language",
+    "subject": "ICT"
+  },
+  {
+    "question": "প্রোগ্রামিং ভাষার সর্বনিম্নস্তর কোনটি?",
+    "options": ["মেশিন ভাষা", "অ্যাসেম্বলি ভাষা", "হাই লেভেল ভাষা", "ভেরি হাই লেভেল ভাষা"],
+    "correctAnswer": "মেশিন ভাষা",
+    "chapter": "Programming & Language",
+    "subject": "ICT"
+  },
+  {
+    "question": "ইন্টারপ্রেটার প্রোগ্রামকে-",
+    "options": [
+      "এক লাইন এক লাইন করে অনুবাদ করে",
+      "একসাথে পুরো প্রোগ্রাম অনুবাদ করে",
+      "একসাথে পাঁচ লাইন করে অনুবাদ করে",
+      "অর্ধেক অর্ধেক লাইন অনুবাদ করে"
+    ],
+    "correctAnswer": "এক লাইন এক লাইন করে অনুবাদ করে",
+    "chapter": "Programming & Language",
+    "subject": "ICT"
+  }
+
+
+]
+
+
