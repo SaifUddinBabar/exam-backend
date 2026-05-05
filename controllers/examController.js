@@ -99,21 +99,26 @@ export const getStats = async (req, res) => {
 // 🧹 CLEAR OLD
 export const clearOldData = async (req, res) => {
   try {
-    const twoDaysAgo = new Date(Date.now() - 172800000);
+    const { type } = req.query;
 
-    const exams = await Exam.deleteMany({
-      $or: [
-        { createdAt: { $lt: twoDaysAgo } },
-        { createdAt: { $exists: false } } // 🔥 old data catch
-      ]
-    });
+    let exams, subs;
 
-    const subs = await Submission.deleteMany({
-      $or: [
-        { createdAt: { $lt: twoDaysAgo } },
-        { createdAt: { $exists: false } }
-      ]
-    });
+    if (type === "all") {
+      // 🔥 FULL DELETE
+      exams = await Exam.deleteMany({});
+      subs = await Submission.deleteMany({});
+    } else {
+      // 🔥 OLD DELETE (default)
+      const twoDaysAgo = new Date(Date.now() - 172800000);
+
+      exams = await Exam.deleteMany({
+        createdAt: { $lt: twoDaysAgo }
+      });
+
+      subs = await Submission.deleteMany({
+        createdAt: { $lt: twoDaysAgo }
+      });
+    }
 
     res.json({
       examsDeleted: exams.deletedCount,
