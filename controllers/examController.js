@@ -98,13 +98,29 @@ export const getStats = async (req, res) => {
 
 // 🧹 CLEAR OLD
 export const clearOldData = async (req, res) => {
-  const twoDaysAgo = new Date(Date.now() - 172800000);
+  try {
+    const twoDaysAgo = new Date(Date.now() - 172800000);
 
-  const exams = await Exam.deleteMany({ createdAt: { $lt: twoDaysAgo } });
-  const subs = await Submission.deleteMany({ createdAt: { $lt: twoDaysAgo } });
+    const exams = await Exam.deleteMany({
+      $or: [
+        { createdAt: { $lt: twoDaysAgo } },
+        { createdAt: { $exists: false } } // 🔥 old data catch
+      ]
+    });
 
-  res.json({
-    examsDeleted: exams.deletedCount,
-    submissionsDeleted: subs.deletedCount
-  });
+    const subs = await Submission.deleteMany({
+      $or: [
+        { createdAt: { $lt: twoDaysAgo } },
+        { createdAt: { $exists: false } }
+      ]
+    });
+
+    res.json({
+      examsDeleted: exams.deletedCount,
+      submissionsDeleted: subs.deletedCount
+    });
+
+  } catch (err) {
+    res.status(500).json({ message: "Clear failed" });
+  }
 };
