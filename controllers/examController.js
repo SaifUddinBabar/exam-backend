@@ -23,8 +23,7 @@ export const createExam = async (req, res) => {
     });
 
     res.json(exam);
-
-  } catch (err) {
+  } catch {
     res.status(500).json({ message: "Create exam failed" });
   }
 };
@@ -33,7 +32,6 @@ export const createExam = async (req, res) => {
 export const getExam = async (req, res) => {
   try {
     const exam = await Exam.findOne({ examCode: req.params.code });
-
     if (!exam) return res.status(404).json({ message: "Exam not found" });
 
     const questions = await Question.find({
@@ -41,7 +39,6 @@ export const getExam = async (req, res) => {
     });
 
     res.json({ ...exam._doc, questions });
-
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -68,8 +65,7 @@ export const submitExam = async (req, res) => {
     await Submission.create({ examCode, name, roll, score });
 
     res.json({ score, answers, questions });
-
-  } catch (err) {
+  } catch {
     res.status(500).json({ message: "Submit failed" });
   }
 };
@@ -81,13 +77,12 @@ export const getRanking = async (req, res) => {
       .sort({ score: -1 });
 
     res.json(data);
-
   } catch {
     res.status(500).json({ message: "Ranking failed" });
   }
 };
 
-// 📊 STATS
+// STATS
 export const getStats = async (req, res) => {
   const examCount = await Exam.countDocuments();
   const submissionCount = await Submission.countDocuments();
@@ -96,7 +91,7 @@ export const getStats = async (req, res) => {
   res.json({ examCount, submissionCount, questionCount });
 };
 
-// 🧹 CLEAR OLD
+// 🔥 CLEAR / DELETE (MAIN FIX)
 export const clearOldData = async (req, res) => {
   try {
     const { type } = req.query;
@@ -104,11 +99,11 @@ export const clearOldData = async (req, res) => {
     let exams, subs;
 
     if (type === "all") {
-      // 🔥 FULL DELETE
+      // ✅ DELETE ALL
       exams = await Exam.deleteMany({});
       subs = await Submission.deleteMany({});
     } else {
-      // 🔥 OLD DELETE (default)
+      // ✅ CLEAR OLD (2 days)
       const twoDaysAgo = new Date(Date.now() - 172800000);
 
       exams = await Exam.deleteMany({
@@ -121,11 +116,12 @@ export const clearOldData = async (req, res) => {
     }
 
     res.json({
+      message: "Done",
       examsDeleted: exams.deletedCount,
       submissionsDeleted: subs.deletedCount
     });
 
-  } catch (err) {
+  } catch {
     res.status(500).json({ message: "Clear failed" });
   }
 };
