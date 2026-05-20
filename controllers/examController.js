@@ -28,6 +28,21 @@ export const createExam = async (req, res) => {
   }
 };
 
+// DELETE SINGLE EXAM
+export const deleteExam = async (req, res) => {
+  try {
+    const { examCode } = req.params;
+
+    await Exam.deleteOne({ examCode });
+    await Submission.deleteMany({ examCode });
+
+    res.json({ message: "Exam deleted successfully" });
+
+  } catch {
+    res.status(500).json({ message: "Delete failed" });
+  }
+};
+
 // GET
 export const getExam = async (req, res) => {
   try {

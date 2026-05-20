@@ -63,7 +63,7 @@
     "subject": "ICT"
   },
   {
-    "question": "বাংলা বর্ণমালা কোন কোডে সংরক্ষিত হয়?",
+    "question": "বাংলা বর্ণমালা কোন কোডে সংরক্ষিত হয়?",
     "options": ["BCD", "ASCII", "UNICODE", "EBCDIC"],
     "correctAnswer": "UNICODE",
     "chapter": "Number System & Digital Device",
@@ -91,61 +91,58 @@
     "subject": "ICT"
   },
   {
-    "question": "বুলিয়ান বীজগণিতে OR অপারেশনকে কী বলা হয়?",
-    "options": ["যোগ", "গুণ", "বিয়োগ", "ভাগ"],
+    "question": "বুলিয়ান বীজগণিতে OR অপারেশনকে কী বলা হয়?",
+    "options": ["যোগ", "গুণ", "বিয়োগ", "ভাগ"],
     "correctAnswer": "যোগ",
     "chapter": "Number System & Digital Device",
     "subject": "ICT"
   },
   {
-    "question": "বুলিয়ান বীজগণিতে AND অপারেশনকে কী বলা হয়?",
-    "options": ["যোগ", "গুণ", "বিয়োগ", "ভাগ"],
+    "question": "বুলিয়ান বীজগণিতে AND অপারেশনকে কী বলা হয়?",
+    "options": ["যোগ", "গুণ", "বিয়োগ", "ভাগ"],
     "correctAnswer": "গুণ",
     "chapter": "Number System & Digital Device",
     "subject": "ICT"
   },
-
-
-  
   {
-    "question": "URL দ্বারা কোনটি প্রকাশ করা হয়?",
-    "options": ["ইন্টারনেট", "ডোমেইন নেম", "ইয়াহু", "ফেসবুক"],
+    "question": "URL দ্বারা কোনটি প্রকাশ করা হয়?",
+    "options": ["ইন্টারনেট", "ডোমেইন নেম", "ইয়াহু", "ফেসবুক"],
     "correctAnswer": "ডোমেইন নেম",
     "chapter": "Web & HTML",
     "subject": "ICT"
   },
   {
-    "question": "URL এর তৃতীয় অংশের নাম কী?",
+    "question": "URL এর তৃতীয় অংশের নাম কী?",
     "options": ["প্রোটোকল", "পাথ", "প্যারামিটার", "হোস্টনেম"],
     "correctAnswer": "পাথ",
     "chapter": "Web & HTML",
     "subject": "ICT"
   },
   {
-    "question": "কোন ওয়েবসাইটকে ইন্টারনেটে যে কমপিউটারে রাখা হয় তাকে কী বলা হয়?",
+    "question": "কোন ওয়েবসাইটকে ইন্টারনেটে যে কমপিউটারে রাখা হয় তাকে কী বলা হয়?",
     "options": ["হোম কম্পিউটার", "মাদার কম্পিউটার", "হাউজ কম্পিউটার", "হোস্ট কম্পিউটার"],
     "correctAnswer": "হোস্ট কম্পিউটার",
     "chapter": "Web & HTML",
     "subject": "ICT"
   },
   {
-    "question": "কোনটি ওয়েব ব্রাউজার?",
-    "options": ["গুগল", "ইয়াহু", "মজিলা", "বিং"],
+    "question": "কোনটি ওয়েব ব্রাউজার?",
+    "options": ["গুগল", "ইয়াহু", "মজিলা", "বিং"],
     "correctAnswer": "মজিলা",
     "chapter": "Web & HTML",
     "subject": "ICT"
   },
   {
-    "question": "কোন ওয়েবসাইটকে যেখানে হোস্ট করা হয় তার নাম কী?",
-    "options": ["হোমপেজ", "ওয়েব সার্ভার", "হোস্টার", "মাদার কমপিউটার"],
-    "correctAnswer": "ওয়েব সার্ভার",
+    "question": "কোন ওয়েবসাইটকে যেখানে হোস্ট করা হয় তার নাম কী?",
+    "options": ["হোমপেজ", "ওয়েব সার্ভার", "হোস্টার", "মাদার কমপিউটার"],
+    "correctAnswer": "ওয়েব সার্ভার",
     "chapter": "Web & HTML",
     "subject": "ICT"
   },
   {
     "question": "HTML হলো",
-    "options": ["ওয়েব ব্রাউজার", "মার্কআপ ল্যাংগুয়েজ", "মেশিন ল্যাংগুয়েজ", "ওয়েবপেজ তৈরির টুলস"],
-    "correctAnswer": "মার্কআপ ল্যাংগুয়েজ",
+    "options": ["ওয়েব ব্রাউজার", "মার্কআপ ল্যাংগুয়েজ", "মেশিন ল্যাংগুয়েজ", "ওয়েবপেজ তৈরির টুলস"],
+    "correctAnswer": "মার্কআপ ল্যাংগুয়েজ",
     "chapter": "Web & HTML",
     "subject": "ICT"
   },
@@ -158,24 +155,14 @@
   },
   {
     "question": "HTTP এর পূর্ণরূপ কী?",
-    "options": [
-      "Higher Text Transfer Protocol",
-      "Hyper Text Transfer Protocol",
-      "Hyper Text Transfer Protocol",
-      "Hyper Transfer Text Protocol"
-    ],
+    "options": ["Higher Text Transfer Protocol", "Hyper Text Transfer Protocol", "Hyper Text Transfer Protocol", "Hyper Transfer Text Protocol"],
     "correctAnswer": "Hyper Text Transfer Protocol",
     "chapter": "Web & HTML",
     "subject": "ICT"
   },
   {
-    "question": "ওয়েবপেজ ডিজাইন কোনটি?",
-    "options": [
-      "ওয়েবসার্ভারে তথ্য রাখা",
-      "HTML ডকুমেন্ট তৈরি",
-      "বিশ্বব্যাপী নেটওয়ার্ক",
-      "ডোমেইন রেজিস্ট্রেশন"
-    ],
+    "question": "ওয়েবপেজ ডিজাইন কোনটি?",
+    "options": ["ওয়েবসার্ভারে তথ্য রাখা", "HTML ডকুমেন্ট তৈরি", "বিশ্বব্যাপী নেটওয়ার্ক", "ডোমেইন রেজিস্ট্রেশন"],
     "correctAnswer": "HTML ডকুমেন্ট তৈরি",
     "chapter": "Web & HTML",
     "subject": "ICT"
@@ -188,57 +175,42 @@
     "subject": "ICT"
   },
   {
-    "question": "ওয়েবসাইটের হায়ারারকিক্যাল কাঠামো কী?",
-    "options": [
-      "হোমপেজ নির্ভর ওয়েবসাইট",
-      "প্রতি পেজের সাথে লিংক",
-      "ওয়েবভিত্তিক যোগাযোগ",
-      "দুটি পেজের মধ্যে লিংক"
-    ],
-    "correctAnswer": "হোমপেজ নির্ভর ওয়েবসাইট",
+    "question": "ওয়েবসাইটের হায়ারারকিক্যাল কাঠামো কী?",
+    "options": ["হোমপেজ নির্ভর ওয়েবসাইট", "প্রতি পেজের সাথে লিংক", "ওয়েবভিত্তিক যোগাযোগ", "দুটি পেজের মধ্যে লিংক"],
+    "correctAnswer": "হোমপেজ নির্ভর ওয়েবসাইট",
     "chapter": "Web & HTML",
     "subject": "ICT"
   },
   {
-    "question": "ওয়েবপেজ তৈরিতে কোন ভাষা ব্যবহৃত হয়?",
+    "question": "ওয়েবপেজ তৈরিতে কোন ভাষা ব্যবহৃত হয়?",
     "options": ["PYTHON", "HTML", "COBOL", "FORTRAN"],
     "correctAnswer": "HTML",
     "chapter": "Web & HTML",
     "subject": "ICT"
   },
   {
-    "question": "HTML এ <p> ও </p> ট্যাগ ব্যবহার করা হয়",
-    "options": [
-      "প্যারাগ্রাফ তৈরির জন্য",
-      "নতুন পেজ তৈরির জন্য",
-      "লেখা বোল্ড করার জন্য",
-      "প্রোগ্রাম শুরু করার জন্য"
-    ],
+    "question": "HTML এ <p> ও </p> ট্যাগ ব্যবহার করা হয়",
+    "options": ["প্যারাগ্রাফ তৈরির জন্য", "নতুন পেজ তৈরির জন্য", "লেখা বোল্ড করার জন্য", "প্রোগ্রাম শুরু করার জন্য"],
     "correctAnswer": "প্যারাগ্রাফ তৈরির জন্য",
     "chapter": "Web & HTML",
     "subject": "ICT"
   },
   {
-    "question": "HTML এ <b> ও </b> ট্যাগ ব্যবহার করা হয়",
-    "options": [
-      "প্যারাগ্রাফ তৈরির জন্য",
-      "নতুন পেজ তৈরির জন্য",
-      "লেখা বোল্ড করার জন্য",
-      "কোনটি নয়"
-    ],
+    "question": "HTML এ <b> ও </b> ট্যাগ ব্যবহার করা হয়",
+    "options": ["প্যারাগ্রাফ তৈরির জন্য", "নতুন পেজ তৈরির জন্য", "লেখা বোল্ড করার জন্য", "কোনটি নয়"],
     "correctAnswer": "লেখা বোল্ড করার জন্য",
     "chapter": "Web & HTML",
     "subject": "ICT"
   },
   {
-    "question": "ইন্টারনেটকে সংক্ষেপে বলা হয়",
+    "question": "ইন্টারনেটকে সংক্ষেপে বলা হয়",
     "options": ["nt", "net", "Inet", "Int"],
     "correctAnswer": "net",
     "chapter": "Web & HTML",
     "subject": "ICT"
   },
   {
-    "question": "দু’টি ওয়েবপেজের মধ্যে যোগাযোগ স্থাপনের জন্য কী ব্যবহার করতে হয়?",
+    "question": "দু'টি ওয়েবপেজের মধ্যে যোগাযোগ স্থাপনের জন্য কী ব্যবহার করতে হয়?",
     "options": ["হাইপার লিঙ্ক", "এলিমেন্ট", "সার্চ ইঞ্জিন", "ব্রাউজার"],
     "correctAnswer": "হাইপার লিঙ্ক",
     "chapter": "Web & HTML",
@@ -252,57 +224,56 @@
     "subject": "ICT"
   },
   {
-    "question": "একটি পেজের সাথে অন্য পেজের সংযোগকে HTML ভাষায় কী বলে?",
+    "question": "একটি পেজের সাথে অন্য পেজের সংযোগকে HTML ভাষায় কী বলে?",
     "options": ["Connection", "Hyperlink", "Link", "Addition"],
     "correctAnswer": "Hyperlink",
     "chapter": "Web & HTML",
     "subject": "ICT"
   },
-  
   {
     "question": "প্রোগ্রাম তৈরিতে প্রোগ্রাম ডিজাইনের পরবর্তী ধাপ কোনটি?",
-    "options": ["সমস্যা বিশ্লেষণ", "প্রোগ্রাম কোডিং", "প্রোগ্রাম বাস্তবায়ন", "প্রোগ্রাম রক্ষণাবেক্ষণ"],
+    "options": ["সমস্যা বিশ্লেষণ", "প্রোগ্রাম কোডিং", "প্রোগ্রাম বাস্তবায়ন", "প্রোগ্রাম রক্ষণাবেক্ষণ"],
     "correctAnswer": "প্রোগ্রাম কোডিং",
     "chapter": "Programming & Language",
     "subject": "ICT"
   },
   {
-    "question": "সি ভাষায় সমজাতীয় ডেটা সংরক্ষণের জন্য কোনটি ব্যবহার করা হয়?",
-    "options": ["ফাংশন", "পয়েন্টার", "স্ট্রাকচর", "অ্যারে"],
+    "question": "সি ভাষায় সমজাতীয় ডেটা সংরক্ষণের জন্য কোনটি ব্যবহার করা হয়?",
+    "options": ["ফাংশন", "পয়েন্টার", "স্ট্রাকচর", "অ্যারে"],
     "correctAnswer": "অ্যারে",
     "chapter": "Programming & Language",
     "subject": "ICT"
   },
   {
-    "question": "প্রথম প্রজন্মের ভাষা বলা হয় কোনটিকে?",
+    "question": "প্রথম প্রজন্মের ভাষা বলা হয় কোনটিকে?",
     "options": ["যান্ত্রিক ভাষা", "অ্যাসেম্বলি ভাষা", "উচ্চস্তরের ভাষা", "অতি উচ্চস্তরের ভাষা"],
     "correctAnswer": "যান্ত্রিক ভাষা",
     "chapter": "Programming & Language",
     "subject": "ICT"
   },
   {
-    "question": "উচ্চস্তরের ভাষাকে যান্ত্রিক ভাষায় রূপান্তরিত করাকে কী বলে?",
+    "question": "উচ্চস্তরের ভাষাকে যান্ত্রিক ভাষায় রূপান্তরিত করাকে কী বলে?",
     "options": ["প্রসেসিং", "ডিবাগিং", "অনুবাদ", "মডিউল"],
     "correctAnswer": "অনুবাদ",
     "chapter": "Programming & Language",
     "subject": "ICT"
   },
   {
-    "question": "কোনো ভাষা কোনো ধরনের রূপান্তর ছাড়া কম্পিউটার সরাসরি নির্বাহ করতে পারে?",
+    "question": "কোনো ভাষা কোনো ধরনের রূপান্তর ছাড়া কম্পিউটার সরাসরি নির্বাহ করতে পারে?",
     "options": ["মেশিন ভাষা", "অ্যাসেম্বলি ভাষা", "উচ্চস্তরের ভাষা", "মধ্যম স্তরের ভাষা"],
     "correctAnswer": "মেশিন ভাষা",
     "chapter": "Programming & Language",
     "subject": "ICT"
   },
   {
-    "question": "মেশিনের ভাষায় রূপান্তরিত প্রোগ্রামকে কী বলা হয়?",
+    "question": "মেশিনের ভাষায় রূপান্তরিত প্রোগ্রামকে কী বলা হয়?",
     "options": ["অ্যাসেম্বলার", "কম্পাইলার", "ইন্টারপ্রেটার", "অবজেক্ট প্রোগ্রাম"],
     "correctAnswer": "অবজেক্ট প্রোগ্রাম",
     "chapter": "Programming & Language",
     "subject": "ICT"
   },
   {
-    "question": "মেশিন ভাষায় অনুদিত হয় কোনটি?",
+    "question": "মেশিন ভাষায় অনুদিত হয় কোনটি?",
     "options": ["অপারেন্ট", "লেবেল", "কমেন্ট", "অপারেশন কোড"],
     "correctAnswer": "অপারেশন কোড",
     "chapter": "Programming & Language",
@@ -310,7 +281,7 @@
   },
   {
     "question": "কোনটি অনুবাদক প্রোগ্রাম?",
-    "options": ["অ্যাসেম্বলি ল্যাংগুয়েজ", "কম্পাইলার", "পাইথন", "ফক্সপ্রো"],
+    "options": ["অ্যাসেম্বলি ল্যাংগুয়েজ", "কম্পাইলার", "পাইথন", "ফক্সপ্রো"],
     "correctAnswer": "কম্পাইলার",
     "chapter": "Programming & Language",
     "subject": "ICT"
@@ -323,14 +294,14 @@
     "subject": "ICT"
   },
   {
-    "question": "কোন অনুবাদক দিয়ে সম্পূর্ণ প্রোগ্রামটি একসাথে অনুবাদ করা সম্ভব?",
+    "question": "কোন অনুবাদক দিয়ে সম্পূর্ণ প্রোগ্রামটি একসাথে অনুবাদ করা সম্ভব?",
     "options": ["অ্যাসেম্বলার", "কম্পাইলার", "ইন্টারপ্রিটার", "মেশিন ভাষা"],
     "correctAnswer": "কম্পাইলার",
     "chapter": "Programming & Language",
     "subject": "ICT"
   },
   {
-    "question": "কোন ভাষা দিয়ে কম্পিউটারের মেমোরি-অ্যাড্রেসের সঙ্গে সরাসরি সংযোগ সাধন সম্ভব?",
+    "question": "কোন ভাষা দিয়ে কম্পিউটারের মেমোরি-অ্যাড্রেসের সঙ্গে সরাসরি সংযোগ সাধন সম্ভব?",
     "options": ["মেশিন ভাষা", "হাই লেভেল ভাষা", "অ্যাসেম্বলি ভাষা", "চতুর্থ প্রজন্মের ভাষা"],
     "correctAnswer": "অ্যাসেম্বলি ভাষা",
     "chapter": "Programming & Language",
@@ -338,13 +309,13 @@
   },
   {
     "question": "কোনটি উচ্চস্তরের ভাষা?",
-    "options": ["অ্যাডা", "অ্যাসেম্বলি ল্যাংগুয়েজ", "পাইথন", "মেশিন ল্যাংগুয়েজ"],
+    "options": ["অ্যাডা", "অ্যাসেম্বলি ল্যাংগুয়েজ", "পাইথন", "মেশিন ল্যাংগুয়েজ"],
     "correctAnswer": "পাইথন",
     "chapter": "Programming & Language",
     "subject": "ICT"
   },
   {
-    "question": "যান্ত্রিক ভাষাকে কোন স্তরের ভাষা বলা হয়?",
+    "question": "যান্ত্রিক ভাষাকে কোন স্তরের ভাষা বলা হয়?",
     "options": ["উচ্চস্তরের", "মধ্যস্তরের", "নিম্নস্তরের", "অতি উচ্চস্তরের"],
     "correctAnswer": "নিম্নস্তরের",
     "chapter": "Programming & Language",
@@ -366,18 +337,13 @@
   },
   {
     "question": "মেশিন ভাষার সুবিধা কোনটি?",
-    "options": [
-      "প্রোগ্রাম সহজে লেখা যায়",
-      "সবধরনের মেশিনে ব্যবহার উপযোগী",
-      "প্রোগ্রাম সরাসরি ও দ্রুত কার্যকরি হয়",
-      "প্রোগ্রামের ভুল সহজে শনাক্ত করা যায়"
-    ],
-    "correctAnswer": "প্রোগ্রাম সরাসরি ও দ্রুত কার্যকরি হয়",
+    "options": ["প্রোগ্রাম সহজে লেখা যায়", "সবধরনের মেশিনে ব্যবহার উপযোগী", "প্রোগ্রাম সরাসরি ও দ্রুত কার্যকরি হয়", "প্রোগ্রামের ভুল সহজে শনাক্ত করা যায়"],
+    "correctAnswer": "প্রোগ্রাম সরাসরি ও দ্রুত কার্যকরি হয়",
     "chapter": "Programming & Language",
     "subject": "ICT"
   },
   {
-    "question": "কোন ভাষায় লিখিত প্রোগ্রাম কম্পিউটার সরাসরি বুঝতে পারে?",
+    "question": "কোন ভাষায় লিখিত প্রোগ্রাম কম্পিউটার সরাসরি বুঝতে পারে?",
     "options": ["মেশিন ভাষা", "উচ্চস্তরের ভাষা", "অ্যাসেম্বলি ভাষা", "চতুর্থ প্রজন্মের ভাষা"],
     "correctAnswer": "মেশিন ভাষা",
     "chapter": "Programming & Language",
@@ -398,7 +364,7 @@
     "subject": "ICT"
   },
   {
-    "question": "অনুবাদক সফটওয়্যার কয় ধরনের?",
+    "question": "অনুবাদক সফটওয়্যার কয় ধরনের?",
     "options": ["২", "৩", "৪", "৫"],
     "correctAnswer": "৩",
     "chapter": "Programming & Language",
@@ -413,18 +379,359 @@
   },
   {
     "question": "ইন্টারপ্রেটার প্রোগ্রামকে-",
-    "options": [
-      "এক লাইন এক লাইন করে অনুবাদ করে",
-      "একসাথে পুরো প্রোগ্রাম অনুবাদ করে",
-      "একসাথে পাঁচ লাইন করে অনুবাদ করে",
-      "অর্ধেক অর্ধেক লাইন অনুবাদ করে"
-    ],
+    "options": ["এক লাইন এক লাইন করে অনুবাদ করে", "একসাথে পুরো প্রোগ্রাম অনুবাদ করে", "একসাথে পাঁচ লাইন করে অনুবাদ করে", "অর্ধেক অর্ধেক লাইন অনুবাদ করে"],
     "correctAnswer": "এক লাইন এক লাইন করে অনুবাদ করে",
     "chapter": "Programming & Language",
     "subject": "ICT"
+  },
+  {
+    "className": "HSC",
+    "subject": "ICT",
+    "chapter": "Board Questions",
+    "topic": "",
+    "questionType": "board",
+    "boardYear": "2023",
+    "boardName": "Dhaka",
+    "question": "(5A)₁₆ এর পরের সংখ্যাটি কত?",
+    "options": ["(6A)₁₆", "(5B)₁₆", "(91)₁₆", "(90)₁₆"],
+    "correctAnswer": "(5B)₁₆",
+    "tutorId": "",
+    "image": ""
+  },
+  {
+    "className": "HSC",
+    "subject": "ICT",
+    "chapter": "Board Questions",
+    "topic": "",
+    "questionType": "board",
+    "boardYear": "2023",
+    "boardName": "Dhaka",
+    "question": "নেটওয়ার্কিংয়ের উদ্দেশ্য হলো— i. ইনফরমেশন শেয়ার ii. সফটওয়্যার শেয়ার iii. হার্ডওয়্যার শেয়ার — নিচের কোনটি সঠিক?",
+    "options": ["i ও ii", "i ও iii", "ii ও iii", "i, ii ও iii"],
+    "correctAnswer": "i, ii ও iii",
+    "tutorId": "",
+    "image": ""
+  },
+  {
+    "className": "HSC",
+    "subject": "ICT",
+    "chapter": "Board Questions",
+    "topic": "",
+    "questionType": "board",
+    "boardYear": "2023",
+    "boardName": "Dhaka",
+    "question": "'Y' এর মান কোনটি? (নিচের চিত্র দেখো)",
+    "options": ["A+B", "AB", "A+B", "A⊕B"],
+    "correctAnswer": "A⊕B",
+    "tutorId": "",
+    "image": "https://res.cloudinary.com/dlllluhli/image/upload/f_auto,q_auto/WhatsApp_Image_2026-05-20_at_4.04.48_PM_1_skfosy"
+  },
+  {
+    "className": "HSC",
+    "subject": "ICT",
+    "chapter": "Board Questions",
+    "topic": "",
+    "questionType": "board",
+    "boardYear": "2023",
+    "boardName": "Dhaka",
+    "question": "উদ্দীপকের বর্তনীটির আউটপুট Y=1 পেতে হলে A ও B এর ইনপুট কত দিতে হবে?",
+    "options": ["A=0 ও B=0", "A=0 ও B=1", "A=1 ও B=0", "A=1 ও B=1"],
+    "correctAnswer": "A=1 ও B=0",
+    "tutorId": "",
+    "image": "https://res.cloudinary.com/dlllluhli/image/upload/f_auto,q_auto/WhatsApp_Image_2026-05-20_at_4.04.48_PM_1_skfosy"
+  },
+  {
+    "className": "HSC",
+    "subject": "ICT",
+    "chapter": "Board Questions",
+    "topic": "",
+    "questionType": "board",
+    "boardYear": "2023",
+    "boardName": "Dhaka",
+    "question": "ব্লুটুথ এর ফ্রিকোয়েন্সি কত?",
+    "options": ["2.45 kHz", "2.45 MHz", "2.45 GHz", "2.45 THz"],
+    "correctAnswer": "2.45 GHz",
+    "tutorId": "",
+    "image": ""
+  },
+  {
+    "className": "HSC",
+    "subject": "ICT",
+    "chapter": "Board Questions",
+    "topic": "",
+    "questionType": "board",
+    "boardYear": "2023",
+    "boardName": "Dhaka",
+    "question": "টেলিপ্রেজেন্সের প্রয়োগক্ষেত্র কোনটি?",
+    "options": ["ক্রায়োসার্জারি", "বায়োমেট্রিক্স", "ভার্চুয়াল রিয়েলিটি", "আর্টিফিশিয়াল ইন্টেলিজেন্ট"],
+    "correctAnswer": "ভার্চুয়াল রিয়েলিটি",
+    "tutorId": "",
+    "image": ""
+  },
+  {
+    "className": "HSC",
+    "subject": "ICT",
+    "chapter": "Board Questions",
+    "topic": "",
+    "questionType": "board",
+    "boardYear": "2023",
+    "boardName": "Dhaka",
+    "question": "আতিকের বয়সের সমকক্ষ সংখ্যা হলো— (ক্লাসে শিক্ষক আতিককে তার বয়স জিজ্ঞেস করেন। আতিক বলল তার বয়স (10100)₂)",
+    "options": ["(20)₈", "(24)₈", "(24)₁₀", "(24)₁₆"],
+    "correctAnswer": "(24)₈",
+    "tutorId": "",
+    "image": ""
+  },
+  {
+    "className": "HSC",
+    "subject": "ICT",
+    "chapter": "Board Questions",
+    "topic": "",
+    "questionType": "board",
+    "boardYear": "2023",
+    "boardName": "Dhaka",
+    "question": "দশ বছর পর আতিকের বয়স হেক্সাডেসিমালে কত হবে?",
+    "options": ["(1D)₁₆", "(1E)₁₆", "(1F)₁₆", "(2D)₁₆"],
+    "correctAnswer": "(1E)₁₆",
+    "tutorId": "",
+    "image": ""
+  },
+  {
+    "className": "HSC",
+    "subject": "ICT",
+    "chapter": "Board Questions",
+    "topic": "",
+    "questionType": "board",
+    "boardYear": "2023",
+    "boardName": "Dhaka",
+    "question": "১০টি কম্পিউটারে মেশ নেটওয়ার্কিং এর আওতায় আনতে কয়টি তারের প্রয়োজন?",
+    "options": ["10", "30", "45", "90"],
+    "correctAnswer": "45",
+    "tutorId": "",
+    "image": ""
+  },
+  {
+    "className": "HSC",
+    "subject": "ICT",
+    "chapter": "Board Questions",
+    "topic": "",
+    "questionType": "board",
+    "boardYear": "2023",
+    "boardName": "Dhaka",
+    "question": "বায়োইনফরমেটিক্স ব্যবহৃত হয়— i. ডিএনএ ম্যাপিং ii. জিন ফাইন্ডিং iii. মেশিন লানিং — নিচের কোনটি সঠিক?",
+    "options": ["i ও ii", "i ও iii", "ii ও iii", "i, ii ও iii"],
+    "correctAnswer": "i ও ii",
+    "tutorId": "",
+    "image": ""
+  },
+  {
+    "className": "HSC",
+    "subject": "ICT",
+    "chapter": "Board Questions",
+    "topic": "",
+    "questionType": "board",
+    "boardYear": "2023",
+    "boardName": "Dhaka",
+    "question": "উদ্দীপকের নেটওয়ার্ক কোনটি? (করিম সাহেব তার প্রয়োজনে কম্পিউটারভিত্তিক একটি সেবা গ্রহণ করলেন যা ২৪ ঘণ্টা খোলা থাকে, সকল সফটওয়্যার স্বয়ংক্রিয়ভাবে আপডেট হয়, খরচ কম এবং ব্যাকআপ ক্যাপাসিটি অনেক বেশি। তার কম্পিউটারটি বিভিন্ন দেশের কম্পিউটারের সাথে যুক্ত।)",
+    "options": ["LAN", "MAN", "PAN", "WAN"],
+    "correctAnswer": "WAN",
+    "tutorId": "",
+    "image": ""
+  },
+  {
+    "className": "HSC",
+    "subject": "ICT",
+    "chapter": "Board Questions",
+    "topic": "",
+    "questionType": "board",
+    "boardYear": "2023",
+    "boardName": "Dhaka",
+    "question": "উদ্দীপকে উল্লিখিত সেবাটি হলো— i. রিসোর্স শেয়ারিবিলিটি ii. অন-ডিমান্ড সেবা iii. পে-আজ-ইউ-গো সেবা — নিচের কোনটি সঠিক?",
+    "options": ["i ও ii", "i ও iii", "ii ও iii", "i, ii ও iii"],
+    "correctAnswer": "i, ii ও iii",
+    "tutorId": "",
+    "image": ""
+  },
+  {
+    "className": "HSC",
+    "subject": "ICT",
+    "chapter": "Board Questions",
+    "topic": "",
+    "questionType": "board",
+    "boardYear": "2023",
+    "boardName": "Dhaka",
+    "question": "বিজ্ঞানসম্মত অনুযায়ী জীবকে শনাক্তকরণের প্রযুক্তি কোনটি?",
+    "options": ["ন্যানোটেকনোলজি", "জেনেটিক ইঞ্জিনিয়ারিং", "বায়োমেট্রিক্স", "বায়োইনফরমেটিক্স"],
+    "correctAnswer": "বায়োমেট্রিক্স",
+    "tutorId": "",
+    "image": ""
+  },
+  {
+    "className": "HSC",
+    "subject": "ICT",
+    "chapter": "Board Questions",
+    "topic": "",
+    "questionType": "board",
+    "boardYear": "2023",
+    "boardName": "Dhaka",
+    "question": "HTML এ ইমেজ ফরমেট হলো— i. gif ii. png iii. psd — নিচের কোনটি সঠিক?",
+    "options": ["i ও ii", "i ও iii", "ii ও iii", "i, ii ও iii"],
+    "correctAnswer": "i ও ii",
+    "tutorId": "",
+    "image": ""
+  },
+  {
+    "className": "HSC",
+    "subject": "ICT",
+    "chapter": "Board Questions",
+    "topic": "",
+    "questionType": "board",
+    "boardYear": "2023",
+    "boardName": "Dhaka",
+    "question": "একই ধরনের ডেটা সংরক্ষণ করে কোনটি?",
+    "options": ["ফাংশন", "অ্যারে", "পয়েন্টার", "স্ট্রাকচার"],
+    "correctAnswer": "অ্যারে",
+    "tutorId": "",
+    "image": ""
+  },
+  {
+    "className": "HSC",
+    "subject": "ICT",
+    "chapter": "Board Questions",
+    "topic": "",
+    "questionType": "board",
+    "boardYear": "2023",
+    "boardName": "Dhaka",
+    "question": "HTML এ বড় হেডিং এলিমেন্ট কোনটি?",
+    "options": ["<h1>", "<h2>", "<h5>", "<h6>"],
+    "correctAnswer": "<h1>",
+    "tutorId": "",
+    "image": ""
+  },
+  {
+    "className": "HSC",
+    "subject": "ICT",
+    "chapter": "Board Questions",
+    "topic": "",
+    "questionType": "board",
+    "boardYear": "2023",
+    "boardName": "Dhaka",
+    "question": "নিচের উদ্দীপকটি পড় ১৭ ও ১৮ নং প্রশ্নের উত্তর দাও। (int a=2, b; b=++a; Printf(\"%d\", b);) — উদ্দীপকে 'b' এর মান কত?",
+    "options": ["0", "2", "3", "4"],
+    "correctAnswer": "3",
+    "tutorId": "",
+    "image": ""
+  },
+  {
+    "className": "HSC",
+    "subject": "ICT",
+    "chapter": "Board Questions",
+    "topic": "",
+    "questionType": "board",
+    "boardYear": "2023",
+    "boardName": "Dhaka",
+    "question": "সিনট্যাক্সের কোন পরিবর্তনে আউটপুট 5 হবে?",
+    "options": ["b=a++", "b=a--", "b=a-3", "b=a+3"],
+    "correctAnswer": "b=a+3",
+    "tutorId": "",
+    "image": ""
+  },
+  {
+    "className": "HSC",
+    "subject": "ICT",
+    "chapter": "Board Questions",
+    "topic": "",
+    "questionType": "board",
+    "boardYear": "2023",
+    "boardName": "Dhaka",
+    "question": "'সি' ভাষায় বৈধ চলক কোনটি?",
+    "options": ["ab@yahoo", "Roll107", "abc ny", "abc-n"],
+    "correctAnswer": "Roll107",
+    "tutorId": "",
+    "image": ""
+  },
+  {
+    "className": "HSC",
+    "subject": "ICT",
+    "chapter": "Board Questions",
+    "topic": "",
+    "questionType": "board",
+    "boardYear": "2023",
+    "boardName": "Dhaka",
+    "question": "ন্যানোপার্টিকেলের আকৃতি কত?",
+    "options": ["১ থেকে 100 nm", "১ থেকে 200 nm", "১ থেকে 300 nm", "১ থেকে 400 nm"],
+    "correctAnswer": "১ থেকে 100 nm",
+    "tutorId": "",
+    "image": ""
+  },
+  {
+    "className": "HSC",
+    "subject": "ICT",
+    "chapter": "Board Questions",
+    "topic": "",
+    "questionType": "board",
+    "boardYear": "2023",
+    "boardName": "Dhaka",
+    "question": "কোন তাপমাত্রায় কোষে অক্সিজেন সরবরাহ বন্ধ হয়ে যায়?",
+    "options": ["-41°C থেকে -196°C", "-31°C থেকে -186°C", "-21°C থেকে -176°C", "-0°C থেকে -100°C"],
+    "correctAnswer": "-41°C থেকে -196°C",
+    "tutorId": "",
+    "image": ""
+  },
+  {
+    "className": "HSC",
+    "subject": "ICT",
+    "chapter": "Board Questions",
+    "topic": "",
+    "questionType": "board",
+    "boardYear": "2023",
+    "boardName": "Dhaka",
+    "question": "নিচের কোন ট্যাগে অ্যাট্রিবিউট থাকে?",
+    "options": ["শুরুর ট্যাগে", "শেষ ট্যাগে", "দুই ট্যাগের মাঝে", "উভয় ট্যাগে"],
+    "correctAnswer": "শুরুর ট্যাগে",
+    "tutorId": "",
+    "image": ""
+  },
+  {
+    "className": "HSC",
+    "subject": "ICT",
+    "chapter": "Board Questions",
+    "topic": "",
+    "questionType": "board",
+    "boardYear": "2023",
+    "boardName": "Dhaka",
+    "question": "উপরের সত্যক সারণি কোন গেটকে নির্দেশ করে?",
+    "options": ["NOR", "EX-OR", "EX-NOR", "NAND"],
+    "correctAnswer": "NOR",
+    "tutorId": "",
+    "image": "https://res.cloudinary.com/dlllluhli/image/upload/f_auto,q_auto/WhatsApp_Image_2026-05-20_at_4.04.48_PM_gkv3my"
+  },
+  {
+    "className": "HSC",
+    "subject": "ICT",
+    "chapter": "Board Questions",
+    "topic": "",
+    "questionType": "board",
+    "boardYear": "2023",
+    "boardName": "Dhaka",
+    "question": "CERN কোথায় অবস্থিত?",
+    "options": ["ইতালি", "আমেরিকা", "ইংল্যান্ড", "সুইজারল্যান্ড"],
+    "correctAnswer": "সুইজারল্যান্ড",
+    "tutorId": "",
+    "image": ""
+  },
+  {
+    "className": "HSC",
+    "subject": "ICT",
+    "chapter": "Board Questions",
+    "topic": "",
+    "questionType": "board",
+    "boardYear": "2023",
+    "boardName": "Dhaka",
+    "question": "X এর মান ৫ হলে, এক্সপ্রেশন X+=15 এর মান কত?",
+    "options": ["5", "10", "15", "20"],
+    "correctAnswer": "20",
+    "tutorId": "",
+    "image": ""
   }
-
-
 ]
-
-
