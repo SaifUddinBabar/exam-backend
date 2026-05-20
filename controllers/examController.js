@@ -1,150 +1,371 @@
+// ==============================
+// controllers/examController.js
+// ==============================
+
 import Exam from "../models/Exam.js";
 import Submission from "../models/Submission.js";
 import Question from "../models/Question.js";
 
+// ==============================
+// GENERATE EXAM CODE
+// ==============================
 const generateCode = () => {
-  return Math.random().toString(36).substring(2, 7).toUpperCase();
+return Math.random()
+.toString(36)
+.substring(2, 7)
+.toUpperCase();
 };
 
-// CREATE
+// ==============================
+// CREATE EXAM
+// ==============================
 export const createExam = async (req, res) => {
-  try {
-    const { title, questions, duration } = req.body;
 
-    if (!title || !questions || questions.length === 0) {
-      return res.status(400).json({ message: "Title and Questions required" });
-    }
+try {
 
-    const exam = await Exam.create({
-      title,
-      questions: questions.map(q => q.toString()),
-      duration,
-      examCode: generateCode()
-    });
+```
+const {
+  title,
+  questions,
+  duration
+} = req.body;
 
-    res.json(exam);
-  } catch {
-    res.status(500).json({ message: "Create exam failed" });
-  }
+// VALIDATION
+if (
+  !title ||
+  !questions ||
+  questions.length === 0
+) {
+
+  return res.status(400).json({
+    message:
+      "Title and questions are required"
+  });
+}
+
+// CREATE EXAM
+const exam = await Exam.create({
+
+  title,
+
+  questions: questions.map((q) =>
+    q.toString()
+  ),
+
+  duration,
+
+  examCode: generateCode()
+
+});
+
+res.status(201).json(exam);
+```
+
+} catch (err) {
+
+```
+res.status(500).json({
+  message: err.message
+});
+```
+
+}
 };
 
-// DELETE SINGLE EXAM
-export const deleteExam = async (req, res) => {
-  try {
-    const { examCode } = req.params;
-
-    await Exam.deleteOne({ examCode });
-    await Submission.deleteMany({ examCode });
-
-    res.json({ message: "Exam deleted successfully" });
-
-  } catch {
-    res.status(500).json({ message: "Delete failed" });
-  }
-};
-
-// GET
+// ==============================
+// GET SINGLE EXAM
+// ==============================
 export const getExam = async (req, res) => {
-  try {
-    const exam = await Exam.findOne({ examCode: req.params.code });
-    if (!exam) return res.status(404).json({ message: "Exam not found" });
 
-    const questions = await Question.find({
-      _id: { $in: exam.questions }
-    });
+try {
 
-    res.json({ ...exam._doc, questions });
-  } catch (err) {
-    res.status(500).json({ error: err.message });
+```
+const exam = await Exam.findOne({
+  examCode: req.params.code
+});
+
+if (!exam) {
+
+  return res.status(404).json({
+    message: "Exam not found"
+  });
+}
+
+// FETCH QUESTIONS
+const questions = await Question.find({
+  _id: {
+    $in: exam.questions
   }
+});
+
+res.json({
+  ...exam._doc,
+  questions
+});
+```
+
+} catch (err) {
+
+```
+res.status(500).json({
+  message: err.message
+});
+```
+
+}
 };
 
-// SUBMIT
+// ==============================
+// SUBMIT EXAM
+// ==============================
 export const submitExam = async (req, res) => {
-  try {
-    const { examCode, name, roll, answers } = req.body;
 
-    const exam = await Exam.findOne({ examCode });
-    if (!exam) return res.status(404).json({ message: "Exam not found" });
+try {
 
-    const questions = await Question.find({
-      _id: { $in: exam.questions }
-    });
+```
+const {
+  examCode,
+  name,
+  roll,
+  answers
+} = req.body;
 
-    let score = 0;
+// FIND EXAM
+const exam = await Exam.findOne({
+  examCode
+});
 
-    questions.forEach((q) => {
-      if (answers[q._id] === q.correctAnswer) score++;
-    });
+if (!exam) {
 
-    await Submission.create({ examCode, name, roll, score });
+  return res.status(404).json({
+    message: "Exam not found"
+  });
+}
 
-    res.json({ score, answers, questions });
-  } catch {
-    res.status(500).json({ message: "Submit failed" });
+// FETCH QUESTIONS
+const questions = await Question.find({
+  _id: {
+    $in: exam.questions
   }
+});
+
+// SCORE COUNT
+let score = 0;
+
+questions.forEach((q) => {
+
+  if (
+    answers[q._id] === q.correctAnswer
+  ) {
+
+    score++;
+  }
+});
+
+// SAVE SUBMISSION
+await Submission.create({
+
+  examCode,
+  name,
+  roll,
+  score
+
+});
+
+res.json({
+  score,
+  answers,
+  questions
+});
+```
+
+} catch (err) {
+
+```
+res.status(500).json({
+  message: err.message
+});
+```
+
+}
 };
 
-// RANKING
+// ==============================
+// GET RANKING
+// ==============================
 export const getRanking = async (req, res) => {
-  try {
-    const data = await Submission.find({ examCode: req.params.code })
-      .sort({ score: -1 });
 
-    res.json(data);
-  } catch {
-    res.status(500).json({ message: "Ranking failed" });
-  }
+try {
+
+```
+const data = await Submission.find({
+  examCode: req.params.code
+}).sort({
+  score: -1
+});
+
+res.json(data);
+```
+
+} catch (err) {
+
+```
+res.status(500).json({
+  message: err.message
+});
+```
+
+}
 };
 
-// STATS
+// ==============================
+// GET STATS
+// ==============================
 export const getStats = async (req, res) => {
-  const examCount = await Exam.countDocuments();
-  const submissionCount = await Submission.countDocuments();
-  const questionCount = await Question.countDocuments();
 
-  res.json({ examCount, submissionCount, questionCount });
+try {
+
+```
+const examCount =
+  await Exam.countDocuments();
+
+const submissionCount =
+  await Submission.countDocuments();
+
+const questionCount =
+  await Question.countDocuments();
+
+res.json({
+
+  examCount,
+  submissionCount,
+  questionCount
+
+});
+```
+
+} catch (err) {
+
+```
+res.status(500).json({
+  message: err.message
+});
+```
+
+}
 };
 
-// GET ALL EXAMS WITH SUBMISSION COUNT
+// ==============================
+// GET ALL EXAMS
+// ==============================
 export const getAllExams = async (req, res) => {
-  try {
 
-    const exams = await Exam.find()
-      .sort({ createdAt: -1 });
+try {
 
-    const examsWithCount = await Promise.all(
-      exams.map(async (exam) => {
+```
+const exams = await Exam.find()
+  .sort({
+    createdAt: -1
+  });
 
-        const submissionCount =
-          await Submission.countDocuments({
-            examCode: exam.examCode
-          });
+const examsWithCount =
+  await Promise.all(
 
-        return {
-          ...exam._doc,
-          submissionCount
-        };
-      })
-    );
+    exams.map(async (exam) => {
 
-    res.json(examsWithCount);
+      const submissionCount =
+        await Submission.countDocuments({
 
-  } catch {
-    res.status(500).json({ message: "Failed" });
-  }
+          examCode:
+            exam.examCode
+
+        });
+
+      return {
+
+        ...exam._doc,
+        submissionCount
+
+      };
+    })
+  );
+
+res.json(examsWithCount);
+```
+
+} catch (err) {
+
+```
+res.status(500).json({
+  message: err.message
+});
+```
+
+}
 };
 
-// 🔥 DELETE ALL (INSTANT)
-export const clearOldData = async (req, res) => {
-  try {
-    await Exam.deleteMany({});
-    await Submission.deleteMany({});
+// ==============================
+// DELETE SINGLE EXAM
+// ==============================
+export const deleteExam = async (req, res) => {
 
-    res.json({
-      message: "All data deleted instantly"
-    });
-  } catch {
-    res.status(500).json({ message: "Delete failed" });
-  }
+try {
+
+```
+const { examCode } = req.params;
+
+await Exam.deleteOne({
+  examCode
+});
+
+await Submission.deleteMany({
+  examCode
+});
+
+res.json({
+  message:
+    "Exam deleted successfully"
+});
+```
+
+} catch (err) {
+
+```
+res.status(500).json({
+  message: err.message
+});
+```
+
+}
+};
+
+// ==============================
+// DELETE ALL DATA
+// ==============================
+export const clearOldData = async (
+req,
+res
+) => {
+
+try {
+
+```
+await Exam.deleteMany({});
+await Submission.deleteMany({});
+
+res.json({
+  message:
+    "All data deleted successfully"
+});
+```
+
+} catch (err) {
+
+```
+res.status(500).json({
+  message: err.message
+});
+```
+
+}
 };
