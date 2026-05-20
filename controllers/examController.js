@@ -106,6 +106,35 @@ export const getStats = async (req, res) => {
   res.json({ examCount, submissionCount, questionCount });
 };
 
+// GET ALL EXAMS WITH SUBMISSION COUNT
+export const getAllExams = async (req, res) => {
+  try {
+
+    const exams = await Exam.find()
+      .sort({ createdAt: -1 });
+
+    const examsWithCount = await Promise.all(
+      exams.map(async (exam) => {
+
+        const submissionCount =
+          await Submission.countDocuments({
+            examCode: exam.examCode
+          });
+
+        return {
+          ...exam._doc,
+          submissionCount
+        };
+      })
+    );
+
+    res.json(examsWithCount);
+
+  } catch {
+    res.status(500).json({ message: "Failed" });
+  }
+};
+
 // 🔥 DELETE ALL (INSTANT)
 export const clearOldData = async (req, res) => {
   try {
