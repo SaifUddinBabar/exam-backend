@@ -1,26 +1,23 @@
 import mongoose from "mongoose";
 import fs from "fs";
-import dotenv from "dotenv";
 import Question from "./models/Question.js";
 
-dotenv.config();
+const MONGO_URI = "mongodb+srv://exam_app:FBQkye9ZvX3k2oq2@cluster0.p6esi4j.mongodb.net/exam_db?appName=Cluster0";
 
 const run = async () => {
   try {
-    console.log("IMPORT DB:", process.env.MONGO_URI);
+    console.log("Connecting...");
+    await mongoose.connect(MONGO_URI);
+    console.log("Connected!");
 
-    await mongoose.connect(process.env.MONGO_URI);
-
-    await Question.deleteMany(); // 🔥 add this
+    await Question.deleteMany();
 
     const data = JSON.parse(
       fs.readFileSync("questions.json", "utf-8")
     );
 
     console.log("Total Questions:", data.length);
-
     await Question.insertMany(data);
-
     console.log("✅ Questions Imported Successfully");
     process.exit();
 
