@@ -554,20 +554,7 @@
     "image": ""
   },
 
-  {
-    "className": "HSC",
-    "subject": "ICT",
-    "chapter": "Board Questions",
-    "topic": "",
-    "questionType": "board",
-    "boardYear": "2023",
-    "boardName": "Rajshahi",
-    "question": "উদ্দীপকে উল্লিখিত সেবাটি হলো— i. রিসোর্স শেয়ারিবিলিটি ii. অন-ডিমান্ড সেবা iii. পে-আজ-ইউ-গো সেবা — নিচের কোনটি সঠিক?",
-    "options": ["i ও ii", "i ও iii", "ii ও iii", "i, ii ও iii"],
-    "correctAnswer": "i, ii ও iii",
-    "tutorId": "",
-    "image": ""
-  },
+  
   {
     "className": "HSC",
     "subject": "ICT",
