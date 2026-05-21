@@ -24,30 +24,23 @@ app.use(
   express.static("uploads")
 );
 
-app.use(
-  "/api/auth",
-  authRoutes
-);
-
-app.use(
-  "/api/questions",
-  questionRoutes
-);
-
-app.use(
-  "/api/exams",
-  examRoutes
-);
+app.use("/api/auth", authRoutes);
+app.use("/api/questions", questionRoutes);
+app.use("/api/exams", examRoutes);
 
 app.get("/", (req, res) => {
   res.send("API Running 🚀");
 });
 
-const PORT =
-  process.env.PORT || 5000;
+const PORT = process.env.PORT || 5000;
 
 app.listen(PORT, () => {
-  console.log(
-    `Server running on port ${PORT}`
-  );
+  console.log(`Server running on port ${PORT}`);
+
+  // ✅ Server কে জাগিয়ে রাখো
+  setInterval(() => {
+    fetch("https://exam-backend-2-o8e6.onrender.com/")
+      .then(() => console.log("✅ Server alive"))
+      .catch(() => console.log("❌ Ping failed"));
+  }, 14 * 60 * 1000);
 });
