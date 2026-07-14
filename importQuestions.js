@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 import fs from "fs";
 import Question from "./models/Question.js";
 
-const MONGO_URI = "mongodb+srv://exam_app:FBQkye9ZvX3k2oq2@cluster0.p6esi4j.mongodb.net/exam_db?appName=Cluster0";
+const MONGO_URI = "mongodb+srv://exam_app:XTXGXLD4BXRp44B6@cluster0.p6esi4j.mongodb.net/exam_db?appName=Cluster0";
 
 const run = async () => {
   try {
