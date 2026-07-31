@@ -31,6 +31,16 @@ const questionSchema = new mongoose.Schema(
     },
 
     // ==============================
+    // DIFFICULTY
+    // ==============================
+    difficulty: {
+      type: String,
+      enum: ["easy", "medium", "hard"],
+      default: "medium",
+      required: true
+    },
+
+    // ==============================
     // QUESTION TYPE
     // ==============================
     questionType: {
@@ -196,6 +206,12 @@ questionSchema.index({
   questionType: 1,
   boardName: 1,
   boardYear: 1
+});
+
+questionSchema.index({
+  subject: 1,
+  chapter: 1,
+  difficulty: 1
 });
 
 // ==============================
