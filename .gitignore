@@ -6,3 +6,5 @@ backups/
 uploads/
 *.log
 .DS_Store
+.env
+.env
