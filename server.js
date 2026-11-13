@@ -7,6 +7,7 @@ import authRoutes from "./routes/authRoutes.js";
 import questionRoutes from "./routes/questionRoutes.js";
 import examRoutes from "./routes/examRoutes.js";
 import organizationRoutes from "./routes/organizationRoutes.js";
+import ictRoutes from "./routes/ictRoutes.js";
 import { startBackupScheduler } from "./services/backupScheduler.js";
 
 // Initialize Database
@@ -48,6 +49,7 @@ app.use("/api/auth", authRoutes);
 app.use("/api/questions", questionRoutes);
 app.use("/api/exams", examRoutes);
 app.use("/api/organizations", organizationRoutes);
+app.use("/api/ict", ictRoutes);
 
 // ==============================
 // 404 NOT FOUND HANDLER
