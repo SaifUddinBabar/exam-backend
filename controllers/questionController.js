@@ -1,302 +1,299 @@
-import mongoose from "mongoose";
-import fs from "fs";
-import dotenv from "dotenv";
-
 import Question from "../models/Question.js";
 
-dotenv.config();
+// =====================================================
+// CHAPTER 2 — APPROVED 13 TOPICS ONLY
+// =====================================================
+const CHAPTER_2_TOPICS = [
+  "কমিউনিকেশন সিস্টেম (Communication System)",
+  "ডেটা কমিউনিকেশন (Data Communication)",
+  "ডেটা কমিউনিকেশনের উপাদান (Data Communication Components: Source, Transmitter, Media, Receiver, Destination)",
+  "ডেটা ট্রান্সমিশন মোড (Data Transmission Mode: Serial/Parallel, Simplex/Half Duplex/Full Duplex)",
+  "ব্যান্ডউইথ (Bandwidth)",
+  "কমিউনিকেশন মিডিয়া: তারযুক্ত (Wired Media – Twisted Pair, Coaxial, Fiber Optic)",
+  "কমিউনিকেশন মিডিয়া: তারবিহীন (Wireless Media – Radio Wave, Microwave, Satellite, Bluetooth, Infrared, Wi-Fi, WiMAX)",
+  "মোবাইল কমিউনিকেশন সিস্টেম (Mobile Communication System)",
+  "মোবাইল ফোনের বিভিন্ন প্রজন্ম (Generations of Mobile Phone: 1G–5G)",
+  "কম্পিউটার নেটওয়ার্ক (Computer Network) ও নেটওয়ার্কের প্রকারভেদ (PAN, LAN, MAN, WAN)",
+  "নেটওয়ার্ক টপোলজি (Network Topology: Bus, Ring, Star, Tree, Mesh, Hybrid)",
+  "নেটওয়ার্কিং ডিভাইস (Networking Devices: Modem, Hub, Switch, Router, Gateway, Repeater)",
+  "ক্লাউড কম্পিউটিং (Cloud Computing)"
+];
 
-/*
-|--------------------------------------------------------------------------
-| CONFIG
-|--------------------------------------------------------------------------
-*/
-
-// আপনার final Chapter 2 JSON file
-const JSON_FILE =
-  "D:/Exam-project/communication_systems_13_topics_final.json";
-
-// MongoDB connection
-const MONGO_URI = process.env.MONGO_URI;
-
-
-/*
-|--------------------------------------------------------------------------
-| START
-|--------------------------------------------------------------------------
-*/
-
-async function fixChapter2() {
+// =====================================================
+// CREATE QUESTION (Protected - Tutor / Admin)
+// =====================================================
+export const createQuestion = async (req, res) => {
   try {
-    if (!MONGO_URI) {
-      throw new Error("MONGO_URI পাওয়া যায়নি। .env file check করুন।");
-    }
+    const {
+      question,
+      options,
+      correctAnswer,
+      chapter,
+      subject,
+      topic,
+      questionType,
+      boardName,
+      boardYear,
+      difficulty,
+      explanation,
+      isPublic
+    } = req.body;
 
-    console.log("Connecting to MongoDB...");
-
-    await mongoose.connect(MONGO_URI);
-
-    console.log("MongoDB connected.");
-
-
-    /*
-    |--------------------------------------------------------------------------
-    | Read JSON
-    |--------------------------------------------------------------------------
-    */
-
-    if (!fs.existsSync(JSON_FILE)) {
-      throw new Error(
-        `JSON file পাওয়া যায়নি:\n${JSON_FILE}`
-      );
-    }
-
-    const rawData = fs.readFileSync(JSON_FILE, "utf8");
-
-    const questions = JSON.parse(rawData);
-
-    console.log(`JSON questions: ${questions.length}`);
-
-
-    /*
-    |--------------------------------------------------------------------------
-    | Validate Chapter 2
-    |--------------------------------------------------------------------------
-    */
-
-    const allowedTopics = [
-      "কমিউনিকেশন সিস্টেম (Communication System)",
-
-      "ডেটা কমিউনিকেশন (Data Communication)",
-
-      "ডেটা কমিউনিকেশনের উপাদান (Data Communication Components: Source, Transmitter, Media, Receiver, Destination)",
-
-      "ডেটা ট্রান্সমিশন মোড (Data Transmission Mode: Serial/Parallel, Simplex/Half Duplex/Full Duplex)",
-
-      "ব্যান্ডউইথ (Bandwidth)",
-
-      "কমিউনিকেশন মিডিয়া: তারযুক্ত (Wired Media – Twisted Pair, Coaxial, Fiber Optic)",
-
-      "কমিউনিকেশন মিডিয়া: তারবিহীন (Wireless Media – Radio Wave, Microwave, Satellite, Bluetooth, Infrared, Wi-Fi, WiMAX)",
-
-      "মোবাইল কমিউনিকেশন সিস্টেম (Mobile Communication System)",
-
-      "মোবাইল ফোনের বিভিন্ন প্রজন্ম (Generations of Mobile Phone: 1G–5G)",
-
-      "কম্পিউটার নেটওয়ার্ক (Computer Network) ও নেটওয়ার্কের প্রকারভেদ (PAN, LAN, MAN, WAN)",
-
-      "নেটওয়ার্ক টপোলজি (Network Topology: Bus, Ring, Star, Tree, Mesh, Hybrid)",
-
-      "নেটওয়ার্কিং ডিভাইস (Networking Devices: Modem, Hub, Switch, Router, Gateway, Repeater)",
-
-      "ক্লাউড কম্পিউটিং (Cloud Computing)"
-    ];
-
-
-    /*
-    |--------------------------------------------------------------------------
-    | Validate JSON topics
-    |--------------------------------------------------------------------------
-    */
-
-    const invalidTopics = [
-      ...new Set(
-        questions
-          .map(q => q.topic)
-          .filter(topic => !allowedTopics.includes(topic))
-      )
-    ];
-
-    if (invalidTopics.length > 0) {
-      console.log("\n❌ Invalid topics found:");
-
-      invalidTopics.forEach(topic => {
-        console.log("-", topic);
-      });
-
-      throw new Error(
-        "JSON file-এ অনুমোদিত 13 topic-এর বাইরে topic পাওয়া গেছে।"
-      );
-    }
-
-
-    /*
-    |--------------------------------------------------------------------------
-    | Create question map
-    |--------------------------------------------------------------------------
-    */
-
-    const questionMap = new Map();
-
-    for (const q of questions) {
-      if (!q.question) continue;
-
-      const key = q.question.trim();
-
-      questionMap.set(key, {
-        topic: q.topic,
-        difficulty: q.difficulty
+    if (!question || !options || !correctAnswer || !chapter || !subject) {
+      return res.status(400).json({
+        success: false,
+        message: "Question, 4 options, correct answer, chapter, and subject are required."
       });
     }
 
+    // Parse options if sent as string or JSON
+    let parsedOptions = options;
+    if (typeof options === "string") {
+      try {
+        parsedOptions = JSON.parse(options);
+      } catch {
+        parsedOptions = options.split(",").map(o => o.trim());
+      }
+    }
 
-    /*
-    |--------------------------------------------------------------------------
-    | Find existing Chapter 2 questions
-    |--------------------------------------------------------------------------
-    */
+    if (!Array.isArray(parsedOptions) || parsedOptions.length !== 4) {
+      return res.status(400).json({
+        success: false,
+        message: "Exactly 4 options are required."
+      });
+    }
 
-    const dbQuestions = await Question.find({
-      chapter: "Communication Systems"
+    // Chapter 2 rule: Only allow approved 13 topics
+    if (
+      chapter === "Communication Systems" &&
+      topic &&
+      !CHAPTER_2_TOPICS.includes(topic)
+    ) {
+      return res.status(400).json({
+        success: false,
+        message: "Chapter 2-এর জন্য এই topic অনুমোদিত নয়।"
+      });
+    }
+
+    const image = req.file ? req.file.filename : null;
+    const organizationId = req.tenant?.orgId || null;
+    const tutorId = req.user?._id?.toString() || "";
+
+    const newQuestion = await Question.create({
+      question: question.trim(),
+      options: parsedOptions,
+      correctAnswer: correctAnswer.trim(),
+      explanation: explanation ? explanation.trim() : "",
+      chapter: chapter.trim(),
+      subject: subject.trim(),
+      topic: topic ? topic.trim() : "",
+      questionType: questionType || "normal",
+      boardName: boardName || "",
+      boardYear: boardYear || "",
+      difficulty: difficulty || "medium",
+      image: image || "",
+      tutorId,
+      organizationId,
+      isPublic: isPublic !== undefined ? Boolean(isPublic) : !organizationId
     });
 
-    console.log(
-      `\nDatabase Chapter 2 questions: ${dbQuestions.length}`
-    );
+    return res.status(201).json(newQuestion);
+  } catch (err) {
+    console.error("createQuestion error:", err);
+    return res.status(500).json({ success: false, error: err.message });
+  }
+};
 
+// =====================================================
+// GET QUESTIONS (Tenant-Scoped & Filterable)
+// =====================================================
+export const getQuestions = async (req, res) => {
+  try {
+    const {
+      chapter,
+      subject,
+      questionType,
+      boardYear,
+      boardName,
+      topic,
+      difficulty,
+      limit
+    } = req.query;
 
-    /*
-    |--------------------------------------------------------------------------
-    | Update
-    |--------------------------------------------------------------------------
-    */
+    let query = {};
 
-    let updated = 0;
-    let notFound = 0;
-    let alreadyCorrect = 0;
-
-    const notFoundQuestions = [];
-
-
-    for (const dbQuestion of dbQuestions) {
-
-      const questionText =
-        dbQuestion.question?.trim();
-
-      if (!questionText) {
-        continue;
-      }
-
-
-      const newData =
-        questionMap.get(questionText);
-
-
-      /*
-      |--------------------------------------------------------------------------
-      | Question not found in JSON
-      |--------------------------------------------------------------------------
-      */
-
-      if (!newData) {
-        notFound++;
-
-        notFoundQuestions.push(questionText);
-
-        continue;
-      }
-
-
-      /*
-      |--------------------------------------------------------------------------
-      | Check if already correct
-      |--------------------------------------------------------------------------
-      */
-
-      if (
-        dbQuestion.topic === newData.topic &&
-        dbQuestion.difficulty === newData.difficulty
-      ) {
-        alreadyCorrect++;
-        continue;
-      }
-
-
-      /*
-      |--------------------------------------------------------------------------
-      | Update ONLY topic + difficulty
-      |--------------------------------------------------------------------------
-      */
-
-      dbQuestion.topic = newData.topic;
-
-      dbQuestion.difficulty = newData.difficulty;
-
-      await dbQuestion.save();
-
-      updated++;
-
-      console.log(
-        `✓ Updated: ${questionText.substring(0, 60)}...`
-      );
+    // Tenancy Filter: Allow public questions OR questions belonging to the current tenant
+    if (req.tenant?.orgId) {
+      query.$or = [
+        { organizationId: req.tenant.orgId },
+        { isPublic: true },
+        { organizationId: null }
+      ];
     }
 
+    if (subject) query.subject = subject;
+    if (chapter) query.chapter = chapter;
 
-    /*
-    |--------------------------------------------------------------------------
-    | Final report
-    |--------------------------------------------------------------------------
-    */
+    if (chapter === "Communication Systems") {
+      query.topic = { $in: CHAPTER_2_TOPICS };
+      if (topic) {
+        if (!CHAPTER_2_TOPICS.includes(topic)) return res.json([]);
+        query.topic = topic;
+      }
+    } else if (topic) {
+      query.topic = topic;
+    }
 
-    console.log("\n====================================");
-    console.log("Chapter 2 Migration Complete");
-    console.log("====================================");
+    if (difficulty) query.difficulty = difficulty;
 
-    console.log("JSON questions :", questions.length);
-    console.log("DB questions   :", dbQuestions.length);
-    console.log("Updated        :", updated);
-    console.log("Already correct:", alreadyCorrect);
-    console.log("Not found      :", notFound);
+    if (questionType === "board") {
+      query.questionType = "board";
+      if (boardName) query.boardName = boardName;
+      if (boardYear) query.boardYear = boardYear;
+    } else if (questionType === "normal") {
+      query.questionType = "normal";
+    }
 
+    let questionsQuery = Question.find(query);
+    if (limit) {
+      questionsQuery = questionsQuery.limit(parseInt(limit));
+    }
 
-    /*
-    |--------------------------------------------------------------------------
-    | Topic counts after update
-    |--------------------------------------------------------------------------
-    */
+    const questions = await questionsQuery;
+    return res.json(questions);
+  } catch (err) {
+    console.error("getQuestions error:", err);
+    return res.status(500).json({ success: false, error: err.message });
+  }
+};
 
-    console.log("\nTopic counts:");
+// =====================================================
+// GET DISTINCT TOPICS FOR A CHAPTER
+// =====================================================
+export const getTopics = async (req, res) => {
+  try {
+    const { subject, chapter } = req.query;
 
-    const topicCounts = {};
-
-    for (const topic of allowedTopics) {
-      topicCounts[topic] = await Question.countDocuments({
-        chapter: "Communication Systems",
-        topic
+    if (!subject || !chapter) {
+      return res.status(400).json({
+        success: false,
+        message: "subject ও chapter প্রয়োজন"
       });
     }
 
-    for (const topic of allowedTopics) {
-      console.log(
-        `${topic} → ${topicCounts[topic]}`
+    let topics;
+    if (chapter === "Communication Systems") {
+      const existingTopics = await Question.distinct("topic", {
+        subject,
+        chapter,
+        questionType: "normal",
+        topic: { $in: CHAPTER_2_TOPICS }
+      });
+
+      topics = CHAPTER_2_TOPICS.filter((topic) =>
+        existingTopics.includes(topic)
       );
+    } else {
+      topics = await Question.distinct("topic", {
+        subject,
+        chapter,
+        questionType: "normal",
+        topic: { $ne: "" }
+      });
     }
 
-
-    /*
-    |--------------------------------------------------------------------------
-    | Close
-    |--------------------------------------------------------------------------
-    */
-
-    await mongoose.disconnect();
-
-    console.log("\nMongoDB disconnected.");
-    console.log("Done.");
+    return res.json(topics);
+  } catch (err) {
+    console.error("getTopics error:", err);
+    return res.status(500).json({ success: false, error: err.message });
   }
+};
 
-  catch (error) {
+// =====================================================
+// AUTO GENERATE MODEL TEST (40% Easy, 40% Medium, 20% Hard)
+// =====================================================
+export const autoGenerateQuestions = async (req, res) => {
+  try {
+    const { subject, chapter, total } = req.query;
 
-    console.error("\n❌ ERROR:");
-    console.error(error.message);
+    if (!subject || !chapter || !total) {
+      return res.status(400).json({
+        success: false,
+        message: "subject, chapter ও total প্রয়োজন"
+      });
+    }
 
-    try {
-      await mongoose.disconnect();
-    } catch {}
+    const totalCount = parseInt(total);
+    if (!totalCount || totalCount <= 0) {
+      return res.status(400).json({
+        success: false,
+        message: "সঠিক প্রশ্ন সংখ্যা দিন"
+      });
+    }
 
-    process.exit(1);
+    const baseMatch = {
+      subject,
+      chapter,
+      questionType: "normal"
+    };
+
+    if (chapter === "Communication Systems") {
+      baseMatch.topic = { $in: CHAPTER_2_TOPICS };
+    }
+
+    const easyCount = Math.round(totalCount * 0.4);
+    const mediumCount = Math.round(totalCount * 0.4);
+    const hardCount = totalCount - easyCount - mediumCount;
+
+    const pickRandom = async (difficulty, count, excludeIds = []) => {
+      if (count <= 0) return [];
+      return Question.aggregate([
+        {
+          $match: {
+            ...baseMatch,
+            difficulty,
+            _id: { $nin: excludeIds }
+          }
+        },
+        { $sample: { size: count } }
+      ]);
+    };
+
+    const easyQs = await pickRandom("easy", easyCount);
+    const mediumQs = await pickRandom("medium", mediumCount);
+    const hardQs = await pickRandom("hard", hardCount);
+
+    let result = [...easyQs, ...mediumQs, ...hardQs];
+
+    const shortage = totalCount - result.length;
+    if (shortage > 0) {
+      const usedIds = result.map((q) => q._id);
+      const fillQs = await Question.aggregate([
+        {
+          $match: {
+            ...baseMatch,
+            _id: { $nin: usedIds }
+          }
+        },
+        { $sample: { size: shortage } }
+      ]);
+      result = [...result, ...fillQs];
+    }
+
+    return res.json({
+      questions: result,
+      breakdown: {
+        requested: { easy: easyCount, medium: mediumCount, hard: hardCount },
+        found: {
+          easy: easyQs.length,
+          medium: mediumQs.length,
+          hard: hardQs.length
+        },
+        total: result.length
+      }
+    });
+  } catch (err) {
+    console.error("autoGenerateQuestions error:", err);
+    return res.status(500).json({ success: false, error: err.message });
   }
-}
-
-
-fixChapter2();
+};

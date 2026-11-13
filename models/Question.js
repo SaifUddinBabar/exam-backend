@@ -190,6 +190,31 @@ const questionSchema = new mongoose.Schema(
       type: String,
       trim: true,
       default: ""
+    },
+
+    // ==============================
+    // EXPLANATION / SOLUTION
+    // ==============================
+    explanation: {
+      type: String,
+      trim: true,
+      default: ""
+    },
+
+    // ==============================
+    // TENANCY & ACCESS
+    // ==============================
+    organizationId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Organization",
+      default: null,
+      index: true
+    },
+
+    isPublic: {
+      type: Boolean,
+      default: true,
+      index: true
     }
 
   },
@@ -212,6 +237,11 @@ questionSchema.index({
   subject: 1,
   chapter: 1,
   difficulty: 1
+});
+
+questionSchema.index({
+  organizationId: 1,
+  isPublic: 1
 });
 
 // ==============================

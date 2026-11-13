@@ -2,23 +2,28 @@ import express from "express";
 import {
   createExam,
   getExam,
+  getExamAdmin,
   submitExam,
   getRanking,
   getStats,
-  clearOldData,
   getAllExams,
-  deleteExam
+  deleteExam,
 } from "../controllers/examController.js";
+import { protect, authorize, optionalAuth } from "../middleware/auth.js";
+import { resolveTenantContext } from "../middleware/tenantContext.js";
 
 const router = express.Router();
 
-router.post("/create", createExam);
+// Static routes (MUST be defined before dynamic parameterized routes)
+router.get("/stats", resolveTenantContext, getStats);
+router.get("/list", protect, resolveTenantContext, authorize("super_admin", "tutor", "org_admin"), getAllExams);
+router.post("/create", protect, resolveTenantContext, authorize("super_admin", "tutor", "org_admin"), createExam);
+router.post("/submit", optionalAuth, submitExam);
+
+// Dynamic parameterized routes
 router.get("/ranking/:code", getRanking);
-router.get("/stats", getStats);
-router.get("/list", getAllExams);
-router.delete("/clear-old", clearOldData);
-router.delete("/:examCode", deleteExam);
-router.get("/:code", getExam);
-router.post("/submit", submitExam);
+router.get("/:code/admin", protect, resolveTenantContext, authorize("super_admin", "tutor", "org_admin"), getExamAdmin);
+router.delete("/:examCode", protect, resolveTenantContext, authorize("super_admin", "tutor", "org_admin"), deleteExam);
+router.get("/:code", getExam); // Sanitized public student exam delivery
 
 export default router;

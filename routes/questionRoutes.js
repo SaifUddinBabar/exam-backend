@@ -1,57 +1,29 @@
 import express from "express";
-
 import {
   createQuestion,
   getQuestions,
   getTopics,
-  autoGenerateQuestions
+  autoGenerateQuestions,
 } from "../controllers/questionController.js";
-
 import { upload } from "../middleware/upload.js";
-
+import { protect, authorize } from "../middleware/auth.js";
+import { resolveTenantContext } from "../middleware/tenantContext.js";
 
 const router = express.Router();
 
+// Public / Tenant-filtered question querying
+router.get("/topics", getTopics);
+router.get("/auto-generate", autoGenerateQuestions);
+router.get("/", resolveTenantContext, getQuestions);
 
-// ============================================================
-// CREATE QUESTION
-// ============================================================
-
+// Protected question authoring
 router.post(
   "/",
+  protect,
+  resolveTenantContext,
+  authorize("super_admin", "tutor", "org_admin", "teacher"),
   upload.single("image"),
   createQuestion
 );
-
-
-// ============================================================
-// GET TOPICS
-// ============================================================
-
-router.get(
-  "/topics",
-  getTopics
-);
-
-
-// ============================================================
-// AUTO GENERATE MODEL TEST
-// ============================================================
-
-router.get(
-  "/auto-generate",
-  autoGenerateQuestions
-);
-
-
-// ============================================================
-// GET QUESTIONS
-// ============================================================
-
-router.get(
-  "/",
-  getQuestions
-);
-
 
 export default router;
