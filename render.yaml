@@ -1,0 +1,21 @@
+services:
+  - type: web
+    name: exam-backend-2
+    runtime: node
+    plan: free
+    branch: clean-deploy
+    buildCommand: npm install
+    startCommand: node server.js
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: MONGO_URI
+        sync: false
+      - key: JWT_ACCESS_SECRET
+        generateValue: true
+      - key: JWT_EXPIRES_IN
+        value: 7d
+      - key: BACKUP_INTERVAL_HOURS
+        value: "24"
+      - key: BACKUP_RETENTION_DAYS
+        value: "30"
