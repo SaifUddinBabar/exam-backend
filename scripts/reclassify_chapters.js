@@ -1,10 +1,21 @@
+
 import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
 import mongoose from "mongoose";
+import dotenv from "dotenv";
+
+dotenv.config();
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+
+// Project root directory
+const PROJECT_ROOT = path.resolve(__dirname, "..");
+
+// JSON file and model paths
+const filePath = path.join(PROJECT_ROOT, "ict_questions.json");
+const modelPath = path.join(PROJECT_ROOT, "models", "Question.js");
 
 const CHAPTER_RULES = [
   {
@@ -39,40 +50,118 @@ const CHAPTER_RULES = [
   }
 ];
 
-const filePath = path.join("D:/exam taker/exam-backend", "ict_questions.json");
-const questions = JSON.parse(fs.readFileSync(filePath, "utf-8"));
-console.log("Total questions in file:", questions.length);
+async function main() {
+  let questions = [];
 
-let reclassified = 0;
-const chapterCounts = {};
+  // Check MongoDB configuration
+  const uri = process.env.MONGO_URI;
 
-for (const q of questions) {
-  for (const rule of CHAPTER_RULES) {
-    if (rule.regex.test(q.question)) {
-      if (q.chapter !== rule.chapter) {
-        q.chapter = rule.chapter;
-        q.topic = rule.defaultTopic;
-        reclassified++;
+  if (!uri) {
+    throw new Error(
+      "MONGO_URI is not configured in environment variables."
+    );
+  }
+
+  // Check required files
+  if (!fs.existsSync(filePath)) {
+    throw new Error(`Question JSON file not found: ${filePath}`);
+  }
+
+  if (!fs.existsSync(modelPath)) {
+    throw new Error(`Question model not found: ${modelPath}`);
+  }
+
+  // Read questions
+  questions = JSON.parse(
+    fs.readFileSync(filePath, "utf-8")
+  );
+
+  if (!Array.isArray(questions)) {
+    throw new Error("Invalid question JSON format. Expected an array.");
+  }
+
+  console.log("Total questions in file:", questions.length);
+
+  let reclassified = 0;
+  const chapterCounts = {};
+
+  for (const q of questions) {
+    const questionText = q.question || "";
+
+    for (const rule of CHAPTER_RULES) {
+      if (rule.regex.test(questionText)) {
+        if (q.chapter !== rule.chapter) {
+          q.chapter = rule.chapter;
+          q.topic = rule.defaultTopic;
+          reclassified++;
+        }
+        break;
       }
-      break;
+    }
+
+    chapterCounts[q.chapter] =
+      (chapterCounts[q.chapter] || 0) + 1;
+  }
+
+  console.log("Reclassified questions:", reclassified);
+  console.log("Updated Chapter Breakdown in JSON:");
+  console.log(chapterCounts);
+
+  // Save updated JSON
+  fs.writeFileSync(
+    filePath,
+    JSON.stringify(questions, null, 2),
+    "utf-8"
+  );
+
+  console.log("JSON file updated successfully.");
+
+  // Connect to MongoDB
+  try {
+    console.log("Connecting to MongoDB...");
+
+    await mongoose.connect(uri);
+
+    console.log("MongoDB connected successfully.");
+
+    const Question = (
+      await import(modelPath)
+    ).default;
+
+    let updated = 0;
+
+    // Update MongoDB questions
+    for (const q of questions) {
+      const result = await Question.updateOne(
+        { question: q.question },
+        {
+          $set: {
+            chapter: q.chapter,
+            topic: q.topic
+          }
+        }
+      );
+
+      updated += result.modifiedCount || 0;
+    }
+
+    console.log(
+      `MongoDB update completed. Modified questions: ${updated}`
+    );
+
+  } catch (error) {
+    console.error("Reclassification error:", error.message);
+    throw error;
+
+  } finally {
+    if (mongoose.connection.readyState !== 0) {
+      await mongoose.disconnect();
+      console.log("MongoDB disconnected.");
     }
   }
-  chapterCounts[q.chapter] = (chapterCounts[q.chapter] || 0) + 1;
 }
 
-console.log("Reclassified questions:", reclassified);
-console.log("Updated Chapter Breakdown in JSON:");
-console.log(chapterCounts);
-
-fs.writeFileSync(filePath, JSON.stringify(questions, null, 2), "utf-8");
-
-// Update MongoDB
-const uri = "mongodb+srv://exam_app:XTXGXLD4BXRp44B6@cluster0.p6esi4j.mongodb.net/exam_db?appName=Cluster0";
-mongoose.connect(uri).then(async () => {
-  const Question = (await import("D:/exam taker/exam-backend/models/Question.js")).default;
-  for (const q of questions) {
-    await Question.updateOne({ question: q.question }, { $set: { chapter: q.chapter, topic: q.topic } });
-  }
-  console.log("MongoDB updated successfully with new chapter classifications!");
-  await mongoose.disconnect();
+main().catch((error) => {
+  console.error("Script failed:", error.message);
+  process.exitCode = 1;
 });
