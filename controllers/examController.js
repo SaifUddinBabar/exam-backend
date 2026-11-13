@@ -360,3 +360,66 @@ export const deleteExam = async (req, res) => {
     return res.status(500).json({ success: false, message: "Delete failed." });
   }
 };
+
+// ============================================================
+// GET STUDENT AVAILABLE EXAMS (Sanitized, Published Exams)
+// ============================================================
+export const getStudentAvailableExams = async (req, res) => {
+  try {
+    const orgFilter = req.tenant?.orgId
+      ? { $or: [{ organizationId: req.tenant.orgId }, { organizationId: null }] }
+      : { organizationId: null };
+
+    const query = {
+      isPublished: true,
+      ...orgFilter,
+    };
+
+    const exams = await Exam.find(query)
+      .select("title description examCode duration examType allowRetake maxAttempts negativeMarkPerWrong startTime endTime createdAt questions")
+      .sort({ createdAt: -1 });
+
+    const sanitized = exams.map((e) => ({
+      _id: e._id,
+      title: e.title,
+      description: e.description,
+      examCode: e.examCode,
+      duration: e.duration,
+      examType: e.examType,
+      allowRetake: e.allowRetake,
+      maxAttempts: e.maxAttempts,
+      negativeMarkPerWrong: e.negativeMarkPerWrong,
+      startTime: e.startTime,
+      endTime: e.endTime,
+      totalQuestions: e.questions ? e.questions.length : 0,
+      createdAt: e.createdAt,
+    }));
+
+    return res.json(sanitized);
+  } catch (error) {
+    console.error("Get Student Available Exams Error:", error);
+    return res.status(500).json({ success: false, message: "Failed to retrieve available exams." });
+  }
+};
+
+// ============================================================
+// GET STUDENT SUBMISSION HISTORY
+// ============================================================
+export const getStudentHistory = async (req, res) => {
+  try {
+    const studentId = req.user?._id;
+    if (!studentId) {
+      return res.status(401).json({ success: false, message: "Authentication required." });
+    }
+
+    const submissions = await Submission.find({ studentId })
+      .sort({ createdAt: -1 })
+      .populate("examId", "title examCode duration examType negativeMarkPerWrong");
+
+    return res.json(submissions);
+  } catch (error) {
+    console.error("Get Student History Error:", error);
+    return res.status(500).json({ success: false, message: "Failed to retrieve history." });
+  }
+};
+
