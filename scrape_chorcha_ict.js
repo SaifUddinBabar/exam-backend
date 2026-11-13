@@ -14,14 +14,21 @@ if (!fs.existsSync(UPLOADS_DIR)) {
   fs.mkdirSync(UPLOADS_DIR, { recursive: true });
 }
 
-function fetchUrl(url, headers = {}) {
+function fetchUrl(url, headers = {}, timeoutMs = 20000) {
   return new Promise((resolve, reject) => {
-    https.get(url, { headers }, (res) => {
+    const req = https.get(url, { headers, timeout: timeoutMs }, (res) => {
       let data = "";
       res.on("data", (chunk) => (data += chunk));
       res.on("end", () => resolve(data));
       res.on("error", reject);
     });
+
+    req.on("timeout", () => {
+      req.destroy();
+      reject(new Error("Request Timeout"));
+    });
+
+    req.on("error", reject);
   });
 }
 
@@ -29,7 +36,7 @@ function downloadImage(imgUrl, destPath) {
   return new Promise((resolve) => {
     try {
       const file = fs.createWriteStream(destPath);
-      https.get(imgUrl, (res) => {
+      const req = https.get(imgUrl, { timeout: 15000 }, (res) => {
         if (res.statusCode === 200) {
           res.pipe(file);
           file.on("finish", () => {
@@ -40,7 +47,15 @@ function downloadImage(imgUrl, destPath) {
           fs.unlink(destPath, () => {});
           resolve(false);
         }
-      }).on("error", () => {
+      });
+      req.on("timeout", () => {
+        req.destroy();
+        file.close();
+        fs.unlink(destPath, () => {});
+        resolve(false);
+      });
+      req.on("error", () => {
+        file.close();
         fs.unlink(destPath, () => {});
         resolve(false);
       });
@@ -60,6 +75,8 @@ function stripTags(html) {
     .replace(/&quot;/g, '"')
     .trim();
 }
+
+const ICT_REGEX = /(^|[-_/])(hsc-ict|ict|আইসিটি|gate|গেইট|binary|বাইনারি|octal|অক্টাল|hexadecimal|হেক্সাডেসিমেল|সংখ্যা-পদ্ধতি|লজিক|logic|boolean|বুলিয়ান|ডি-মরগান|টপোলজি|topology|html|css|সি-প্রোগ্রামিং|c-programming|ডাটাবেজ|database|ক্লাউড|cloud|রোবোটিক্স|robotics|ক্রায়োসার্জারি|cryosurgery|বায়োমেট্রিক্স|biometrics|network|নেটওয়ার্ক)([-_/]|$)/i;
 
 const TOPIC_RULES = [
   { topic: "লজিক গেইট (Logic Gates)", chapter: "অধ্যায় ৩: সংখ্যা পদ্ধতি ও ডিজিটাল ডিভাইস", regex: /গেইট|gate|and|or|not|nand|nor|xor|xnor/i },
@@ -85,10 +102,9 @@ const BOARD_MAP = {
 
 export async function parseQuestion(url) {
   try {
-    const html = await fetchUrl(url);
+    const html = await fetchUrl(url, {}, 15000);
     if (!html || html.length < 500) return null;
 
-    // 1. Title / Question
     const ogTitle = html.match(/property="og:title" content="([^"]+)"/);
     let questionText = ogTitle ? stripTags(ogTitle[1]) : "";
     if (!questionText) {
@@ -97,14 +113,15 @@ export async function parseQuestion(url) {
     }
     if (!questionText || questionText.length < 4) return null;
 
-    // Clean leading question numbers e.g. "1. " or "১. "
     questionText = questionText.replace(/^[0-9১-৯]+[\.\-\)]\s*/, "");
 
-    // 2. Answer key
+    const decodedUrl = decodeURIComponent(url);
+    const isActuallyIct = ICT_REGEX.test(decodedUrl) || TOPIC_RULES.some((r) => r.regex.test(questionText));
+    if (!isActuallyIct) return null;
+
     const ansMatch = html.match(/"answer":"([A-D])"/);
     const answerKey = ansMatch ? ansMatch[1] : "";
 
-    // 3. Options
     const btnRegex = /<button disabled="" class="flex items-center gap-3 p-2 rounded-xl transition-all([^"]*)"[\s\S]*?<span[^>]*>([ক-হA-D])<\/span>[\s\S]*?<p[^>]*>([\s\S]*?)<\/p>[\s\S]*?<\/button>/gi;
     const options = [];
     let correctAnswer = "";
@@ -132,8 +149,6 @@ export async function parseQuestion(url) {
 
     if (options.length !== 4 || !correctAnswer) return null;
 
-    // 4. Board & Year
-    const decodedUrl = decodeURIComponent(url);
     const boardRegex = /(ঢাকা|চট্টগ্রাম|রাজশাহী|কুমিল্লা|যশোর|বরিশাল|সিলেট|দিনাজপুর|ময়মনসিংহ)\s*বোর্ড\s*[-_]?\s*(২০[০-৯]{2}|20[0-9]{2})/i;
     const bMatch = decodedUrl.match(boardRegex) || html.match(boardRegex);
     let boardName = "";
@@ -143,7 +158,6 @@ export async function parseQuestion(url) {
       boardYear = bMatch[2].replace(/[০-৯]/g, (d) => "০১২৩৪৫৬৭৮৯".indexOf(d));
     }
 
-    // 5. Chapter & Topic
     let chapter = "অধ্যায় ৩: সংখ্যা পদ্ধতি ও ডিজিটাল ডিভাইস";
     let topic = "ডিজিটাল ডিভাইস";
     for (const rule of TOPIC_RULES) {
@@ -154,7 +168,6 @@ export async function parseQuestion(url) {
       }
     }
 
-    // 6. Image download
     let localImagePath = "";
     const imgMatches = [...html.matchAll(/src="(https:\/\/assets\.chorcha\.net\/[^"]+\.(?:png|jpg|jpeg|webp|svg))"/gi)];
     const questionImg = imgMatches.find(
@@ -196,7 +209,7 @@ export async function parseQuestion(url) {
 
 async function startScraper() {
   const isTest = process.argv.includes("--test");
-  console.log(`🚀 Starting Chorcha HSC ICT MCQ Scraper ${isTest ? "(TEST MODE: 30 Questions)" : ""}...`);
+  console.log(`🚀 Starting Chorcha HSC ICT MCQ Scraper ${isTest ? "(TEST MODE: 50 Questions)" : ""}...`);
 
   const sitemaps = [
     "https://chorcha.net/sitemaps/sitemap/1.xml",
@@ -210,70 +223,70 @@ async function startScraper() {
     "https://chorcha.net/sitemaps/sitemap/9.xml"
   ];
 
-  const ictKeywords = [
-    "ict", "আইসিটি", "গেইট", "gate", "বাইনারি", "binary", "দশমিক", "অক্টাল", "octal",
-    "হেক্সাডেসিমেল", "hexadecimal", "সংখ্যা-পদ্ধতি", "লজিক", "logic", "বুলিয়ান", "boolean",
-    "ডি-মরগান", "কম্পিউটার", "নেটওয়ার্ক", "network", "টপোলজি", "topology", "ip-address",
-    "html", "ওয়েব", "web", "সি-প্রোগ্রামিং", "প্রোগ্রামিং", "c-programming", "ডাটাবেজ", "database",
-    "sql", "ক্লাউড", "cloud", "রোবোটিক্স", "robotics", "ক্রায়োসার্জারি", "বায়োমেট্রিক্স", "biometrics"
-  ];
+  const outPath = path.join(__dirname, "ict_questions.json");
+  let existingQuestions = [];
+  try {
+    if (fs.existsSync(outPath)) {
+      existingQuestions = JSON.parse(fs.readFileSync(outPath, "utf-8"));
+    }
+  } catch {}
+
+  const alreadySavedQuestions = new Set(existingQuestions.map((q) => q.question));
+  console.log(`ℹ️ Already saved in local JSON: ${alreadySavedQuestions.size} questions`);
 
   const candidateUrls = new Set();
   console.log("🔍 Scanning sitemaps for ICT questions...");
   for (let i = 0; i < (isTest ? 2 : sitemaps.length); i++) {
     try {
-      const smContent = await fetchUrl(sitemaps[i]);
+      const smContent = await fetchUrl(sitemaps[i], {}, 25000);
       const matches = [...smContent.matchAll(/<loc>(https:\/\/chorcha\.net\/question\/[^<]+)<\/loc>/g)].map((m) => m[1]);
       let matchedCount = 0;
       for (const u of matches) {
         const dec = decodeURIComponent(u).toLowerCase();
-        if (ictKeywords.some((k) => dec.includes(k))) {
+        if (ICT_REGEX.test(dec)) {
           candidateUrls.add(u);
           matchedCount++;
         }
       }
-      console.log(`  Sitemap ${i + 1}: Found ${matchedCount} ICT questions`);
-      if (isTest && candidateUrls.size >= 30) break;
+      console.log(`  Sitemap ${i + 1}: Found ${matchedCount} verified ICT questions`);
+      if (isTest && candidateUrls.size >= 50) break;
     } catch (e) {
-      console.error(`  Error reading sitemap ${i + 1}:`, e.message);
+      console.error(`  ⚠️ Sitemap ${i + 1} timeout or skipped:`, e.message);
     }
   }
 
   let urlList = Array.from(candidateUrls);
-  if (isTest) urlList = urlList.slice(0, 30);
-  console.log(`\n📦 Total questions to scrape: ${urlList.length}`);
+  if (isTest) urlList = urlList.slice(0, 50);
+  console.log(`\n📦 Total candidate questions to scrape: ${urlList.length}`);
 
-  const scrapedQuestions = [];
-  const BATCH_SIZE = 5;
+  const scrapedQuestions = [...existingQuestions];
+  const BATCH_SIZE = 6;
 
   for (let i = 0; i < urlList.length; i += BATCH_SIZE) {
     const batch = urlList.slice(i, i + BATCH_SIZE);
     const results = await Promise.all(batch.map((u) => parseQuestion(u)));
+    
+    let newItems = 0;
     for (const q of results) {
-      if (q) scrapedQuestions.push(q);
+      if (q && !alreadySavedQuestions.has(q.question)) {
+        alreadySavedQuestions.add(q.question);
+        scrapedQuestions.push(q);
+        newItems++;
+      }
     }
-    process.stdout.write(`\rProgress: ${scrapedQuestions.length} / ${urlList.length} scraped (${Math.round((i / urlList.length) * 100)}%)`);
+
+    // Incremental autosave every batch
+    if (newItems > 0 && scrapedQuestions.length % 20 === 0) {
+      fs.writeFileSync(outPath, JSON.stringify(scrapedQuestions, null, 2), "utf-8");
+    }
+
+    const pct = Math.round((i / urlList.length) * 100);
+    process.stdout.write(`\rProgress: ${scrapedQuestions.length} saved | Processed: ${i + batch.length}/${urlList.length} (${pct}%)`);
   }
 
-  console.log(`\n✅ Completed scraping! Successfully parsed ${scrapedQuestions.length} questions.`);
-
-  // Save to ict_questions.json
-  const outPath = path.join(__dirname, "ict_questions.json");
-  let existing = [];
-  try {
-    if (fs.existsSync(outPath)) {
-      existing = JSON.parse(fs.readFileSync(outPath, "utf-8"));
-    }
-  } catch {}
-
-  const mergedMap = new Map();
-  for (const q of [...existing, ...scrapedQuestions]) {
-    mergedMap.set(q.question, q);
-  }
-  const merged = Array.from(mergedMap.values());
-
-  fs.writeFileSync(outPath, JSON.stringify(merged, null, 2), "utf-8");
-  console.log(`💾 Saved ${merged.length} questions to: ${outPath}`);
+  // Final save
+  fs.writeFileSync(outPath, JSON.stringify(scrapedQuestions, null, 2), "utf-8");
+  console.log(`\n\n✅ Finished! Total ICT questions saved: ${scrapedQuestions.length}`);
 
   // Auto import to MongoDB
   const mongoUri = process.env.MONGO_URI || "mongodb+srv://exam_app:XTXGXLD4BXRp44B6@cluster0.p6esi4j.mongodb.net/exam_db?appName=Cluster0";
@@ -283,14 +296,14 @@ async function startScraper() {
     const QuestionModel = (await import("./models/Question.js")).default;
 
     let imported = 0;
-    for (const q of merged) {
+    for (const q of scrapedQuestions) {
       const exists = await QuestionModel.findOne({ question: q.question });
       if (!exists) {
         await QuestionModel.create(q);
         imported++;
       }
     }
-    console.log(`🎉 Successfully imported ${imported} new questions into MongoDB!`);
+    console.log(`🎉 Successfully synced ${imported} new questions into MongoDB!`);
     await mongoose.disconnect();
   } catch (err) {
     console.error("MongoDB import error:", err.message);
