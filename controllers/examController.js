@@ -92,6 +92,22 @@ export const getExamAdmin = async (req, res) => {
       return res.status(404).json({ success: false, message: "Exam not found." });
     }
 
+    // Role & Ownership check: super_admin or author or organization admin
+    if (req.user?.globalRole !== "super_admin") {
+      const isAuthor = exam.authorId && exam.authorId.toString() === req.user._id.toString();
+      const isOrgAdmin =
+        req.tenant?.role === "org_admin" &&
+        exam.organizationId &&
+        exam.organizationId.toString() === req.tenant.orgId.toString();
+
+      if (!isAuthor && !isOrgAdmin) {
+        return res.status(403).json({
+          success: false,
+          message: "Forbidden: You are not authorized to access this exam's administrative details.",
+        });
+      }
+    }
+
     const rawQuestions = await Question.find({
       _id: { $in: exam.questions },
     });
@@ -293,11 +309,36 @@ export const getStats = async (req, res) => {
 };
 
 // ============================================================
-// GET ALL EXAMS (Optimized with Aggregation Pipeline)
+// GET ALL EXAMS (Optimized with Aggregation Pipeline & Strict Scoping)
 // ============================================================
 export const getAllExams = async (req, res) => {
   try {
-    const filter = req.tenant?.orgId ? { organizationId: req.tenant.orgId } : {};
+    const filter = {};
+
+    if (req.user?.globalRole === "super_admin") {
+      if (req.tenant?.orgId) {
+        filter.organizationId = req.tenant.orgId;
+      }
+    } else if (req.user?.role === "org_admin") {
+      if (req.tenant?.orgId) {
+        filter.organizationId = req.tenant.orgId;
+      } else {
+        filter.$or = [{ authorId: req.user._id }, { organizationId: { $ne: null } }];
+      }
+    } else if (req.user?.role === "tutor") {
+      // Teacher sees only exams they authored OR exams in their active organization
+      if (req.tenant?.orgId) {
+        filter.$or = [{ authorId: req.user._id }, { organizationId: req.tenant.orgId }];
+      } else {
+        filter.authorId = req.user._id;
+      }
+    } else {
+      // Students cannot use instructor list endpoint
+      return res.status(403).json({
+        success: false,
+        message: "Forbidden: Instructor access required.",
+      });
+    }
 
     const examsWithCount = await Exam.aggregate([
       { $match: filter },

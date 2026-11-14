@@ -60,12 +60,28 @@ export const createOrganization = async (req, res) => {
   }
 };
 
-// List Organizations (Super Admin or Directory)
+// List Organizations (Super Admin, User Memberships, or Directory)
 export const getOrganizations = async (req, res) => {
   try {
-    const filter = {};
-    if (req.user?.globalRole !== "super_admin") {
-      filter.status = "active";
+    let filter = { status: "active" };
+
+    if (req.user?.globalRole === "super_admin") {
+      filter = {};
+    } else if (req.user) {
+      // Find all memberships for current user
+      const memberships = await OrganizationMembership.find({
+        userId: req.user._id,
+        status: "active",
+      }).select("organizationId");
+      const userOrgIds = memberships.map((m) => m.organizationId);
+
+      filter = {
+        $or: [
+          { ownerId: req.user._id },
+          { _id: { $in: userOrgIds } },
+          { status: "active", "settings.allowPublicRegistration": true },
+        ],
+      };
     }
 
     const orgs = await Organization.find(filter).sort({ createdAt: -1 });
