@@ -37,6 +37,10 @@ const practiceSessionSchema = new mongoose.Schema(
       type: String,
       default: "mixed",
     },
+    version: {
+      type: String,
+      default: "bangla",
+    },
     durationMinutes: {
       type: Number,
       default: 0,

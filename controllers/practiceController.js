@@ -19,16 +19,42 @@ const getTenantFilter = (req) => {
   };
 };
 
+export const ENGLISH_CHAPTERS = [
+  "Introduction to ICT",
+  "Communication Systems",
+  "Number System & Digital Device",
+  "Web & HTML",
+  "Programming & Language",
+];
+
+export const applyVersionFilter = (filter, version, chapter) => {
+  if (chapter && chapter !== "All") {
+    filter.chapter = chapter;
+  } else if (version === "english") {
+    filter.chapter = { $in: ENGLISH_CHAPTERS };
+  } else if (version === "bangla") {
+    filter.chapter = { $nin: ENGLISH_CHAPTERS };
+  }
+};
+
 // ============================================================================
 // 1. GET FILTER METADATA (Subjects, Chapters, Dependent Topics, Boards, Classes)
 // ============================================================================
 export const getFilterMetadata = async (req, res) => {
   try {
+    const { version } = req.query;
     const tenantFilter = getTenantFilter(req);
+    const matchFilter = { ...tenantFilter };
+
+    if (version === "english") {
+      matchFilter.chapter = { $in: ENGLISH_CHAPTERS };
+    } else if (version === "bangla") {
+      matchFilter.chapter = { $nin: ENGLISH_CHAPTERS };
+    }
 
     // Aggregate distinct combinations of Subject, Chapter, Topic
     const metadata = await Question.aggregate([
-      { $match: tenantFilter },
+      { $match: matchFilter },
       {
         $group: {
           _id: {
@@ -56,9 +82,9 @@ export const getFilterMetadata = async (req, res) => {
 
     // Distinct boards and classes
     const [boards, boardYears, classes] = await Promise.all([
-      Question.distinct("boardName", { ...tenantFilter, boardName: { $ne: "" } }),
-      Question.distinct("boardYear", { ...tenantFilter, boardYear: { $ne: "" } }),
-      Question.distinct("className", { ...tenantFilter, className: { $ne: "" } }),
+      Question.distinct("boardName", { ...matchFilter, boardName: { $ne: "" } }),
+      Question.distinct("boardYear", { ...matchFilter, boardYear: { $ne: "" } }),
+      Question.distinct("className", { ...matchFilter, className: { $ne: "" } }),
     ]);
 
     // Format structure: { subjects: [{ name, total, chapters: [{ name, count, topics }] }], boards, boardYears, classes }
@@ -101,6 +127,7 @@ export const getQuestionBank = async (req, res) => {
       boardName,
       boardYear,
       className,
+      version,
     } = req.query;
 
     const pageNum = Math.max(1, parseInt(page));
@@ -110,7 +137,7 @@ export const getQuestionBank = async (req, res) => {
     const filter = { ...getTenantFilter(req) };
 
     if (subject && subject !== "All") filter.subject = subject;
-    if (chapter && chapter !== "All") filter.chapter = chapter;
+    applyVersionFilter(filter, version, chapter);
     if (topic && topic !== "All") filter.topic = topic;
     if (difficulty && difficulty !== "All") filter.difficulty = difficulty.toLowerCase();
     if (boardName && boardName !== "All") {
@@ -171,11 +198,11 @@ export const getQuestionBank = async (req, res) => {
 // ============================================================================
 export const getAvailableCount = async (req, res) => {
   try {
-    const { subject, chapter, topic, difficulty } = req.query;
+    const { subject, chapter, topic, difficulty, version } = req.query;
     const filter = { ...getTenantFilter(req) };
 
     if (subject && subject !== "All") filter.subject = subject;
-    if (chapter && chapter !== "All") filter.chapter = chapter;
+    applyVersionFilter(filter, version, chapter);
     if (topic && topic !== "All") filter.topic = topic;
     if (difficulty && difficulty !== "mixed" && difficulty !== "All") {
       filter.difficulty = difficulty.toLowerCase();
@@ -203,13 +230,14 @@ export const generatePracticeTest = async (req, res) => {
       mode = "practice", // 'practice' (immediate feedback) or 'test' (delayed grading)
       durationMinutes = 0,
       title,
+      version = "bangla",
     } = req.body;
 
     const tenantFilter = getTenantFilter(req);
     const filter = { ...tenantFilter };
 
     if (subject && subject !== "All") filter.subject = subject;
-    if (chapter && chapter !== "All") filter.chapter = chapter;
+    applyVersionFilter(filter, version, chapter);
     if (topic && topic !== "All") filter.topic = topic;
 
     const requestedCount = Math.max(5, Math.min(100, parseInt(questionCount) || 20));
@@ -271,12 +299,13 @@ export const generatePracticeTest = async (req, res) => {
     if (req.user?._id) {
       session = await PracticeSession.create({
         studentId: req.user._id,
-        title: title || `${subject} - ${chapter === "All" ? "Comprehensive" : chapter} Practice`,
+        title: title || `${subject} - ${chapter === "All" ? (version === "english" ? "English Medium All Chapters" : "বাংলা মাধ্যম সর্বমোট অধ্যায়") : chapter} Practice`,
         mode,
         subject,
         chapter,
         topic,
         difficulty,
+        version: version || "bangla",
         durationMinutes: parseInt(durationMinutes) || 0,
         totalQuestions: selectedQuestions.length,
         questions: selectedQuestions.map((q) => ({
@@ -465,10 +494,18 @@ export const getPracticeMistakes = async (req, res) => {
 
     const wrongList = Array.from(wrongQuestionIds);
 
-    const questions = await Question.find({
+    const { version } = req.query;
+    const mistakeFilter = {
       _id: { $in: wrongList },
       ...getTenantFilter(req),
-    }).lean();
+    };
+    if (version === "english") {
+      mistakeFilter.chapter = { $in: ENGLISH_CHAPTERS };
+    } else if (version === "bangla") {
+      mistakeFilter.chapter = { $nin: ENGLISH_CHAPTERS };
+    }
+
+    const questions = await Question.find(mistakeFilter).lean();
 
     return res.json({
       success: true,
@@ -487,14 +524,22 @@ export const getPracticeMistakes = async (req, res) => {
 export const getBookmarks = async (req, res) => {
   try {
     const studentId = req.user?._id;
+    const { version } = req.query;
     if (!studentId) {
       return res.status(401).json({ success: false, message: "Authentication required" });
+    }
+
+    const questionMatch = { ...getTenantFilter(req) };
+    if (version === "english") {
+      questionMatch.chapter = { $in: ENGLISH_CHAPTERS };
+    } else if (version === "bangla") {
+      questionMatch.chapter = { $nin: ENGLISH_CHAPTERS };
     }
 
     const bookmarks = await Bookmark.find({ studentId })
       .populate({
         path: "questionId",
-        match: getTenantFilter(req),
+        match: questionMatch,
       })
       .sort({ createdAt: -1 })
       .lean();
