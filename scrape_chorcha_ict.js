@@ -17,8 +17,17 @@ if (!fs.existsSync(UPLOADS_DIR)) {
   fs.mkdirSync(UPLOADS_DIR, { recursive: true });
 }
 
-function fetchUrl(url, headers = {}, timeoutMs = 20000) {
+const DEFAULT_HEADERS = {
+  "User-Agent":
+    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+  Accept:
+    "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8",
+  "Accept-Language": "bn,en-US;q=0.9,en;q=0.8",
+};
+
+function fetchUrl(url, customHeaders = {}, timeoutMs = 20000) {
   return new Promise((resolve, reject) => {
+    const headers = { ...DEFAULT_HEADERS, ...customHeaders };
     const req = https.get(
       url,
       { headers, timeout: timeoutMs },
@@ -50,7 +59,7 @@ function downloadImage(imgUrl, destPath) {
 
       const req = https.get(
         imgUrl,
-        { timeout: 15000 },
+        { headers: DEFAULT_HEADERS, timeout: 15000 },
         (res) => {
           if (res.statusCode === 200) {
             res.pipe(file);
@@ -97,13 +106,13 @@ function stripTags(html) {
 }
 
 const ICT_REGEX =
-  /(^|[-_/])(hsc-ict|ict|আইসিটি|gate|গেইট|binary|বাইনারি|octal|অক্টাল|hexadecimal|হেক্সাডেসিমেল|সংখ্যা-পদ্ধতি|লজিক|logic|boolean|বুলিয়ান|ডি-মরগান|টপোলজি|topology|html|css|সি-প্রোগ্রামিং|c-programming|ডাটাবেজ|database|ক্লাউড|cloud|রোবোটিক্স|robotics|ক্রায়োসার্জারি|cryosurgery|বায়োমেট্রিক্স|biometrics|network|নেটওয়ার্ক)([-_/]|$)/i;
+  /(^|[-_/%])(hsc-ict|ict|আইসিটি|gate|গেইট|binary|বাইনারি|octal|অক্টাল|hexadecimal|হেক্সাডেসিমেল|সংখ্যা-পদ্ধতি|লজিক|logic|boolean|বুলিয়ান|ডি-মরগান|টপোলজি|topology|html|css|সি-প্রোগ্রামিং|c-programming|ডাটাবেজ|database|ক্লাউড|cloud|রোবোটিক্স|robotics|ক্রায়োসার্জারি|cryosurgery|বায়োমেট্রিক্স|biometrics|network|নেটওয়ার্ক|এনকোডার|ডিকোডার|ফ্লিপফ্লপ|রেজিস্টার|কাউন্টার|অ্যালজেবরা|অপটিক্যাল-ফাইবার|ওয়াইম্যাক্স|wimax|bluetooth|স্যাটেলাইট|ডাটা-কমিউনিকেশন|ব্যান্ডউইডথ|এসকিউএল|sql|primary-key|রিলেশনাল|rdbms)([-_/%]|$)/i;
 
 const TOPIC_RULES = [
   {
-    topic: "লজিক গেইট (Logic Gates)",
+    topic: "ডিজিটাল ডিভাইস ও লজিক গেইট",
     chapter: "অধ্যায় ৩: সংখ্যা পদ্ধতি ও ডিজিটাল ডিভাইস",
-    regex: /গেইট|gate|and|or|not|nand|nor|xor|xnor/i,
+    regex: /গেইট|gate|and|or|not|nand|nor|xor|xnor|এনকোডার|ডিকোডার|ফ্লিপফ্লপ|রেজিস্টার|কাউন্টার|বুলিয়ান|অ্যালজেবরা|ডি-মরগান/i,
   },
   {
     topic: "সংখ্যা পদ্ধতি (Number Systems)",
@@ -126,13 +135,13 @@ const TOPIC_RULES = [
     topic: "ডাটাবেজ ম্যানেজমেন্ট (DBMS)",
     chapter: "অধ্যায় ৬: ডাটাবেজ ম্যানেজমেন্ট সিস্টেম",
     regex:
-      /ডাটাবেজ|database|dbms|sql|primary key|foreign key|কুয়েরি|রিলেশন|ইনডেক্সিং/i,
+      /ডাটাবেজ|database|dbms|sql|primary key|foreign key|কুয়েরি|রিলেশন|ইনডেক্সিং|এসকিউএল|rdbms/i,
   },
   {
     topic: "কমিউনিকেশন ও নেটওয়ার্কিং",
     chapter: "অধ্যায় ২: কমিউনিকেশন সিস্টেমস ও নেটওয়ার্কিং",
     regex:
-      /নেটওয়ার্ক|network|টপোলজি|topology|ক্লাউড|cloud|ওয়াইফাই|wifi|ব্লুটুথ|bluetooth|মডেম|রাউটার|অপটিক্যাল ফাইবার/i,
+      /নেটওয়ার্ক|network|টপোলজি|topology|ক্লাউড|cloud|ওয়াইফাই|wifi|ব্লুটুথ|bluetooth|মডেম|রাউটার|অপটিক্যাল ফাইবার|ওয়াইম্যাক্স|wimax|স্যাটেলাইট|ব্যান্ডউইডথ|ডাটা কমিউনিকেশন/i,
   },
   {
     topic: "বিশ্ব ও বাংলাদেশ প্রেক্ষিত",
@@ -300,16 +309,21 @@ export async function parseQuestion(url) {
       }
     }
 
+    const validBoards = [
+      "Dhaka", "Chittagong", "Rajshahi", "Cumilla",
+      "Jessore", "Barishal", "Sylhet", "Dinajpur", "Mymensingh"
+    ];
+    const isBoardValid = validBoards.includes(boardName) && /^[0-9]{4}$/.test(boardYear);
+
     return {
       className: "HSC",
       subject: "ICT",
       chapter,
       topic,
       difficulty: "medium",
-      questionType:
-        boardName && boardYear ? "board" : "normal",
-      boardName,
-      boardYear,
+      questionType: isBoardValid ? "board" : "normal",
+      boardName: isBoardValid ? boardName : "",
+      boardYear: isBoardValid ? boardYear : "",
       question: questionText,
       options,
       correctAnswer,
@@ -417,7 +431,7 @@ async function startScraper() {
 
   const scrapedQuestions = [...existingQuestions];
 
-  const BATCH_SIZE = 6;
+  const BATCH_SIZE = 8;
 
   for (let i = 0; i < urlList.length; i += BATCH_SIZE) {
     const batch = urlList.slice(i, i + BATCH_SIZE);
@@ -446,11 +460,14 @@ async function startScraper() {
       ((i + batch.length) / urlList.length) * 100
     );
 
-    process.stdout.write(
-      `\rProgress: ${scrapedQuestions.length} saved | Processed: ${
+    console.log(
+      `Progress: ${scrapedQuestions.length} saved | Processed: ${
         i + batch.length
       }/${urlList.length} (${pct}%)`
     );
+
+    // Polite 100ms pause to ensure 100% success rate without throttling
+    await new Promise((r) => setTimeout(r, 100));
   }
 
   // Final save
@@ -461,7 +478,7 @@ async function startScraper() {
   );
 
   console.log(
-    `\n\n✅ Finished! Total ICT questions saved: ${scrapedQuestions.length}`
+    `\n\n✅ Finished! Total ICT questions saved in JSON: ${scrapedQuestions.length}`
   );
 
   // Auto import to MongoDB
@@ -482,21 +499,29 @@ async function startScraper() {
       await import("./models/Question.js")
     ).default;
 
-    let imported = 0;
+    const existingInDb = new Set(
+      (await QuestionModel.find({}, "question").lean()).map((q) => q.question)
+    );
 
+    const toInsert = [];
     for (const q of scrapedQuestions) {
-      const exists = await QuestionModel.findOne({
-        question: q.question,
-      });
-
-      if (!exists) {
-        await QuestionModel.create(q);
-        imported++;
+      if (!existingInDb.has(q.question)) {
+        existingInDb.add(q.question);
+        toInsert.push(q);
       }
     }
 
+    let imported = 0;
+    if (toInsert.length > 0) {
+      console.log(`Inserting ${toInsert.length} new unique questions into MongoDB...`);
+      const inserted = await QuestionModel.insertMany(toInsert, { ordered: false });
+      imported = inserted.length;
+    }
+
+    const finalTotal = await QuestionModel.countDocuments({});
+
     console.log(
-      `🎉 Successfully synced ${imported} new questions into MongoDB!`
+      `🎉 Successfully synced ${imported} new questions into MongoDB! Total questions now: ${finalTotal}`
     );
 
     await mongoose.disconnect();
