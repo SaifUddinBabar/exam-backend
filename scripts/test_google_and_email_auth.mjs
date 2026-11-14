@@ -159,6 +159,7 @@ await registerEmail(
       role: "tutor",
       designation: "Assistant Professor",
       institution: "Dhaka College",
+      teacherPasscode: "006985",
     },
   },
   resTeacher
