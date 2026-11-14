@@ -1,4 +1,5 @@
 import Question from "../models/Question.js";
+import { applyTopicFilter, getChapterQueryRegex } from "./practiceController.js";
 
 // =====================================================
 // CHAPTER 2 — APPROVED 13 TOPICS ONLY
@@ -132,16 +133,9 @@ export const getQuestions = async (req, res) => {
     }
 
     if (subject) query.subject = subject;
-    if (chapter) query.chapter = chapter;
-
-    if (chapter === "Communication Systems") {
-      query.topic = { $in: CHAPTER_2_TOPICS };
-      if (topic) {
-        if (!CHAPTER_2_TOPICS.includes(topic)) return res.json([]);
-        query.topic = topic;
-      }
-    } else if (topic) {
-      query.topic = topic;
+    if (chapter) query.chapter = getChapterQueryRegex(chapter);
+    if (topic && topic !== "All") {
+      applyTopicFilter(query, topic);
     }
 
     if (difficulty) query.difficulty = difficulty;
