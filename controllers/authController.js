@@ -7,6 +7,8 @@ import Organization from "../models/Organization.js";
 import OrganizationMembership from "../models/OrganizationMembership.js";
 import OtpVerification from "../models/OtpVerification.js";
 import Submission from "../models/Submission.js";
+import Exam from "../models/Exam.js";
+import Question from "../models/Question.js";
 import {
   normalizeBdPhone,
   isValidBdPhone,
