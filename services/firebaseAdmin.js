@@ -58,8 +58,19 @@ async function getGooglePublicCerts() {
   }
   const res = await fetch("https://www.googleapis.com/robot/v1/metadata/x509/securetoken@system.gserviceaccount.com");
   if (!res.ok) throw new Error("Failed to fetch Google public certs from Google API.");
+  
   cachedCerts = await res.json();
-  certsExpiry = now + 6 * 60 * 60 * 1000; // cache for 6 hours
+  
+  // Parse Cache-Control header from Google API (standard rotation window)
+  let maxAge = 6 * 3600; // default 6 hours
+  const cacheControl = res.headers?.get?.("cache-control");
+  if (cacheControl) {
+    const match = cacheControl.match(/max-age=(\d+)/i);
+    if (match && match[1]) {
+      maxAge = parseInt(match[1], 10);
+    }
+  }
+  certsExpiry = now + maxAge * 1000;
   return cachedCerts;
 }
 
@@ -68,21 +79,50 @@ async function verifyWithGooglePublicCerts(idToken) {
   if (!decodedHeader || !decodedHeader.header || !decodedHeader.header.kid) {
     throw new Error("Malformed JWT header: missing kid property.");
   }
+
+  // Enforce RS256 algorithm strictly
+  if (decodedHeader.header.alg !== "RS256") {
+    throw new Error(`Unsupported token algorithm '${decodedHeader.header.alg}'. Only RS256 is permitted.`);
+  }
+
   const kid = decodedHeader.header.kid;
   const certs = await getGooglePublicCerts();
   let cert = certs[kid];
   if (!cert) {
+    // If not found in cache, trigger immediate key rotation refresh
     certsExpiry = 0;
     const fresh = await getGooglePublicCerts();
     cert = fresh[kid];
     if (!cert) throw new Error("Token signing key (kid) does not match any current Google public certificates.");
   }
 
-  return jwt.verify(idToken, cert, {
+  // 1. Cryptographically verify RS256 signature, expiry, audience, and issuer
+  const decoded = jwt.verify(idToken, cert, {
     algorithms: ["RS256"],
     audience: projectId,
     issuer: `https://securetoken.google.com/${projectId}`,
+    clockTolerance: 30, // 30 seconds clock skew tolerance
   });
+
+  // 2. Explicitly validate standard Firebase ID token claims
+  const nowInSec = Math.floor(Date.now() / 1000);
+
+  // Subject must be a non-empty string and correspond to user UID
+  if (!decoded.sub || typeof decoded.sub !== "string" || decoded.sub.length > 128) {
+    throw new Error("Invalid subject (sub) claim in Firebase ID token.");
+  }
+
+  // auth_time must be an integer in the past
+  if (!decoded.auth_time || typeof decoded.auth_time !== "number" || decoded.auth_time > nowInSec + 60) {
+    throw new Error("Invalid or future auth_time claim in Firebase ID token.");
+  }
+
+  // iat must be an integer in the past
+  if (!decoded.iat || typeof decoded.iat !== "number" || decoded.iat > nowInSec + 60) {
+    throw new Error("Invalid or future issued-at (iat) claim in Firebase ID token.");
+  }
+
+  return decoded;
 }
 
 /**
