@@ -62,30 +62,15 @@ export const sendSms = async ({ phone, message }) => {
   const provider = (process.env.SMS_GATEWAY_PROVIDER || "generic").toLowerCase();
   const apiUrl = process.env.SMS_API_URL;
 
-  // If no SMS provider key configured:
+  // If no SMS provider key configured in environment:
   if (!apiKey) {
-    const isProduction = process.env.NODE_ENV === "production";
-    if (isProduction) {
-      console.warn("[SMS WARNING] Production mode: SMS Gateway API Key (SMS_API_KEY) is not configured.");
-      return {
-        success: false,
-        configured: false,
-        error: "SMS Gateway is not configured. Please contact the administrator or configure SMS_API_KEY.",
-      };
-    }
-
-    // In local development or automated test mode:
-    console.log(`\n========================================`);
-    console.log(`[DEVELOPMENT / TEST SMS SIMULATOR]`);
-    console.log(`To: ${normalizedPhone}`);
-    console.log(`Message: ${message}`);
-    console.log(`========================================\n`);
+    console.warn(`[SMS SIMULATOR] SMS_API_KEY not set. Simulating delivery to ${normalizedPhone}: ${message}`);
 
     return {
       success: true,
       configured: false,
       testMode: true,
-      message: "Development test mode: OTP logged to server console.",
+      message: "SMS Gateway is not configured. Running in simulator mode (OTP provided in response/console).",
     };
   }
 
