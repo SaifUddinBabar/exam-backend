@@ -83,7 +83,7 @@ const PORT = config.port;
 let server;
 let backupScheduler;
 if (process.env.NODE_ENV !== "test") {
-  server = app.listen(PORT, () => {
+  server = app.listen(PORT, "0.0.0.0", () => {
     console.log(`🚀 Examino server running on port ${PORT} [${config.env}]`);
     const intervalHours = parseFloat(process.env.BACKUP_INTERVAL_HOURS || "24");
     backupScheduler = startBackupScheduler(intervalHours * 60 * 60 * 1000);
