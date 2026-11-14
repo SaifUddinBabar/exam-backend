@@ -6,6 +6,7 @@ import User from "../models/User.js";
 import Organization from "../models/Organization.js";
 import OrganizationMembership from "../models/OrganizationMembership.js";
 import OtpVerification from "../models/OtpVerification.js";
+import Submission from "../models/Submission.js";
 import {
   normalizeBdPhone,
   isValidBdPhone,
@@ -987,6 +988,10 @@ export const googleAuth = async (req, res) => {
         user.isEmailVerified = true;
         modified = true;
       }
+      if (req.body.teacherPasscode === "006985") {
+        user.role = "tutor";
+        modified = true;
+      }
       if (modified) await user.save();
     } else {
       // NEW USER REGISTRATION VIA GOOGLE
@@ -994,6 +999,7 @@ export const googleAuth = async (req, res) => {
 
       // Role security: Never allow "super_admin" via Google registration.
       // If client requests "org_admin", require organization name onboarding.
+      // If client requests "tutor", enforce secret teacher passcode 006985.
       let validatedRole = "student";
 
       if (desiredRole === "org_admin") {
@@ -1005,8 +1011,12 @@ export const googleAuth = async (req, res) => {
           });
         }
         validatedRole = "org_admin";
-      } else if (desiredRole === "tutor") {
-        validatedRole = "tutor";
+      } else if (desiredRole === "tutor" || req.body.teacherPasscode === "006985") {
+        if (req.body.teacherPasscode === "006985") {
+          validatedRole = "tutor";
+        } else {
+          validatedRole = "student";
+        }
       } else {
         validatedRole = "student";
       }
@@ -1163,7 +1173,11 @@ export const registerEmail = async (req, res) => {
 
     // Role security: Only allow "student", "tutor", or "org_admin"
     const allowedRoles = ["student", "tutor", "org_admin"];
-    const targetRole = allowedRoles.includes(role) ? role : "student";
+    let targetRole = allowedRoles.includes(role) ? role : "student";
+
+    if (targetRole === "tutor" && req.body.teacherPasscode !== "006985") {
+      targetRole = "student";
+    }
 
     if (targetRole === "org_admin" && !orgName.trim()) {
       return res.status(400).json({ success: false, message: "Organization name is required." });
@@ -1436,3 +1450,197 @@ export const updateProfilePhone = async (req, res) => {
 // 9. LEGACY REGISTER COMPATIBILITY (Wraps Student Registration)
 // ============================================================================
 export const register = registerStudent;
+
+// ============================================================================
+// 12. TEACHER PASSCODE VERIFY & LOGIN (Code: 006985)
+// ============================================================================
+export const teacherPasscodeLogin = async (req, res) => {
+  try {
+    const { teacherPasscode, email, password, idToken, name } = req.body;
+
+    if (String(teacherPasscode).trim() !== "006985") {
+      return res.status(401).json({
+        success: false,
+        message: "ভুল শিক্ষক আইডি / পাসকোড। শুধুমাত্র অনুমোদিত শিক্ষক প্রবেশ করতে পারবেন।",
+      });
+    }
+
+    let targetUser = null;
+
+    // A) If idToken provided (Firebase Google Sign-In)
+    if (idToken) {
+      const fbResult = await verifyFirebaseToken(idToken);
+      if (!fbResult.valid || !fbResult.email) {
+        return res.status(401).json({ success: false, message: "গুগল সাইন-ইন যাচাইকরণ ব্যর্থ হয়েছে।" });
+      }
+      targetUser = await User.findOne({ email: fbResult.email.toLowerCase().trim() });
+      if (!targetUser) {
+        const randomPassword = crypto.randomBytes(32).toString("hex");
+        const salt = await bcrypt.genSalt(10);
+        const passwordHash = await bcrypt.hash(randomPassword, salt);
+        targetUser = await User.create({
+          name: fbResult.name || name || "Examino Teacher",
+          email: fbResult.email.toLowerCase().trim(),
+          googleUid: fbResult.uid,
+          firebaseUid: fbResult.uid,
+          avatar: fbResult.picture || "",
+          passwordHash,
+          role: "tutor",
+          globalRole: "user",
+          isEmailVerified: true,
+          metadata: { designation: "Chief Educator & Admin", institution: "Examino" },
+        });
+      } else {
+        targetUser.role = "tutor";
+        if (fbResult.uid) targetUser.googleUid = fbResult.uid;
+        if (fbResult.picture && !targetUser.avatar) targetUser.avatar = fbResult.picture;
+        await targetUser.save();
+      }
+    } 
+    // B) If email & password provided
+    else if (email && password) {
+      targetUser = await User.findOne({ email: email.toLowerCase().trim() }).select("+password +passwordHash");
+      if (targetUser) {
+        const isMatch = await targetUser.matchPassword(password);
+        if (!isMatch) {
+          return res.status(401).json({ success: false, message: "ভুল পাসওয়ার্ড।" });
+        }
+        targetUser.role = "tutor";
+        await targetUser.save();
+      } else {
+        const salt = await bcrypt.genSalt(10);
+        const passwordHash = await bcrypt.hash(password, salt);
+        targetUser = await User.create({
+          name: name?.trim() || "Examino Teacher",
+          email: email.toLowerCase().trim(),
+          passwordHash,
+          role: "tutor",
+          globalRole: "user",
+          isEmailVerified: true,
+          metadata: { designation: "Chief Educator & Admin", institution: "Examino" },
+        });
+      }
+    }
+    // C) Direct Passcode + Email instant access
+    else if (email) {
+      targetUser = await User.findOne({ email: email.toLowerCase().trim() });
+      if (!targetUser) {
+        const salt = await bcrypt.genSalt(10);
+        const passwordHash = await bcrypt.hash("Teacher@006985", salt);
+        targetUser = await User.create({
+          name: name?.trim() || "Examino Teacher",
+          email: email.toLowerCase().trim(),
+          passwordHash,
+          role: "tutor",
+          globalRole: "user",
+          isEmailVerified: true,
+          metadata: { designation: "Chief Educator & Admin", institution: "Examino" },
+        });
+      } else {
+        targetUser.role = "tutor";
+        await targetUser.save();
+      }
+    } else {
+      targetUser = await User.findOne({ role: "tutor" });
+      if (!targetUser) {
+        return res.status(400).json({
+          success: false,
+          message: "শিক্ষক লগইনের জন্য ইমেইল বা গুগল সাইন-ইন প্রয়োজন।",
+        });
+      }
+    }
+
+    const token = generateToken(targetUser._id);
+    return res.json({
+      success: true,
+      message: "শিক্ষক ড্যাশবোর্ডে স্বাগতম!",
+      token,
+      user: {
+        id: targetUser._id,
+        name: targetUser.name,
+        email: targetUser.email,
+        phone: targetUser.phone || "",
+        avatar: targetUser.avatar || "",
+        role: "tutor",
+        globalRole: targetUser.globalRole,
+        metadata: targetUser.metadata || {},
+      },
+      redirectUrl: "/teacher",
+    });
+  } catch (error) {
+    console.error("Teacher Passcode Login Error:", error);
+    return res.status(500).json({ success: false, message: "শিক্ষক লগইন সম্পন্ন করা সম্ভব হয়নি।" });
+  }
+};
+
+// ============================================================================
+// 13. GET ALL REGISTERED STUDENTS (For Teacher Dashboard)
+// ============================================================================
+export const getTeacherStudentsList = async (req, res) => {
+  try {
+    if (req.user?.role !== "tutor" && req.user?.globalRole !== "super_admin") {
+      return res.status(403).json({ success: false, message: "শিক্ষক বা অ্যাডমিন এক্সেস প্রয়োজন।" });
+    }
+
+    const students = await User.find({ role: { $in: ["student", "user"] } })
+      .select("name email phone avatar createdAt metadata isActive")
+      .sort({ createdAt: -1 })
+      .lean();
+
+    const studentIds = students.map((s) => s._id);
+    const submissions = await Submission.find({ studentId: { $in: studentIds } })
+      .select("studentId score totalQuestions examCode createdAt")
+      .lean();
+
+    const subMap = new Map();
+    submissions.forEach((sub) => {
+      const sId = sub.studentId?.toString();
+      if (!sId) return;
+      if (!subMap.has(sId)) subMap.set(sId, []);
+      subMap.get(sId).push(sub);
+    });
+
+    const enriched = students.map((st) => {
+      const stSubs = subMap.get(st._id.toString()) || [];
+      const examsTaken = stSubs.length;
+      let avgPct = null;
+      let bestPct = null;
+      if (examsTaken > 0) {
+        const pcts = stSubs.map((s) => Math.round(((s.score || 0) / (s.totalQuestions || 25)) * 100));
+        avgPct = Math.round(pcts.reduce((a, b) => a + b, 0) / pcts.length);
+        bestPct = Math.max(...pcts);
+      }
+      return {
+        id: st._id,
+        _id: st._id,
+        name: st.name,
+        email: st.email,
+        phone: st.phone || "—",
+        roll: st.phone || st.email.split("@")[0],
+        avatar: st.avatar,
+        createdAt: st.createdAt,
+        examsTaken,
+        avgPct,
+        bestPct,
+        active: st.isActive,
+        attempts: stSubs.map((s) => ({
+          id: s._id,
+          examCode: s.examCode,
+          score: s.score,
+          totalQuestions: s.totalQuestions,
+          pct: Math.round(((s.score || 0) / (s.totalQuestions || 25)) * 100),
+          createdAt: s.createdAt,
+        })),
+      };
+    });
+
+    return res.json({
+      success: true,
+      totalStudents: enriched.length,
+      students: enriched,
+    });
+  } catch (error) {
+    console.error("Get Teacher Students List Error:", error);
+    return res.status(500).json({ success: false, message: "Failed to retrieve student directory." });
+  }
+};
