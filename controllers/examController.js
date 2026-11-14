@@ -407,17 +407,13 @@ export const deleteExam = async (req, res) => {
 // ============================================================
 export const getStudentAvailableExams = async (req, res) => {
   try {
-    const orgFilter = req.tenant?.orgId
-      ? { $or: [{ organizationId: req.tenant.orgId }, { organizationId: null }] }
-      : { organizationId: null };
-
+    // Return all published exams so students can see and join every exam created by the teacher
     const query = {
       isPublished: true,
-      ...orgFilter,
     };
 
     const exams = await Exam.find(query)
-      .select("title description examCode duration examType allowRetake maxAttempts negativeMarkPerWrong startTime endTime createdAt questions")
+      .select("title description examCode duration examType allowRetake maxAttempts negativeMarkPerWrong startTime endTime createdAt questions authorId")
       .sort({ createdAt: -1 });
 
     const sanitized = exams.map((e) => ({
@@ -440,6 +436,88 @@ export const getStudentAvailableExams = async (req, res) => {
   } catch (error) {
     console.error("Get Student Available Exams Error:", error);
     return res.status(500).json({ success: false, message: "Failed to retrieve available exams." });
+  }
+};
+
+// ============================================================
+// GET STUDENT WEAK TOPICS & REVISION RECOMMENDATIONS
+// ============================================================
+export const getStudentWeakTopics = async (req, res) => {
+  try {
+    const studentId = req.user?._id;
+    if (!studentId) {
+      return res.status(401).json({ success: false, message: "Authentication required." });
+    }
+
+    const submissions = await Submission.find({ studentId })
+      .sort({ createdAt: -1 })
+      .limit(15);
+
+    if (!submissions || submissions.length === 0) {
+      return res.json({
+        success: true,
+        weakTopics: [],
+        totalMistakes: 0,
+        message: "No exam submissions found yet.",
+      });
+    }
+
+    const examIds = submissions.map((s) => s.examId).filter(Boolean);
+    const exams = await Exam.find({ _id: { $in: examIds } }).select("questions");
+    const allQuestionIds = exams.flatMap((e) => e.questions || []);
+
+    const questions = await Question.find({ _id: { $in: allQuestionIds } })
+      .select("subject chapter topic difficulty correctAnswer")
+      .lean();
+
+    const qMap = new Map(questions.map((q) => [q._id.toString(), q]));
+    const topicStats = {};
+
+    submissions.forEach((sub) => {
+      const answers = sub.answers || {};
+      for (const [qId, studentAns] of Object.entries(answers)) {
+        const q = qMap.get(qId);
+        if (!q) continue;
+
+        const topicKey = q.topic || q.chapter || "সাধারণ বিষয়";
+        if (!topicStats[topicKey]) {
+          topicStats[topicKey] = {
+            topic: topicKey,
+            chapter: q.chapter || "",
+            subject: q.subject || "ICT",
+            totalAttempted: 0,
+            wrongCount: 0,
+            correctCount: 0,
+          };
+        }
+        topicStats[topicKey].totalAttempted++;
+        if (studentAns === q.correctAnswer) {
+          topicStats[topicKey].correctCount++;
+        } else {
+          topicStats[topicKey].wrongCount++;
+        }
+      }
+    });
+
+    const weakList = Object.values(topicStats)
+      .map((t) => {
+        const accuracy = t.totalAttempted > 0 ? Math.round((t.correctCount / t.totalAttempted) * 100) : 0;
+        return {
+          ...t,
+          accuracy,
+        };
+      })
+      .filter((t) => t.wrongCount > 0 || t.accuracy < 70)
+      .sort((a, b) => b.wrongCount - a.wrongCount);
+
+    return res.json({
+      success: true,
+      weakTopics: weakList,
+      totalMistakes: weakList.reduce((acc, curr) => acc + curr.wrongCount, 0),
+    });
+  } catch (error) {
+    console.error("Get Weak Topics Error:", error);
+    return res.status(500).json({ success: false, message: "Failed to analyze weak topics." });
   }
 };
 

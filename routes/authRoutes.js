@@ -15,6 +15,8 @@ import {
   getMe,
   updateProfilePhone,
   register,
+  teacherPasscodeLogin,
+  getTeacherStudentsList,
 } from "../controllers/authController.js";
 import { protect } from "../middleware/auth.js";
 
@@ -44,6 +46,10 @@ router.post("/register", register); // Legacy compatibility
 router.post("/login", login);
 router.post("/firebase-login", firebaseLogin);
 router.post("/password/reset", resetPassword);
+router.post("/teacher-verify", teacherPasscodeLogin);
+
+// Teacher Directory
+router.get("/teacher/students", protect, getTeacherStudentsList);
 
 // Profile
 router.get("/me", protect, getMe);
