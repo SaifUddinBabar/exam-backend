@@ -21,6 +21,12 @@ const userSchema = new mongoose.Schema(
       index: true,
       sparse: true,
     },
+    rollNumber: {
+      type: String,
+      trim: true,
+      index: true,
+      default: "",
+    },
     firebaseUid: {
       type: String,
       trim: true,

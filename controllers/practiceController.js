@@ -138,7 +138,10 @@ export const getQuestionBank = async (req, res) => {
 
     if (subject && subject !== "All") filter.subject = subject;
     applyVersionFilter(filter, version, chapter);
-    if (topic && topic !== "All") filter.topic = topic;
+    if (topic && topic !== "All") {
+      const cleanTopic = topic.split("(")[0].trim().replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+      filter.topic = new RegExp(cleanTopic, "i");
+    }
     if (difficulty && difficulty !== "All") filter.difficulty = difficulty.toLowerCase();
     if (boardName && boardName !== "All") {
       filter.questionType = "board";
@@ -203,7 +206,10 @@ export const getAvailableCount = async (req, res) => {
 
     if (subject && subject !== "All") filter.subject = subject;
     applyVersionFilter(filter, version, chapter);
-    if (topic && topic !== "All") filter.topic = topic;
+    if (topic && topic !== "All") {
+      const cleanTopic = topic.split("(")[0].trim().replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+      filter.topic = new RegExp(cleanTopic, "i");
+    }
     if (difficulty && difficulty !== "mixed" && difficulty !== "All") {
       filter.difficulty = difficulty.toLowerCase();
     }
@@ -238,7 +244,10 @@ export const generatePracticeTest = async (req, res) => {
 
     if (subject && subject !== "All") filter.subject = subject;
     applyVersionFilter(filter, version, chapter);
-    if (topic && topic !== "All") filter.topic = topic;
+    if (topic && topic !== "All") {
+      const cleanTopic = topic.split("(")[0].trim().replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+      filter.topic = new RegExp(cleanTopic, "i");
+    }
 
     const requestedCount = Math.max(5, Math.min(100, parseInt(questionCount) || 20));
 

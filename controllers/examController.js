@@ -375,15 +375,22 @@ export const getAllExams = async (req, res) => {
 // ============================================================
 export const deleteExam = async (req, res) => {
   try {
-    const examCode = req.params.examCode?.toUpperCase();
-    const exam = await Exam.findOne({ examCode });
+    const rawCode = req.params.examCode;
+    const isObjectId = mongoose.Types.ObjectId.isValid(rawCode);
+    const exam = await Exam.findOne({
+      $or: [
+        { examCode: rawCode?.toUpperCase() },
+        ...(isObjectId ? [{ _id: rawCode }] : []),
+      ],
+    });
     if (!exam) {
       return res.status(404).json({ success: false, message: "Exam not found." });
     }
 
-    // Role check: super_admin or matching author / organization
+    // Role check: super_admin, tutor, or matching author
     if (
       req.user.globalRole !== "super_admin" &&
+      req.user.role !== "tutor" &&
       exam.authorId &&
       exam.authorId.toString() !== req.user._id.toString()
     ) {
@@ -393,8 +400,10 @@ export const deleteExam = async (req, res) => {
       });
     }
 
-    await Exam.deleteOne({ examCode });
-    await Submission.deleteMany({ examCode });
+    await Exam.deleteOne({ _id: exam._id });
+    await Submission.deleteMany({
+      $or: [{ examId: exam._id }, { examCode: exam.examCode }],
+    });
 
     return res.json({ success: true, message: "Exam deleted successfully." });
   } catch (error) {

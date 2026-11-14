@@ -17,6 +17,9 @@ import {
   register,
   teacherPasscodeLogin,
   getTeacherStudentsList,
+  getTeacherStudentDetails,
+  deleteTeacherStudent,
+  updateFullProfile,
 } from "../controllers/authController.js";
 import { protect } from "../middleware/auth.js";
 
@@ -48,11 +51,14 @@ router.post("/firebase-login", firebaseLogin);
 router.post("/password/reset", resetPassword);
 router.post("/teacher-verify", teacherPasscodeLogin);
 
-// Teacher Directory
+// Teacher Directory & Student Management
 router.get("/teacher/students", protect, getTeacherStudentsList);
+router.get("/teacher/students/:studentId", protect, getTeacherStudentDetails);
+router.delete("/teacher/students/:studentId", protect, deleteTeacherStudent);
 
 // Profile
 router.get("/me", protect, getMe);
+router.put("/profile", protect, updateFullProfile);
 router.put("/profile/phone", protect, updateProfilePhone);
 
 export default router;
