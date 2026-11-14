@@ -15,9 +15,21 @@ const userSchema = new mongoose.Schema(
       lowercase: true,
       trim: true,
     },
+    phone: {
+      type: String,
+      trim: true,
+      index: true,
+      sparse: true,
+    },
     passwordHash: {
       type: String,
-      required: true,
+      default: function () {
+        return this.password || "";
+      },
+    },
+    password: {
+      type: String,
+      select: false,
     },
     // Global platform role
     globalRole: {
@@ -25,14 +37,25 @@ const userSchema = new mongoose.Schema(
       enum: ["super_admin", "user"],
       default: "user",
     },
-    // Backwards compatibility for legacy tutors
+    // Application role
     role: {
       type: String,
-      default: "tutor",
+      enum: ["student", "tutor", "org_admin", "super_admin"],
+      default: "student",
+    },
+    isPhoneVerified: {
+      type: Boolean,
+      default: false,
     },
     isActive: {
       type: Boolean,
       default: true,
+    },
+    metadata: {
+      level: { type: String, trim: true, default: "" },
+      group: { type: String, trim: true, default: "" },
+      designation: { type: String, trim: true, default: "" },
+      institution: { type: String, trim: true, default: "" },
     },
   },
   {
