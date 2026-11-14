@@ -21,6 +21,27 @@ const userSchema = new mongoose.Schema(
       index: true,
       sparse: true,
     },
+    firebaseUid: {
+      type: String,
+      trim: true,
+      index: true,
+      sparse: true,
+    },
+    googleUid: {
+      type: String,
+      trim: true,
+      index: true,
+      sparse: true,
+    },
+    avatar: {
+      type: String,
+      trim: true,
+      default: "",
+    },
+    isEmailVerified: {
+      type: Boolean,
+      default: false,
+    },
     passwordHash: {
       type: String,
       default: function () {

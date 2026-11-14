@@ -6,13 +6,29 @@ import {
   registerTeacher,
   registerOrganization,
   login,
+  firebaseLogin,
+  googleAuth,
+  registerEmail,
+  forgotPasswordEmail,
+  resetPasswordEmail,
   resetPassword,
   getMe,
+  updateProfilePhone,
   register,
 } from "../controllers/authController.js";
 import { protect } from "../middleware/auth.js";
 
 const router = express.Router();
+
+// Google OAuth Endpoint
+router.post("/google", googleAuth);
+
+// Email Registration Endpoint
+router.post("/register/email", registerEmail);
+
+// Email Password Reset Endpoints
+router.post("/password/forgot-email", forgotPasswordEmail);
+router.post("/password/reset-email", resetPasswordEmail);
 
 // OTP Endpoints
 router.post("/otp/send", sendOtp);
@@ -26,9 +42,11 @@ router.post("/register", register); // Legacy compatibility
 
 // Common Login & Password Reset
 router.post("/login", login);
+router.post("/firebase-login", firebaseLogin);
 router.post("/password/reset", resetPassword);
 
 // Profile
 router.get("/me", protect, getMe);
+router.put("/profile/phone", protect, updateProfilePhone);
 
 export default router;
