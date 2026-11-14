@@ -1469,9 +1469,12 @@ export const teacherPasscodeLogin = async (req, res) => {
 
     // A) If idToken provided (Firebase Google Sign-In)
     if (idToken) {
-      const fbResult = await verifyFirebaseToken(idToken);
+      const fbResult = await verifyFirebaseGoogleToken(idToken);
       if (!fbResult.valid || !fbResult.email) {
-        return res.status(401).json({ success: false, message: "গুগল সাইন-ইন যাচাইকরণ ব্যর্থ হয়েছে।" });
+        return res.status(401).json({
+          success: false,
+          message: fbResult.error || "গুগল সাইন-ইন যাচাইকরণ ব্যর্থ হয়েছে।",
+        });
       }
       targetUser = await User.findOne({ email: fbResult.email.toLowerCase().trim() });
       if (!targetUser) {
