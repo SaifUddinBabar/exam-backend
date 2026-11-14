@@ -13,6 +13,8 @@ import {
   hashOtp,
   sendSms,
 } from "../services/smsService.js";
+import { verifyFirebaseToken, verifyFirebaseGoogleToken } from "../services/firebaseAdmin.js";
+import { sendPasswordResetEmail } from "../services/emailService.js";
 
 const generateToken = (userId) => {
   return jwt.sign({ id: userId }, config.jwt.secret, {
@@ -232,12 +234,41 @@ const validateVerificationToken = async (phone, verificationToken, purpose) => {
   return true;
 };
 
+// Unified phone verification helper (Supports SMS Gateway OTP or Firebase Phone Auth)
+const verifyPhoneAuth = async (phone, verificationToken, firebaseToken, purpose = "registration") => {
+  if (verificationToken) {
+    const valid = await validateVerificationToken(phone, verificationToken, purpose);
+    if (valid) return { valid: true };
+  }
+  if (firebaseToken) {
+    const fb = await verifyFirebaseToken(firebaseToken);
+    if (fb.valid) {
+      if (
+        fb.localPhone === phone ||
+        fb.phoneNumber?.endsWith(phone) ||
+        phone.endsWith(fb.localPhone || "")
+      ) {
+        return { valid: true, firebaseUid: fb.uid, firebasePhone: fb.phoneNumber };
+      }
+    }
+  }
+  return { valid: false };
+};
+
 // ============================================================================
 // 3. STUDENT REGISTRATION
 // ============================================================================
 export const registerStudent = async (req, res) => {
   try {
-    const { name, phone, password, verificationToken, level = "HSC 2027", group = "Science" } = req.body;
+    const {
+      name,
+      phone,
+      password,
+      verificationToken,
+      firebaseToken,
+      level = "HSC 2027",
+      group = "Science",
+    } = req.body;
 
     if (!name || !phone || !password) {
       return res.status(400).json({
@@ -261,9 +292,9 @@ export const registerStudent = async (req, res) => {
       });
     }
 
-    // Verify OTP token (skip only if explicitly bypass in local test suite with MOCK flag)
-    const tokenValid = await validateVerificationToken(normalizedPhone, verificationToken, "registration");
-    if (!tokenValid && process.env.NODE_ENV === "production") {
+    // Verify OTP token or Firebase Phone Auth
+    const authCheck = await verifyPhoneAuth(normalizedPhone, verificationToken, firebaseToken, "registration");
+    if (!authCheck.valid) {
       return res.status(400).json({
         success: false,
         message: "Mobile verification required. Please verify your number with OTP.",
@@ -291,6 +322,7 @@ export const registerStudent = async (req, res) => {
       name: name.trim(),
       email: emailRepresentation,
       phone: normalizedPhone,
+      firebaseUid: authCheck.firebaseUid || undefined,
       passwordHash,
       role: "student",
       globalRole: "user",
@@ -339,6 +371,7 @@ export const registerTeacher = async (req, res) => {
       email,
       password,
       verificationToken,
+      firebaseToken,
       designation = "Senior Lecturer / Instructor",
       institution = "",
     } = req.body;
@@ -365,8 +398,8 @@ export const registerTeacher = async (req, res) => {
       });
     }
 
-    const tokenValid = await validateVerificationToken(normalizedPhone, verificationToken, "registration");
-    if (!tokenValid && process.env.NODE_ENV === "production") {
+    const authCheck = await verifyPhoneAuth(normalizedPhone, verificationToken, firebaseToken, "registration");
+    if (!authCheck.valid) {
       return res.status(400).json({
         success: false,
         message: "Mobile verification required. Please verify your number with OTP.",
@@ -396,6 +429,7 @@ export const registerTeacher = async (req, res) => {
       name: name.trim(),
       email: teacherEmail,
       phone: normalizedPhone,
+      firebaseUid: authCheck.firebaseUid || undefined,
       passwordHash,
       role: "tutor",
       globalRole: "user",
@@ -438,7 +472,16 @@ export const registerTeacher = async (req, res) => {
 // ============================================================================
 export const registerOrganization = async (req, res) => {
   try {
-    const { orgName, ownerName, phone, email, password, verificationToken, location = "Dhaka" } = req.body;
+    const {
+      orgName,
+      ownerName,
+      phone,
+      email,
+      password,
+      verificationToken,
+      firebaseToken,
+      location = "Dhaka",
+    } = req.body;
 
     if (!orgName || !ownerName || !phone || !password) {
       return res.status(400).json({
@@ -462,8 +505,8 @@ export const registerOrganization = async (req, res) => {
       });
     }
 
-    const tokenValid = await validateVerificationToken(normalizedPhone, verificationToken, "registration");
-    if (!tokenValid && process.env.NODE_ENV === "production") {
+    const authCheck = await verifyPhoneAuth(normalizedPhone, verificationToken, firebaseToken, "registration");
+    if (!authCheck.valid) {
       return res.status(400).json({
         success: false,
         message: "Mobile verification required. Please verify your number with OTP.",
@@ -509,6 +552,7 @@ export const registerOrganization = async (req, res) => {
       name: ownerName.trim(),
       email: ownerEmail,
       phone: normalizedPhone,
+      firebaseUid: authCheck.firebaseUid || undefined,
       passwordHash,
       role: "org_admin",
       globalRole: "user",
@@ -681,7 +725,7 @@ export const login = async (req, res) => {
 // ============================================================================
 export const resetPassword = async (req, res) => {
   try {
-    const { phone, otp, verificationToken, newPassword } = req.body;
+    const { phone, otp, verificationToken, firebaseToken, newPassword } = req.body;
 
     const normalizedPhone = normalizeBdPhone(phone);
     if (!normalizedPhone) {
@@ -698,10 +742,20 @@ export const resetPassword = async (req, res) => {
       });
     }
 
-    // If verificationToken is provided, validate it
+    // Validate verification method: verificationToken, OTP, or Firebase Token
     let tokenValid = false;
     if (verificationToken) {
       tokenValid = await validateVerificationToken(normalizedPhone, verificationToken, "password_reset");
+    } else if (firebaseToken) {
+      const fbResult = await verifyFirebaseToken(firebaseToken);
+      if (
+        fbResult.valid &&
+        (fbResult.localPhone === normalizedPhone ||
+          fbResult.phoneNumber?.endsWith(normalizedPhone) ||
+          normalizedPhone.endsWith(fbResult.localPhone || ""))
+      ) {
+        tokenValid = true;
+      }
     } else if (otp) {
       // Direct verify and reset in single step
       const record = await OtpVerification.findOne({
@@ -717,7 +771,7 @@ export const resetPassword = async (req, res) => {
       }
     }
 
-    if (!tokenValid && process.env.NODE_ENV === "production") {
+    if (!tokenValid) {
       return res.status(400).json({
         success: false,
         message: "Invalid or expired verification code. Please request a new OTP.",
@@ -757,6 +811,528 @@ export const resetPassword = async (req, res) => {
       success: false,
       message: "Failed to reset password. Please try again.",
     });
+  }
+};
+
+// ============================================================================
+// 8. FIREBASE PHONE AUTH LOGIN
+// ============================================================================
+export const firebaseLogin = async (req, res) => {
+  try {
+    const { idToken } = req.body;
+    if (!idToken) {
+      return res.status(400).json({
+        success: false,
+        message: "Firebase authentication token is required.",
+      });
+    }
+
+    const fbResult = await verifyFirebaseToken(idToken);
+    if (!fbResult.valid) {
+      return res.status(401).json({
+        success: false,
+        message: fbResult.error || "Firebase authentication token verification failed.",
+      });
+    }
+
+    const localPhone = fbResult.localPhone;
+    const e164Phone = fbResult.phoneNumber;
+
+    if (!localPhone || !isValidBdPhone(localPhone)) {
+      return res.status(400).json({
+        success: false,
+        message: "Firebase authentication token does not contain a valid Bangladeshi mobile number.",
+      });
+    }
+
+    // Search user strictly by verified mobile number or system phone email (prevents unverified account takeover)
+    const user = await User.findOne({
+      $or: [
+        { phone: localPhone },
+        { phone: e164Phone },
+        { email: `${localPhone}@student.examino.edu.bd` },
+        { email: `${localPhone}@teacher.examino.edu.bd` },
+        { email: `${localPhone}@org.examino.edu.bd` },
+      ],
+    });
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        notRegistered: true,
+        phone: localPhone,
+        phoneNumber: e164Phone,
+        message: "No Examino account found with this mobile number. Please register your account.",
+      });
+    }
+
+    if (!user.isActive) {
+      return res.status(403).json({
+        success: false,
+        message: "Your account has been deactivated. Please contact support.",
+      });
+    }
+
+    // Safely link firebaseUid since phone number ownership was cryptographically validated
+    if (!user.firebaseUid || user.firebaseUid !== fbResult.uid || !user.isPhoneVerified) {
+      user.firebaseUid = fbResult.uid;
+      user.isPhoneVerified = true;
+      if (!user.phone) user.phone = localPhone;
+      await user.save();
+    }
+
+    let redirectUrl = "/dashboard";
+    const userRole = (user.globalRole === "super_admin" ? "super_admin" : (user.role || "")).toLowerCase();
+    if (userRole === "super_admin") {
+      redirectUrl = "/admin";
+    } else if (userRole === "org_admin") {
+      redirectUrl = "/organization";
+    } else if (userRole === "tutor") {
+      redirectUrl = "/teacher";
+    }
+
+    const memberships = await OrganizationMembership.find({
+      userId: user._id,
+      status: "active",
+    })
+      .populate("organizationId", "name slug code status")
+      .lean();
+
+    const token = generateToken(user._id);
+
+    return res.json({
+      success: true,
+      message: "Authentication successful with Firebase Phone.",
+      token,
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        phone: user.phone || localPhone,
+        role: user.role,
+        globalRole: user.globalRole,
+        metadata: user.metadata || {},
+      },
+      memberships: memberships.map((m) => ({
+        id: m._id,
+        role: m.role,
+        organization: m.organizationId,
+      })),
+      redirectUrl,
+    });
+  } catch (error) {
+    console.error("Firebase Login Error:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Server error during Firebase login.",
+    });
+  }
+};
+
+// ============================================================================
+// 9. FIREBASE GOOGLE AUTHENTICATION (Login & Registration)
+// ============================================================================
+export const googleAuth = async (req, res) => {
+  try {
+    const { idToken, desiredRole = "student", metadata = {}, orgName = "", location = "Dhaka" } = req.body;
+    if (!idToken) {
+      return res.status(400).json({
+        success: false,
+        message: "Google ID token is required.",
+      });
+    }
+
+    const fbResult = await verifyFirebaseGoogleToken(idToken);
+    if (!fbResult.valid) {
+      return res.status(401).json({
+        success: false,
+        message: fbResult.error || "Google authentication failed.",
+      });
+    }
+
+    const email = fbResult.email;
+    const name = fbResult.name || email.split("@")[0];
+
+    // Find existing account by email, googleUid, or firebaseUid
+    let user = await User.findOne({
+      $or: [{ email }, { googleUid: fbResult.uid }, { firebaseUid: fbResult.uid }],
+    });
+
+    let isNewUser = false;
+
+    if (user) {
+      // EXISTING USER: Preserve their authentic database role!
+      // (Never overwrite or downgrade/upgrade role)
+      if (!user.isActive) {
+        return res.status(403).json({
+          success: false,
+          message: "Your account has been deactivated. Please contact support.",
+        });
+      }
+
+      let modified = false;
+      if (!user.googleUid) {
+        user.googleUid = fbResult.uid;
+        modified = true;
+      }
+      if (!user.firebaseUid) {
+        user.firebaseUid = fbResult.uid;
+        modified = true;
+      }
+      if (!user.avatar && fbResult.picture) {
+        user.avatar = fbResult.picture;
+        modified = true;
+      }
+      if (!user.isEmailVerified) {
+        user.isEmailVerified = true;
+        modified = true;
+      }
+      if (modified) await user.save();
+    } else {
+      // NEW USER REGISTRATION VIA GOOGLE
+      isNewUser = true;
+
+      // Role security: Never allow "super_admin" via Google registration.
+      // If client requests "org_admin", require organization name onboarding.
+      let validatedRole = "student";
+
+      if (desiredRole === "org_admin") {
+        if (!orgName || !orgName.trim()) {
+          return res.status(400).json({
+            success: false,
+            needsOrgOnboarding: true,
+            message: "Coaching / Organization Name is required to register as Coaching Administrator.",
+          });
+        }
+        validatedRole = "org_admin";
+      } else if (desiredRole === "tutor") {
+        validatedRole = "tutor";
+      } else {
+        validatedRole = "student";
+      }
+
+      const randomPassword = crypto.randomBytes(32).toString("hex");
+      const salt = await bcrypt.genSalt(10);
+      const passwordHash = await bcrypt.hash(randomPassword, salt);
+
+      user = await User.create({
+        name,
+        email,
+        googleUid: fbResult.uid,
+        firebaseUid: fbResult.uid,
+        avatar: fbResult.picture || "",
+        passwordHash,
+        role: validatedRole,
+        globalRole: "user",
+        isEmailVerified: true,
+        metadata: {
+          level: metadata.level || "HSC 2027",
+          group: metadata.group || "Science",
+          designation: metadata.designation || (validatedRole === "tutor" ? "Lecturer / Educator" : ""),
+          institution: metadata.institution || "",
+        },
+      });
+
+      // If Coaching / Organization Admin -> create organization workspace
+      if (validatedRole === "org_admin") {
+        let baseSlug = orgName.trim().toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
+        if (!baseSlug) baseSlug = `coaching-${Date.now().toString().slice(-4)}`;
+        let slug = baseSlug;
+        let counter = 1;
+        while (await Organization.findOne({ slug })) {
+          slug = `${baseSlug}-${counter++}`;
+        }
+        const organization = await Organization.create({
+          name: orgName.trim(),
+          slug,
+          code: `EXM-${Math.floor(1000 + Math.random() * 9000)}`,
+          ownerId: user._id,
+          contactEmail: user.email,
+          location: (location || "Dhaka").trim(),
+          status: "active",
+          plan: "free",
+        });
+        await OrganizationMembership.create({
+          organizationId: organization._id,
+          userId: user._id,
+          role: "org_admin",
+          status: "active",
+        });
+      }
+    }
+
+    let redirectUrl = "/dashboard";
+    const userRole = (user.globalRole === "super_admin" ? "super_admin" : (user.role || "")).toLowerCase();
+    if (userRole === "super_admin") {
+      redirectUrl = "/admin";
+    } else if (userRole === "org_admin") {
+      redirectUrl = "/organization";
+    } else if (userRole === "tutor") {
+      redirectUrl = "/teacher";
+    }
+
+    const memberships = await OrganizationMembership.find({
+      userId: user._id,
+      status: "active",
+    })
+      .populate("organizationId", "name slug code status")
+      .lean();
+
+    const token = generateToken(user._id);
+
+    return res.json({
+      success: true,
+      message: isNewUser ? "Google registration successful." : "Google login successful.",
+      token,
+      isNewUser,
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        phone: user.phone || "",
+        avatar: user.avatar || "",
+        role: user.role,
+        globalRole: user.globalRole,
+        isEmailVerified: user.isEmailVerified,
+        metadata: user.metadata || {},
+      },
+      memberships: memberships.map((m) => ({
+        id: m._id,
+        role: m.role,
+        organization: m.organizationId,
+      })),
+      redirectUrl,
+    });
+  } catch (error) {
+    console.error("Google Auth Error:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Server error during Google authentication.",
+    });
+  }
+};
+
+// ============================================================================
+// 10. EMAIL + PASSWORD REGISTRATION
+// ============================================================================
+export const registerEmail = async (req, res) => {
+  try {
+    const {
+      name,
+      email,
+      password,
+      confirmPassword,
+      role = "student",
+      level = "HSC 2027",
+      group = "Science",
+      designation = "Lecturer",
+      institution = "",
+      orgName = "",
+      location = "Dhaka",
+    } = req.body;
+
+    if (!name || !name.trim()) {
+      return res.status(400).json({ success: false, message: "Full name is required." });
+    }
+
+    if (!email || !email.trim()) {
+      return res.status(400).json({ success: false, message: "Email address is required." });
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const normalizedEmail = email.trim().toLowerCase();
+    if (!emailRegex.test(normalizedEmail)) {
+      return res.status(400).json({ success: false, message: "Please enter a valid email address." });
+    }
+
+    if (!password || password.length < 6) {
+      return res.status(400).json({ success: false, message: "Password must be at least 6 characters long." });
+    }
+
+    if (confirmPassword !== undefined && password !== confirmPassword) {
+      return res.status(400).json({ success: false, message: "Passwords do not match." });
+    }
+
+    const existingUser = await User.findOne({ email: normalizedEmail });
+    if (existingUser) {
+      return res.status(409).json({
+        success: false,
+        message: "An account with this email address already exists. Please sign in.",
+      });
+    }
+
+    // Role security: Only allow "student", "tutor", or "org_admin"
+    const allowedRoles = ["student", "tutor", "org_admin"];
+    const targetRole = allowedRoles.includes(role) ? role : "student";
+
+    if (targetRole === "org_admin" && !orgName.trim()) {
+      return res.status(400).json({ success: false, message: "Organization name is required." });
+    }
+
+    const salt = await bcrypt.genSalt(10);
+    const passwordHash = await bcrypt.hash(password, salt);
+
+    const user = await User.create({
+      name: name.trim(),
+      email: normalizedEmail,
+      passwordHash,
+      role: targetRole,
+      globalRole: "user",
+      isEmailVerified: false,
+      metadata: {
+        level: level.trim(),
+        group: group.trim(),
+        designation: designation.trim(),
+        institution: institution.trim(),
+      },
+    });
+
+    let redirectUrl = "/dashboard";
+    if (targetRole === "tutor") {
+      redirectUrl = "/teacher";
+    } else if (targetRole === "org_admin") {
+      redirectUrl = "/organization";
+      // Create organization workspace
+      let baseSlug = orgName.trim().toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
+      if (!baseSlug) baseSlug = `coaching-${Date.now().toString().slice(-4)}`;
+      let slug = baseSlug;
+      let counter = 1;
+      while (await Organization.findOne({ slug })) {
+        slug = `${baseSlug}-${counter++}`;
+      }
+      const organization = await Organization.create({
+        name: orgName.trim(),
+        slug,
+        code: `EXM-${Math.floor(1000 + Math.random() * 9000)}`,
+        ownerId: user._id,
+        contactEmail: normalizedEmail,
+        location: location.trim(),
+        status: "active",
+        plan: "free",
+      });
+      await OrganizationMembership.create({
+        organizationId: organization._id,
+        userId: user._id,
+        role: "org_admin",
+        status: "active",
+      });
+    }
+
+    const token = generateToken(user._id);
+
+    return res.status(201).json({
+      success: true,
+      message: "Account registered successfully with email.",
+      token,
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        phone: user.phone || "",
+        role: user.role,
+        globalRole: user.globalRole,
+        isEmailVerified: user.isEmailVerified,
+        metadata: user.metadata || {},
+      },
+      redirectUrl,
+    });
+  } catch (error) {
+    console.error("Email Register Error:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Server error during email registration.",
+    });
+  }
+};
+
+// ============================================================================
+// 11. EMAIL PASSWORD RESET FLOW
+// ============================================================================
+export const forgotPasswordEmail = async (req, res) => {
+  try {
+    const { email } = req.body;
+    if (!email || !email.trim()) {
+      return res.status(400).json({ success: false, message: "Email is required." });
+    }
+
+    const normalizedEmail = email.trim().toLowerCase();
+    const user = await User.findOne({ email: normalizedEmail });
+
+    // Anti-enumeration: always return success
+    if (!user) {
+      return res.json({
+        success: true,
+        message: "If this email is registered, password reset instructions have been dispatched.",
+      });
+    }
+
+    // Generate signed reset token with 15 minutes validity
+    const resetToken = jwt.sign(
+      { id: user._id, email: user.email, purpose: "password_reset_email" },
+      config.jwt.secret,
+      { expiresIn: "15m" }
+    );
+
+    // Securely dispatch transactional email (never exposed over HTTP wire)
+    await sendPasswordResetEmail({
+      to: user.email,
+      name: user.name,
+      resetToken,
+    });
+
+    return res.json({
+      success: true,
+      message: "If this email is registered, password reset instructions have been dispatched.",
+    });
+  } catch (error) {
+    console.error("Forgot Password Email Error:", error);
+    return res.status(500).json({ success: false, message: "Failed to process password reset request." });
+  }
+};
+
+export const resetPasswordEmail = async (req, res) => {
+  try {
+    const { email, resetToken, newPassword, confirmPassword } = req.body;
+
+    if (!resetToken) {
+      return res.status(400).json({ success: false, message: "Password reset token is required." });
+    }
+
+    if (!newPassword || newPassword.length < 6) {
+      return res.status(400).json({ success: false, message: "Password must be at least 6 characters long." });
+    }
+
+    if (confirmPassword !== undefined && newPassword !== confirmPassword) {
+      return res.status(400).json({ success: false, message: "Passwords do not match." });
+    }
+
+    let decoded;
+    try {
+      decoded = jwt.verify(resetToken, config.jwt.secret);
+    } catch (err) {
+      return res.status(400).json({ success: false, message: "Invalid or expired password reset token." });
+    }
+
+    if (decoded.purpose !== "password_reset_email") {
+      return res.status(400).json({ success: false, message: "Invalid reset token purpose." });
+    }
+
+    const user = await User.findById(decoded.id);
+    if (!user) {
+      return res.status(404).json({ success: false, message: "User not found." });
+    }
+
+    const salt = await bcrypt.genSalt(10);
+    user.passwordHash = await bcrypt.hash(newPassword, salt);
+    await user.save();
+
+    return res.json({
+      success: true,
+      message: "Password has been successfully updated. You can now login.",
+    });
+  } catch (error) {
+    console.error("Reset Password Email Error:", error);
+    return res.status(500).json({ success: false, message: "Failed to update password." });
   }
 };
 
@@ -801,6 +1377,58 @@ export const getMe = async (req, res) => {
       success: false,
       message: "Failed to fetch profile.",
     });
+  }
+};
+
+// ============================================================================
+// 12. UPDATE / LINK MOBILE NUMBER (Profile Onboarding for Google Users)
+// ============================================================================
+export const updateProfilePhone = async (req, res) => {
+  try {
+    const { phone } = req.body;
+    if (!phone) {
+      return res.status(400).json({ success: false, message: "Mobile number is required." });
+    }
+
+    const normalizedPhone = normalizeBdPhone(phone);
+    if (!normalizedPhone || !isValidBdPhone(normalizedPhone)) {
+      return res.status(400).json({
+        success: false,
+        message: "Please enter a valid 11-digit Bangladeshi mobile number (e.g. 017XXXXXXXX).",
+      });
+    }
+
+    // Check if another user already owns this phone
+    const existing = await User.findOne({
+      phone: normalizedPhone,
+      _id: { $ne: req.user._id },
+    });
+    if (existing) {
+      return res.status(409).json({
+        success: false,
+        message: "This mobile number is already linked to another Examino account.",
+      });
+    }
+
+    req.user.phone = normalizedPhone;
+    req.user.isPhoneVerified = true;
+    await req.user.save();
+
+    return res.json({
+      success: true,
+      message: "Mobile number updated successfully.",
+      user: {
+        id: req.user._id,
+        name: req.user.name,
+        email: req.user.email,
+        phone: req.user.phone,
+        role: req.user.role,
+        isPhoneVerified: req.user.isPhoneVerified,
+      },
+    });
+  } catch (err) {
+    console.error("Update Phone Error:", err);
+    return res.status(500).json({ success: false, message: "Failed to update mobile number." });
   }
 };
 
