@@ -1,0 +1,631 @@
+{
+  "generatedAt": "2026-11-15T04:40:50.969Z",
+  "totalQuestions": 2752,
+  "summary": {
+    "totalQuestions": 2752,
+    "crossSubjectFlaggedCount": 10,
+    "duplicatesCount": 306,
+    "missingOrGenericTopicCount": 779,
+    "malformedQuestionsCount": 0,
+    "questionsWithImagesCount": 186
+  },
+  "crossSubjectMismatches": [
+    {
+      "qId": "6ab9f910a15f24063b2c9537",
+      "question": "ক্রায়োসার্জারি ব্যবহৃত হয়-",
+      "options": [
+        "প্লাস্টিক সার্জারিতে",
+        "হার্টের বাইপাসে",
+        "চোখের লেন্স প্রতিস্থাপনে",
+        "লিভার ক্যান্সারে"
+      ],
+      "correctAnswer": "লিভার ক্যান্সারে",
+      "currentSubject": "ICT",
+      "currentChapter": "Introduction to ICT",
+      "currentTopic": "ক্রায়োসার্জারি (Cryosurgery)",
+      "suggestedSubject": "Physics",
+      "suggestedChapter": "General Physics",
+      "reason": "Contains non-ICT Physics concept (লেন্স) inside ICT chapter"
+    },
+    {
+      "qId": "6ab9f910a15f24063b2c95de",
+      "question": "ক্যামোসার্জারি চিকিৎসা পদ্ধতিতে নিচের কোনটি ব্যবহৃত হয়?",
+      "options": [
+        "ক্রায়োজেনিক এজেন্ট",
+        "অ্যাম্বুলেন্স",
+        "রেডিও থেরাপি",
+        "কেমোথেরাপি"
+      ],
+      "correctAnswer": "ক্রায়োজেনিক এজেন্ট",
+      "currentSubject": "ICT",
+      "currentChapter": "Board Questions",
+      "currentTopic": "",
+      "suggestedSubject": "Physics",
+      "suggestedChapter": "General Physics",
+      "reason": "Contains non-ICT Physics concept (লেন্স) inside ICT chapter"
+    },
+    {
+      "qId": "6af72ce7b3fef9f3900975f9",
+      "question": "Extended onlyWhich of the following is the correct balanced symbol equation for aerobic respiration",
+      "options": [
+        "C6H12O6   +  6 O2 →  6 CO2 + 6 H2O",
+        "C6H12O6 →  2 C3H6O3",
+        "6 CO2 + 6 H2O →  C6H12O6  + 6 O2",
+        "C6H12O6  →  2 C2H5OH + 2 CO2"
+      ],
+      "correctAnswer": "C6H12O6   +  6 O2 →  6 CO2 + 6 H2O",
+      "currentSubject": "ICT",
+      "currentChapter": "অধ্যায় ২: কমিউনিকেশন সিস্টেমস ও নেটওয়ার্কিং",
+      "currentTopic": "কমিউনিকেশন ও নেটওয়ার্কিং",
+      "suggestedSubject": "Chemistry / Biology",
+      "suggestedChapter": "Natural Sciences",
+      "reason": "Contains pure Chemistry/Biology concept or formula (aerobic respiration) inside ICT chapter"
+    },
+    {
+      "qId": "6af733a111ee24af7b2db449",
+      "question": "Higher OnlyThe reaction between nitrogen and hydrogen produces ammonia.N2 (g) + 3H2 (g) \\(\\rightleft",
+      "options": [
+        "A",
+        "B",
+        "C",
+        "D"
+      ],
+      "correctAnswer": "B",
+      "currentSubject": "ICT",
+      "currentChapter": "অধ্যায় ৩: সংখ্যা পদ্ধতি ও ডিজিটাল ডিভাইস",
+      "currentTopic": "লজিক গেইট (Logic Gates)",
+      "suggestedSubject": "Chemistry / Biology",
+      "suggestedChapter": "Natural Sciences",
+      "reason": "Contains pure Chemistry/Biology concept or formula (ammonia) inside ICT chapter"
+    },
+    {
+      "qId": "6af733b311ee24af7b2db51b",
+      "question": "What is the balanced chemical equation for anaerobic respiration in yeast?",
+      "options": [
+        "C6H12O6  →  2CO2 + 6H2O",
+        "C6H12O6  →  6CO2 + 6H2O",
+        "C6H12O6  →  2C2H5OH + 2CO2",
+        "C6H12O6  →  2C2H5OH + 2H2O"
+      ],
+      "correctAnswer": "C6H12O6  →  2C2H5OH + 2CO2",
+      "currentSubject": "ICT",
+      "currentChapter": "অধ্যায় ২: কমিউনিকেশন সিস্টেমস ও নেটওয়ার্কিং",
+      "currentTopic": "কমিউনিকেশন ও নেটওয়ার্কিং",
+      "suggestedSubject": "Chemistry / Biology",
+      "suggestedChapter": "Natural Sciences",
+      "reason": "Contains pure Chemistry/Biology concept or formula (aerobic respiration) inside ICT chapter"
+    },
+    {
+      "qId": "6af733b511ee24af7b2db545",
+      "question": "In a titration, 25.0 cm3 of a sodium sulfite solution required 45.0 cm3 of 0.0200 mol dm-3 potassium",
+      "options": [
+        "0.014 mol dm-3",
+        "0.056 mol dm-3",
+        "0.090 mol dm-3",
+        "0.900 mol dm-3"
+      ],
+      "correctAnswer": "0.090 mol dm-3",
+      "currentSubject": "ICT",
+      "currentChapter": "অধ্যায় ৩: সংখ্যা পদ্ধতি ও ডিজিটাল ডিভাইস",
+      "currentTopic": "লজিক গেইট (Logic Gates)",
+      "suggestedSubject": "Chemistry / Biology",
+      "suggestedChapter": "Natural Sciences",
+      "reason": "Contains pure Chemistry/Biology concept or formula (sodium) inside ICT chapter"
+    },
+    {
+      "qId": "6af733b611ee24af7b2db56c",
+      "question": "The production of ammonia involves the exothermic reaction between nitrogen and hydrogen. The equati",
+      "options": [
+        "-230 kJ / mol",
+        "-1025 kJ / mol",
+        "-87 kJ / mol",
+        "+87 kJ / mol"
+      ],
+      "correctAnswer": "-87 kJ / mol",
+      "currentSubject": "ICT",
+      "currentChapter": "অধ্যায় ৩: সংখ্যা পদ্ধতি ও ডিজিটাল ডিভাইস",
+      "currentTopic": "লজিক গেইট (Logic Gates)",
+      "suggestedSubject": "Chemistry / Biology",
+      "suggestedChapter": "Natural Sciences",
+      "reason": "Contains pure Chemistry/Biology concept or formula (ammonia) inside ICT chapter"
+    },
+    {
+      "qId": "6af733de11ee24af7b2db903",
+      "question": "Which of the following lenses would you prefer to use while reading small letters found in a diction",
+      "options": [
+        "A convex lens of focal length 50 cm",
+        "A concave lens of focal length 50 cm",
+        "A convex lens of focal length 5 cm",
+        "A concave lens of focal length 5 cm"
+      ],
+      "correctAnswer": "A convex lens of focal length 5 cm",
+      "currentSubject": "ICT",
+      "currentChapter": "অধ্যায় ৩: সংখ্যা পদ্ধতি ও ডিজিটাল ডিভাইস",
+      "currentTopic": "লজিক গেইট (Logic Gates)",
+      "suggestedSubject": "Physics",
+      "suggestedChapter": "General Physics",
+      "reason": "Contains non-ICT Physics concept (focal length) inside ICT chapter"
+    },
+    {
+      "qId": "6af733e411ee24af7b2db9a2",
+      "question": "কম্পিউটার ব্যবসায়ী জনাব দিপু দৈনন্দিন লেনদেনের জন্য ১,০০,০০০ টাকা নিকটস্থ ব্যাংকে জমা করেন এবং প্রয়ো",
+      "options": [
+        "কেন্দ্রীয় ব্যাংক",
+        "বাণিজ্যিক ব্যাংক",
+        "আঞ্চলিক ব্যাংক",
+        "বিনিয়োগ ব্যাংক"
+      ],
+      "correctAnswer": "বাণিজ্যিক ব্যাংক",
+      "currentSubject": "ICT",
+      "currentChapter": "অধ্যায় ৩: সংখ্যা পদ্ধতি ও ডিজিটাল ডিভাইস",
+      "currentTopic": "লজিক গেইট (Logic Gates)",
+      "suggestedSubject": "Economics",
+      "suggestedChapter": "Macro/Micro Economics",
+      "reason": "Contains Economics/Finance concept (বাণিজ্যিক ব্যাংক) inside ICT chapter"
+    },
+    {
+      "qId": "6af73d35889b8ce675c04ae4",
+      "question": "10g এবং 20g ভরের দুটি বস্তুকে 5m দূরে রাখা হলো। যদি মহাকর্ষীয় ধ্রুবক \\(6.7×10^{-11} Nm^2 kg^{-2}\\)",
+      "options": [
+        "4.36×10−14N4.36×10^{-14} N4.36×10−14N",
+        "5.36×10−15N5.36×10^{-15} N5.36×10−15N",
+        "5.36×10−16N5.36×10^{-16} N5.36×10−16N",
+        "4.36×10−16N4.36×10^{-16} N4.36×10−16N"
+      ],
+      "correctAnswer": "5.36×10−16N5.36×10^{-16} N5.36×10−16N",
+      "currentSubject": "ICT",
+      "currentChapter": "অধ্যায় ৫: প্রোগ্রামিং ভাষা (সি প্রোগ্রামিং)",
+      "currentTopic": "সি প্রোগ্রামিং (C Language)",
+      "suggestedSubject": "Physics",
+      "suggestedChapter": "General Physics",
+      "reason": "Contains non-ICT Physics concept (মহাকর্ষ) inside ICT chapter"
+    }
+  ],
+  "duplicatesSample": [
+    {
+      "duplicateId": "6ab9f90fa15f24063b2c93c3",
+      "originalId": "6ab9f90fa15f24063b2c92bf",
+      "chapter": "অধ্যায় ২: কমিউনিকেশন সিস্টেমস ও নেটওয়ার্কিং",
+      "preview": "বিভিন্ন পাহাড়-পর্বতে যেকোনো বাধা অতিক্রম করতে পারে—\ni. রেডিও ওয়েভ\nii. "
+    },
+    {
+      "duplicateId": "6ab9f90fa15f24063b2c93cb",
+      "originalId": "6ab9f90fa15f24063b2c92c5",
+      "chapter": "Communication Systems",
+      "preview": "Wi-Max-এর বেস স্টেশনে থাকে—\ni. ইনডোর ডিভাইস\nii. ইনডোর টাওয়ার\niii. আউট"
+    },
+    {
+      "duplicateId": "6ab9f90fa15f24063b2c93cd",
+      "originalId": "6ab9f90fa15f24063b2c92c7",
+      "chapter": "অধ্যায় ২: কমিউনিকেশন সিস্টেমস ও নেটওয়ার্কিং",
+      "preview": "বর্তমানে জনপ্রিয় হটস্পট হলো—\ni. ওয়াই-ফাই\nii. ওয়াই-ম্যাক্স\niii. ব্লু"
+    },
+    {
+      "duplicateId": "6ab9f910a15f24063b2c93f0",
+      "originalId": "6ab9f90fa15f24063b2c92e4",
+      "chapter": "Communication Systems",
+      "preview": "Wi-Max-এর কভারেজ এরিয়া কত?"
+    },
+    {
+      "duplicateId": "6ab9f910a15f24063b2c93fd",
+      "originalId": "6ab9f90fa15f24063b2c9277",
+      "chapter": "অধ্যায় ২: কমিউনিকেশন সিস্টেমস ও নেটওয়ার্কিং",
+      "preview": "সাধারণত পাহাড়ি এলাকায় কার্যকরী নেটওয়ার্ক স্থাপনের জন্য কোন মাধ্যমটি সু"
+    },
+    {
+      "duplicateId": "6ab9f910a15f24063b2c9404",
+      "originalId": "6ab9f90fa15f24063b2c92ef",
+      "chapter": "অধ্যায় ২: কমিউনিকেশন সিস্টেমস ও নেটওয়ার্কিং",
+      "preview": "মাইক্রোওয়েভ যোগাযোগ কয় ধরনের হয়ে থাকে?"
+    },
+    {
+      "duplicateId": "6ab9f910a15f24063b2c9411",
+      "originalId": "6ab9f90fa15f24063b2c9283",
+      "chapter": "অধ্যায় ২: কমিউনিকেশন সিস্টেমস ও নেটওয়ার্কিং",
+      "preview": "অপটিক্যাল ফাইবারের সবচেয়ে ভিতরের অংশ কোনটি?"
+    },
+    {
+      "duplicateId": "6ab9f910a15f24063b2c9416",
+      "originalId": "6ab9f90fa15f24063b2c9288",
+      "chapter": "Communication Systems",
+      "preview": "কোর, ক্ল্যাডিং ও জ্যাকেট দিয়ে কোনটি তৈরি?"
+    },
+    {
+      "duplicateId": "6ab9f910a15f24063b2c9433",
+      "originalId": "6ab9f90fa15f24063b2c92a5",
+      "chapter": "Communication Systems",
+      "preview": "কো-অ্যাক্সিয়াল ক্যাবলের কোনটি হালকা ও নমনীয় তার?"
+    },
+    {
+      "duplicateId": "6ab9f910a15f24063b2c944a",
+      "originalId": "6ab9f90fa15f24063b2c91f9",
+      "chapter": "Communication Systems",
+      "preview": "উদ্দীপক: রাজুর প্রিন্টার ব্যবহারের ক্ষেত্রে ডেটা ট্রান্সমিশন মোডের বৈশ"
+    },
+    {
+      "duplicateId": "6ab9f910a15f24063b2c945c",
+      "originalId": "6ab9f90fa15f24063b2c9208",
+      "chapter": "Communication Systems",
+      "preview": "কিবোর্ড থেকে সিপিউতে ডেটা স্থানান্তরের সময় ব্যবহৃত ট্রান্সমিশনের বৈশি"
+    },
+    {
+      "duplicateId": "6ab9f910a15f24063b2c9470",
+      "originalId": "6ab9f90fa15f24063b2c921b",
+      "chapter": "Communication Systems",
+      "preview": "কোনটি মাল্টিকাস্ট সিস্টেম?"
+    },
+    {
+      "duplicateId": "6ab9f910a15f24063b2c9486",
+      "originalId": "6ab9f90fa15f24063b2c9228",
+      "chapter": "Communication Systems",
+      "preview": "কোন প্রক্রিয়ায় প্রেরক তাৎক্ষণিক ডেটা ট্রান্সফার করতে পারে?"
+    },
+    {
+      "duplicateId": "6ab9f910a15f24063b2c9489",
+      "originalId": "6ab9f90fa15f24063b2c922b",
+      "chapter": "অধ্যায় ২: কমিউনিকেশন সিস্টেমস ও নেটওয়ার্কিং",
+      "preview": "সিনক্রোনাস ট্রান্সমিশনের প্রধান সুবিধা কোনটি?"
+    },
+    {
+      "duplicateId": "6ab9f910a15f24063b2c948a",
+      "originalId": "6ab9f90fa15f24063b2c922c",
+      "chapter": "Communication Systems",
+      "preview": "স্টার্ট ও স্টপ বিটের মাঝে ব্লক আকারে ডেটা পাঠানো হয় কোন ট্রান্সমিশনে?"
+    },
+    {
+      "duplicateId": "6ab9f910a15f24063b2c94af",
+      "originalId": "6ab9f90fa15f24063b2c925c",
+      "chapter": "Communication Systems",
+      "preview": "কম্পিউটার থেকে প্রিন্টারে ডেটা স্থানান্তরিত হয়—"
+    },
+    {
+      "duplicateId": "6ab9f910a15f24063b2c94b6",
+      "originalId": "6ab9f90fa15f24063b2c923d",
+      "chapter": "Communication Systems",
+      "preview": "একসাথে অসংখ্য লাইনে ডেটা প্রেরণ সম্ভব—"
+    },
+    {
+      "duplicateId": "6ab9f90fa15f24063b2c93d4",
+      "originalId": "6ab9f90fa15f24063b2c92cd",
+      "chapter": "Communication Systems",
+      "preview": "টেলিভিশনের রিমোট কন্ট্রোলে কোনটি ব্যবহৃত হয়?"
+    },
+    {
+      "duplicateId": "6ab9f90fa15f24063b2c93d6",
+      "originalId": "6ab9f90fa15f24063b2c92cf",
+      "chapter": "অধ্যায় ২: কমিউনিকেশন সিস্টেমস ও নেটওয়ার্কিং",
+      "preview": "ব্লুটুথ একেই সময়ে কয়টি ডিভাইস সংযুক্ত হতে পারে?"
+    },
+    {
+      "duplicateId": "6ab9f910a15f24063b2c93e9",
+      "originalId": "6ab9f90fa15f24063b2c934d",
+      "chapter": "Communication Systems",
+      "preview": "WiMAX প্রযুক্তি কোথায় ব্যবহৃত হয়?"
+    },
+    {
+      "duplicateId": "6ab9f910a15f24063b2c93f3",
+      "originalId": "6ab9f90fa15f24063b2c9271",
+      "chapter": "Communication Systems",
+      "preview": "উদ্দীপক: নিচের উদ্দীপকটি লক্ষ করো এবং ২০৭ ও ২০৮ নং প্রশ্নের উত্তর দাও:"
+    },
+    {
+      "duplicateId": "6ab9f910a15f24063b2c93f9",
+      "originalId": "6ab9f90fa15f24063b2c91e3",
+      "chapter": "Communication Systems",
+      "preview": "কোন প্রকার তার/ক্যাবল কিউবিকাল সংযোগ দ্বারা একাধিক ডিভাইসের মধ্যে যে প"
+    },
+    {
+      "duplicateId": "6ab9f910a15f24063b2c9419",
+      "originalId": "6ab9f90fa15f24063b2c928b",
+      "chapter": "অধ্যায় ২: কমিউনিকেশন সিস্টেমস ও নেটওয়ার্কিং",
+      "preview": "টুইস্টেড পেয়ার ক্যাবলের তারগুলোর রঙ হতে পারে—\ni. কমলা\nii. সাদা, নীল\nii"
+    },
+    {
+      "duplicateId": "6ab9f910a15f24063b2c9426",
+      "originalId": "6ab9f90fa15f24063b2c9298",
+      "chapter": "Communication Systems",
+      "preview": "টুইস্টেড পেয়ার ক্যাবল কয় ধরনের হয়ে থাকে?"
+    },
+    {
+      "duplicateId": "6ab9f910a15f24063b2c9432",
+      "originalId": "6ab9f90fa15f24063b2c92a4",
+      "chapter": "Communication Systems",
+      "preview": "কো-অ্যাক্সিয়াল ক্যাবলের ডেটা প্রেরণের সাধারণ হার কত?"
+    }
+  ],
+  "missingOrGenericTopicSample": [
+    {
+      "qId": "6ab9f90fa15f24063b2c91e2",
+      "chapter": "অধ্যায় ২: কমিউনিকেশন সিস্টেমস ও নেটওয়ার্কিং",
+      "topic": "কমিউনিকেশন ও নেটওয়ার্কিং",
+      "preview": "IoT (Internet of Things) প্রযুক্তির ব্যবহারিক ক্ষেত্রগুলো হচ"
+    },
+    {
+      "qId": "6ab9f90fa15f24063b2c91ed",
+      "chapter": "অধ্যায় ২: কমিউনিকেশন সিস্টেমস ও নেটওয়ার্কিং",
+      "topic": "কমিউনিকেশন ও নেটওয়ার্কিং",
+      "preview": "মডেম যন্ত্রটি কমিউনিকেশন সিস্টেমে ব্যবহার হতে পারে—\ni. সোর্স"
+    },
+    {
+      "qId": "6ab9f90fa15f24063b2c91f4",
+      "chapter": "অধ্যায় ২: কমিউনিকেশন সিস্টেমস ও নেটওয়ার্কিং",
+      "topic": "কমিউনিকেশন ও নেটওয়ার্কিং",
+      "preview": "নিচের তথ্যগুলো লক্ষ করো—\ni. মাল্টিকাস্ট মোডে নেটওয়ার্কের অধ"
+    },
+    {
+      "qId": "6ab9f90fa15f24063b2c9207",
+      "chapter": "অধ্যায় ২: কমিউনিকেশন সিস্টেমস ও নেটওয়ার্কিং",
+      "topic": "কমিউনিকেশন ও নেটওয়ার্কিং",
+      "preview": "সিনক্রোনাস ট্রান্সমিশনে ডেটা ক্যারেক্টারগুলোকে ভাগ করে নেয়—"
+    },
+    {
+      "qId": "6ab9f90fa15f24063b2c924f",
+      "chapter": "অধ্যায় ২: কমিউনিকেশন সিস্টেমস ও নেটওয়ার্কিং",
+      "topic": "কমিউনিকেশন ও নেটওয়ার্কিং",
+      "preview": "ধীর গতি ডেটা স্থানান্তরের ক্ষেত্রে কোন ব্যান্ডউইথ ব্যবহার হয"
+    },
+    {
+      "qId": "6ab9f90fa15f24063b2c92c7",
+      "chapter": "অধ্যায় ২: কমিউনিকেশন সিস্টেমস ও নেটওয়ার্কিং",
+      "topic": "কমিউনিকেশন ও নেটওয়ার্কিং",
+      "preview": "বর্তমানে জনপ্রিয় হটস্পট হলো—\ni. ওয়াই-ফাই\nii. ওয়াই-ম্যাক্স"
+    },
+    {
+      "qId": "6ab9f90fa15f24063b2c92d0",
+      "chapter": "অধ্যায় ২: কমিউনিকেশন সিস্টেমস ও নেটওয়ার্কিং",
+      "topic": "কমিউনিকেশন ও নেটওয়ার্কিং",
+      "preview": "ব্লুটুথ এর কভারেজ এরিয়া কত?"
+    },
+    {
+      "qId": "6ab9f90fa15f24063b2c930d",
+      "chapter": "অধ্যায় ২: কমিউনিকেশন সিস্টেমস ও নেটওয়ার্কিং",
+      "topic": "কমিউনিকেশন ও নেটওয়ার্কিং",
+      "preview": "ইউরোপিয়ান টেলিযোগাযোগ স্ট্যান্ডার্ড ইনস্টিটিউট কোন প্রজন্মের"
+    },
+    {
+      "qId": "6ab9f90fa15f24063b2c9322",
+      "chapter": "অধ্যায় ২: কমিউনিকেশন সিস্টেমস ও নেটওয়ার্কিং",
+      "topic": "কমিউনিকেশন ও নেটওয়ার্কিং",
+      "preview": "নিচের উদ্দীপকটি পড়ো এবং পরবর্তী দুটি প্রশ্নের উত্তর দাও:\nমনি"
+    },
+    {
+      "qId": "6ab9f90fa15f24063b2c9328",
+      "chapter": "অধ্যায় ২: কমিউনিকেশন সিস্টেমস ও নেটওয়ার্কিং",
+      "topic": "কমিউনিকেশন ও নেটওয়ার্কিং",
+      "preview": "তাদের নেটওয়ার্কটি কী ধরনের হবে?\n(একটি অফিসের আটতলা ভবনের বিভ"
+    },
+    {
+      "qId": "6ab9f90fa15f24063b2c91ef",
+      "chapter": "অধ্যায় ২: কমিউনিকেশন সিস্টেমস ও নেটওয়ার্কিং",
+      "topic": "কমিউনিকেশন ও নেটওয়ার্কিং",
+      "preview": "ডেটা কমিউনিকেশনের মূল উপাদান কয়টি?"
+    },
+    {
+      "qId": "6ab9f90fa15f24063b2c920e",
+      "chapter": "অধ্যায় ২: কমিউনিকেশন সিস্টেমস ও নেটওয়ার্কিং",
+      "topic": "কমিউনিকেশন ও নেটওয়ার্কিং",
+      "preview": "ফুল-ডুপ্লেক্স মোডে চলে—"
+    },
+    {
+      "qId": "6ab9f90fa15f24063b2c9229",
+      "chapter": "অধ্যায় ২: কমিউনিকেশন সিস্টেমস ও নেটওয়ার্কিং",
+      "topic": "কমিউনিকেশন ও নেটওয়ার্কিং",
+      "preview": "অ্যাসিনক্রোনাস ট্রান্সমিশনে একটি ডেটা বা ক্যারেক্টার প্রেরণে"
+    },
+    {
+      "qId": "6ab9f90fa15f24063b2c922b",
+      "chapter": "অধ্যায় ২: কমিউনিকেশন সিস্টেমস ও নেটওয়ার্কিং",
+      "topic": "কমিউনিকেশন ও নেটওয়ার্কিং",
+      "preview": "সিনক্রোনাস ট্রান্সমিশনের প্রধান সুবিধা কোনটি?"
+    },
+    {
+      "qId": "6ab9f90fa15f24063b2c926b",
+      "chapter": "অধ্যায় ২: কমিউনিকেশন সিস্টেমস ও নেটওয়ার্কিং",
+      "topic": "কমিউনিকেশন ও নেটওয়ার্কিং",
+      "preview": "ব্যান্ডউইথ পরিমাপের জন্য কোন একক ব্যবহার করা হয়?"
+    },
+    {
+      "qId": "6ab9f90fa15f24063b2c9273",
+      "chapter": "অধ্যায় ২: কমিউনিকেশন সিস্টেমস ও নেটওয়ার্কিং",
+      "topic": "কমিউনিকেশন ও নেটওয়ার্কিং",
+      "preview": "উদ্দীপক: নিচের উদ্দীপকটি পড়ো এবং ২০৯ ও ২১০ নং প্রশ্নের উত্তর"
+    },
+    {
+      "qId": "6ab9f90fa15f24063b2c9294",
+      "chapter": "অধ্যায় ২: কমিউনিকেশন সিস্টেমস ও নেটওয়ার্কিং",
+      "topic": "কমিউনিকেশন ও নেটওয়ার্কিং",
+      "preview": "অপটিক্যাল ফাইবারের কোরের ব্যাস কম হলে—\ni. আলোক সিগন্যালের বি"
+    },
+    {
+      "qId": "6ab9f90fa15f24063b2c92b7",
+      "chapter": "অধ্যায় ২: কমিউনিকেশন সিস্টেমস ও নেটওয়ার্কিং",
+      "topic": "কমিউনিকেশন ও নেটওয়ার্কিং",
+      "preview": "ডেটা কমিউনিকেশনের মাধ্যমগুলো হলো—\ni. টুইস্টেড পেয়ার ক্যাবল\n"
+    },
+    {
+      "qId": "6ab9f90fa15f24063b2c92c1",
+      "chapter": "অধ্যায় ২: কমিউনিকেশন সিস্টেমস ও নেটওয়ার্কিং",
+      "topic": "কমিউনিকেশন ও নেটওয়ার্কিং",
+      "preview": "মাইক্রোওয়েভের বহন হচ্ছে—\ni. টেরিস্ট্রিয়াল\nii. স্যাটেলাইট\nii"
+    },
+    {
+      "qId": "6ab9f90fa15f24063b2c92e9",
+      "chapter": "অধ্যায় ২: কমিউনিকেশন সিস্টেমস ও নেটওয়ার্কিং",
+      "topic": "কমিউনিকেশন ও নেটওয়ার্কিং",
+      "preview": "মাইক্রোওয়েভের ফ্রিকোয়েন্সি রেঞ্জ কত?"
+    },
+    {
+      "qId": "6ab9f90fa15f24063b2c92f0",
+      "chapter": "অধ্যায় ২: কমিউনিকেশন সিস্টেমস ও নেটওয়ার্কিং",
+      "topic": "কমিউনিকেশন ও নেটওয়ার্কিং",
+      "preview": "কৃত্রিম উপগ্রহের মাধ্যমে মাইক্রোওয়েভে সিগন্যাল আদান-প্রদান শ"
+    },
+    {
+      "qId": "6ab9f90fa15f24063b2c92f5",
+      "chapter": "অধ্যায় ২: কমিউনিকেশন সিস্টেমস ও নেটওয়ার্কিং",
+      "topic": "কমিউনিকেশন ও নেটওয়ার্কিং",
+      "preview": "সাধারণত মোবাইল কমিউনিকেশনের সূচনা—\ni. অ্যানালগ পদ্ধতিতে মোবা"
+    },
+    {
+      "qId": "6ab9f90fa15f24063b2c92ff",
+      "chapter": "অধ্যায় ২: কমিউনিকেশন সিস্টেমস ও নেটওয়ার্কিং",
+      "topic": "কমিউনিকেশন ও নেটওয়ার্কিং",
+      "preview": "উদ্দীপক: নিচের উদ্দীপকটি পড়ো এবং ৩৭০ ও ৩৭১ নং প্রশ্নের উত্তর"
+    },
+    {
+      "qId": "6ab9f90fa15f24063b2c9308",
+      "chapter": "অধ্যায় ২: কমিউনিকেশন সিস্টেমস ও নেটওয়ার্কিং",
+      "topic": "কমিউনিকেশন ও নেটওয়ার্কিং",
+      "preview": "কোন প্রজন্মের মোবাইল প্রযুক্তিতে ভয়েস কল এবং প্যাকেট সুইচিং "
+    },
+    {
+      "qId": "6ab9f90fa15f24063b2c91ec",
+      "chapter": "অধ্যায় ২: কমিউনিকেশন সিস্টেমস ও নেটওয়ার্কিং",
+      "topic": "কমিউনিকেশন ও নেটওয়ার্কিং",
+      "preview": "কমিউনিকেশনে ডেস্টিনেশন হিসেবে ব্যবহার হতে পারে—\ni. কম্পিউটার"
+    }
+  ],
+  "malformedQuestions": [],
+  "imageHealthSample": [
+    {
+      "qId": "6ab9f910a15f24063b2c9466",
+      "chapter": "Communication Systems",
+      "imgUrl": "https://res.cloudinary.com/dtz0urit6/image/upload/q_auto:best,f_jpg/cloudinary-tools-uploads/tplzhhgfuz5gdrok5xoy",
+      "preview": "নিচের চিত্রটি কোন মোডের?",
+      "status": "BROKEN (404)"
+    },
+    {
+      "qId": "6ab9f910a15f24063b2c9468",
+      "chapter": "Communication Systems",
+      "imgUrl": "https://res.cloudinary.com/dtz0urit6/image/upload/q_auto:best,f_jpg/cloudinary-tools-uploads/hslgmvshpdio32uwo7s1",
+      "preview": "নিচের চিত্রটি কোন মোডের?",
+      "status": "BROKEN (404)"
+    },
+    {
+      "qId": "6ab9f90fa15f24063b2c93ce",
+      "chapter": "Communication Systems",
+      "imgUrl": "https://res.cloudinary.com/dycwm69nt/image/upload/v1790486423/ChatGPT_Image_Sep_27_2026_11_18_40_AM_zilznu.png",
+      "preview": "উদ্দীপক: চিত্রে উলেখিত মাধ্যম কোনটি?",
+      "status": "ACTIVE (200)"
+    },
+    {
+      "qId": "6ab9f90fa15f24063b2c93cf",
+      "chapter": "Communication Systems",
+      "imgUrl": "https://res.cloudinary.com/dycwm69nt/image/upload/v1790486423/ChatGPT_Image_Sep_27_2026_11_18_40_AM_zilznu.png",
+      "preview": "উদ্দীপক: চিত্রে উলেখিত প্রযুক্তি ব্যবহার করা হয়—\n",
+      "status": "ACTIVE (200)"
+    },
+    {
+      "qId": "6ab9f910a15f24063b2c945f",
+      "chapter": "Communication Systems",
+      "imgUrl": "https://res.cloudinary.com/dtz0urit6/image/upload/q_auto:best,f_jpg/cloudinary-tools-uploads/tplzhhgfuz5gdrok5xoy",
+      "preview": "নিচের চিত্রটি হতে পারে—",
+      "status": "BROKEN (404)"
+    },
+    {
+      "qId": "6ab9f910a15f24063b2c95a7",
+      "chapter": "Board Questions",
+      "imgUrl": "https://res.cloudinary.com/dlllluhli/image/upload/f_auto,q_auto/WhatsApp_Image_2026-05-20_at_4.04.48_PM_gkv3my",
+      "preview": "উপরের সত্যক সারণি কোন গেটকে নির্দেশ করে?",
+      "status": "ACTIVE (200)"
+    },
+    {
+      "qId": "6ab9f910a15f24063b2c95e2",
+      "chapter": "Board Questions",
+      "imgUrl": "https://res.cloudinary.com/dycwm69nt/image/upload/q_auto/f_auto/v1779588479/WhatsApp_Image_2026-05-24_at_8.06.24_AM_xmndkc.jpg",
+      "preview": "উদ্দীপকের লজিক সার্কিটের আউটপুট সমীকরণ কোন গেটের স",
+      "status": "ACTIVE (200)"
+    },
+    {
+      "qId": "6ab9f910a15f24063b2c9593",
+      "chapter": "Board Questions",
+      "imgUrl": "https://res.cloudinary.com/dlllluhli/image/upload/f_auto,q_auto/WhatsApp_Image_2026-05-20_at_4.04.48_PM_1_skfosy",
+      "preview": "'Y' এর মান কোনটি? (নিচের চিত্র দেখো)",
+      "status": "ACTIVE (200)"
+    },
+    {
+      "qId": "6ab9f910a15f24063b2c95bf",
+      "chapter": "Board Questions",
+      "imgUrl": "https://res.cloudinary.com/dlllluhli/image/upload/f_auto,q_auto/WhatsApp_Image_2026-05-20_at_5.59.34_PM_iubrah",
+      "preview": "নিচের লজিক চিত্রটি দেখ। Y এর মান কোনটি?",
+      "status": "ACTIVE (200)"
+    },
+    {
+      "qId": "6ab9f910a15f24063b2c95c4",
+      "chapter": "Board Questions",
+      "imgUrl": "https://res.cloudinary.com/dlllluhli/image/upload/v1779377367/ChatGPT_Image_May_21_2026_09_25_07_PM_fhbpil.png",
+      "preview": "উদ্দীপকে Y এর মান হতে পারে— i. P̄.Q ii. PQ + P̄Q̄ ",
+      "status": "ACTIVE (200)"
+    },
+    {
+      "qId": "6ab9f910a15f24063b2c95d5",
+      "chapter": "Board Questions",
+      "imgUrl": "https://res.cloudinary.com/dlllluhli/image/upload/v1779377973/Screenshot_2026-05-21_213904_zpaagm.png",
+      "preview": "নিচের চিত্রে কী দেখানো হয়েছে?",
+      "status": "ACTIVE (200)"
+    },
+    {
+      "qId": "6ab9f910a15f24063b2c95dc",
+      "chapter": "Board Questions",
+      "imgUrl": "https://res.cloudinary.com/dlllluhli/image/upload/v1779378094/Screenshot_2026-05-21_214105_qfxpks.png",
+      "preview": "সার্বজনীন গেট তৈরিতে ব্যবহৃত হয় নিচের কোনটি?",
+      "status": "ACTIVE (200)"
+    },
+    {
+      "qId": "6ab9f910a15f24063b2c9612",
+      "chapter": "Board Questions",
+      "imgUrl": "https://res.cloudinary.com/dlllluhli/image/upload/v1779722905/Screenshot_2026-05-25_212749_syn8ij.png",
+      "preview": "নিচের চিত্রটি লক্ষ কর এবং উদ্দীপকের F এর সরলীকৃত ম",
+      "status": "ACTIVE (200)"
+    },
+    {
+      "qId": "6ab9f910a15f24063b2c9629",
+      "chapter": "Board Questions",
+      "imgUrl": "https://res.cloudinary.com/dlllluhli/image/upload/v1780276271/WhatsApp_Image_2026-06-01_at_6.57.47_AM_tnijnh.jpg",
+      "preview": "উপরের চিত্রটি লক্ষ্য করো এবং ২ ও ৩ নং প্রশ্নের উত্",
+      "status": "ACTIVE (200)"
+    },
+    {
+      "qId": "6ab9f910a15f24063b2c9594",
+      "chapter": "Board Questions",
+      "imgUrl": "https://res.cloudinary.com/dlllluhli/image/upload/f_auto,q_auto/WhatsApp_Image_2026-05-20_at_4.04.48_PM_1_skfosy",
+      "preview": "উদ্দীপকের বর্তনীটির আউটপুট Y=1 পেতে হলে A ও B এর ই",
+      "status": "ACTIVE (200)"
+    },
+    {
+      "qId": "6ab9f910a15f24063b2c95c3",
+      "chapter": "Board Questions",
+      "imgUrl": "https://res.cloudinary.com/dlllluhli/image/upload/v1779377367/ChatGPT_Image_May_21_2026_09_25_07_PM_fhbpil.png",
+      "preview": "নিচের উদ্দীপকটি লক্ষ কর এবং ১ ও ২নং প্রশ্নের উত্তর",
+      "status": "ACTIVE (200)"
+    },
+    {
+      "qId": "6ab9f910a15f24063b2c95e3",
+      "chapter": "Board Questions",
+      "imgUrl": "https://res.cloudinary.com/dycwm69nt/image/upload/q_auto/f_auto/v1779588479/WhatsApp_Image_2026-05-24_at_8.06.24_AM_xmndkc.jpg",
+      "preview": "উদ্দীপকের সার্কিটের ইনপুট A, B ও C হলে কখন X = 1 হ",
+      "status": "ACTIVE (200)"
+    },
+    {
+      "qId": "6ab9f910a15f24063b2c95c0",
+      "chapter": "Board Questions",
+      "imgUrl": "https://res.cloudinary.com/dlllluhli/image/upload/f_auto,q_auto/WhatsApp_Image_2026-05-20_at_5.59.34_PM_iubrah",
+      "preview": "A ও B এর মান কত হলে Y=1 হবে?  i. A=0, B=0  ii. A=1",
+      "status": "ACTIVE (200)"
+    },
+    {
+      "qId": "6ab9f910a15f24063b2c9613",
+      "chapter": "Board Questions",
+      "imgUrl": "https://res.cloudinary.com/dlllluhli/image/upload/v1779722905/Screenshot_2026-05-25_212749_syn8ij.png",
+      "preview": "নিচের চিত্রটি লক্ষ কর এবং F এর সরলীকৃত মানকে মোট ক",
+      "status": "ACTIVE (200)"
+    },
+    {
+      "qId": "6ab9f910a15f24063b2c960a",
+      "chapter": "Board Questions",
+      "imgUrl": "https://res.cloudinary.com/dlllluhli/image/upload/v1779674426/WhatsApp_Image_2026-05-25_at_8.00.02_AM_tnrese.jpg",
+      "preview": "চিত্রের আউটপুট হবে—",
+      "status": "ACTIVE (200)"
+    }
+  ]
+}

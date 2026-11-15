@@ -1,0 +1,914 @@
+{
+  "generatedAt": "2026-11-15T05:00:43.369Z",
+  "totalQuestionsScanned": 2752,
+  "crossSubjectSummary": {
+    "count": 7,
+    "items": [
+      {
+        "qId": "6af72ce7b3fef9f3900975f9",
+        "question": "Extended onlyWhich of the following is the correct balanced symbol equation for aerobic respiration",
+        "fullQuestion": "Extended onlyWhich of the following is the correct balanced symbol equation for aerobic respiration",
+        "currentSubject": "ICT",
+        "currentChapter": "অধ্যায় ২: কমিউনিকেশন সিস্টেমস ও নেটওয়ার্কিং",
+        "currentTopic": "কমিউনিকেশন ও নেটওয়ার্কিং",
+        "suggestedSubject": "Biology / Chemistry",
+        "suggestedChapter": "Bioenergetics / Respiration",
+        "reason": "Matched non-ICT domain pattern: Aerobic Respiration / Glucose equation",
+        "confidence": "High"
+      },
+      {
+        "qId": "6af733a111ee24af7b2db449",
+        "question": "Higher OnlyThe reaction between nitrogen and hydrogen produces ammonia.N2 (g) + 3H2 (g) \\(\\rightleft",
+        "fullQuestion": "Higher OnlyThe reaction between nitrogen and hydrogen produces ammonia.N2 (g) + 3H2 (g) \\(\\rightleft",
+        "currentSubject": "ICT",
+        "currentChapter": "অধ্যায় ৩: সংখ্যা পদ্ধতি ও ডিজিটাল ডিভাইস",
+        "currentTopic": "লজিক গেইট (Logic Gates)",
+        "suggestedSubject": "Chemistry",
+        "suggestedChapter": "Chemical Equilibrium & Industrial Chemistry",
+        "reason": "Matched non-ICT domain pattern: Haber process ammonia synthesis",
+        "confidence": "High"
+      },
+      {
+        "qId": "6af733b311ee24af7b2db51b",
+        "question": "What is the balanced chemical equation for anaerobic respiration in yeast?",
+        "fullQuestion": "What is the balanced chemical equation for anaerobic respiration in yeast?",
+        "currentSubject": "ICT",
+        "currentChapter": "অধ্যায় ২: কমিউনিকেশন সিস্টেমস ও নেটওয়ার্কিং",
+        "currentTopic": "কমিউনিকেশন ও নেটওয়ার্কিং",
+        "suggestedSubject": "Biology / Chemistry",
+        "suggestedChapter": "Bioenergetics / Respiration",
+        "reason": "Matched non-ICT domain pattern: Aerobic Respiration / Glucose equation",
+        "confidence": "High"
+      },
+      {
+        "qId": "6af733b511ee24af7b2db545",
+        "question": "In a titration, 25.0 cm3 of a sodium sulfite solution required 45.0 cm3 of 0.0200 mol dm-3 potassium",
+        "fullQuestion": "In a titration, 25.0 cm3 of a sodium sulfite solution required 45.0 cm3 of 0.0200 mol dm-3 potassium",
+        "currentSubject": "ICT",
+        "currentChapter": "অধ্যায় ৩: সংখ্যা পদ্ধতি ও ডিজিটাল ডিভাইস",
+        "currentTopic": "লজিক গেইট (Logic Gates)",
+        "suggestedSubject": "Chemistry",
+        "suggestedChapter": "Quantitative Chemistry",
+        "reason": "Matched non-ICT domain pattern: Redox Titration & Stoichiometry",
+        "confidence": "High"
+      },
+      {
+        "qId": "6af733b611ee24af7b2db56c",
+        "question": "The production of ammonia involves the exothermic reaction between nitrogen and hydrogen. The equati",
+        "fullQuestion": "The production of ammonia involves the exothermic reaction between nitrogen and hydrogen. The equati",
+        "currentSubject": "ICT",
+        "currentChapter": "অধ্যায় ৩: সংখ্যা পদ্ধতি ও ডিজিটাল ডিভাইস",
+        "currentTopic": "লজিক গেইট (Logic Gates)",
+        "suggestedSubject": "Chemistry",
+        "suggestedChapter": "Chemical Energetics",
+        "reason": "Matched non-ICT domain pattern: Thermochemistry & Enthalpy of reaction",
+        "confidence": "High"
+      },
+      {
+        "qId": "6af733de11ee24af7b2db903",
+        "question": "Which of the following lenses would you prefer to use while reading small letters found in a diction",
+        "fullQuestion": "Which of the following lenses would you prefer to use while reading small letters found in a diction",
+        "currentSubject": "ICT",
+        "currentChapter": "অধ্যায় ৩: সংখ্যা পদ্ধতি ও ডিজিটাল ডিভাইস",
+        "currentTopic": "লজিক গেইট (Logic Gates)",
+        "suggestedSubject": "Physics",
+        "suggestedChapter": "Geometrical Optics",
+        "reason": "Matched non-ICT domain pattern: Geometrical Optics & Lenses",
+        "confidence": "High"
+      },
+      {
+        "qId": "6af733e411ee24af7b2db9a2",
+        "question": "কম্পিউটার ব্যবসায়ী জনাব দিপু দৈনন্দিন লেনদেনের জন্য ১,০০,০০০ টাকা নিকটস্থ ব্যাংকে জমা করেন এবং প্রয়ো",
+        "fullQuestion": "কম্পিউটার ব্যবসায়ী জনাব দিপু দৈনন্দিন লেনদেনের জন্য ১,০০,০০০ টাকা নিকটস্থ ব্যাংকে জমা করেন এবং প্রয়ো",
+        "currentSubject": "ICT",
+        "currentChapter": "অধ্যায় ৩: সংখ্যা পদ্ধতি ও ডিজিটাল ডিভাইস",
+        "currentTopic": "লজিক গেইট (Logic Gates)",
+        "suggestedSubject": "Finance & Banking",
+        "suggestedChapter": "Commercial Banks",
+        "reason": "Matched non-ICT domain pattern: Commercial Banking & Money Markets",
+        "confidence": "High"
+      }
+    ]
+  },
+  "duplicateSummary": {
+    "totalDuplicateGroups": 324,
+    "totalDuplicateQuestions": 332,
+    "groups": [
+      {
+        "originalId": "6ab9f90fa15f24063b2c91e2",
+        "originalText": "IoT (Internet of Things) প্রযুক্তির ব্যবহারিক ক্ষেত্রগুলো হচ্ছে—\ni. বিভিন্ন বা হোম অটোমেশনে\nii. অবস্",
+        "chapter": "অধ্যায় ২: কমিউনিকেশন সিস্টেমস ও নেটওয়ার্কিং",
+        "createdAt": "2026-09-28T05:20:16.183Z",
+        "duplicateCount": 1,
+        "items": [
+          {
+            "duplicateId": "6ab9f90fa15f24063b2c93c8",
+            "chapter": "অধ্যায় ২: কমিউনিকেশন সিস্টেমস ও নেটওয়ার্কিং",
+            "type": "Exact Duplicate",
+            "createdAt": "2026-09-28T05:20:16.199Z"
+          }
+        ]
+      },
+      {
+        "originalId": "6ab9f90fa15f24063b2c91ed",
+        "originalText": "মডেম যন্ত্রটি কমিউনিকেশন সিস্টেমে ব্যবহার হতে পারে—\ni. সোর্স হিসেবে\nii. ডেস্টিনেশন হিসেবে\niii. ট্রান",
+        "chapter": "অধ্যায় ২: কমিউনিকেশন সিস্টেমস ও নেটওয়ার্কিং",
+        "createdAt": "2026-09-28T05:20:16.184Z",
+        "duplicateCount": 1,
+        "items": [
+          {
+            "duplicateId": "6ab9f910a15f24063b2c9478",
+            "chapter": "অধ্যায় ২: কমিউনিকেশন সিস্টেমস ও নেটওয়ার্কিং",
+            "type": "Exact Duplicate",
+            "createdAt": "2026-09-28T05:20:16.203Z"
+          }
+        ]
+      },
+      {
+        "originalId": "6ab9f90fa15f24063b2c91f4",
+        "originalText": "নিচের তথ্যগুলো লক্ষ করো—\ni. মাল্টিকাস্ট মোডে নেটওয়ার্কের অধীনস্থ সকল নোডই ডেটা গ্রহণ বা প্রেরণের ক্",
+        "chapter": "অধ্যায় ২: কমিউনিকেশন সিস্টেমস ও নেটওয়ার্কিং",
+        "createdAt": "2026-09-28T05:20:16.184Z",
+        "duplicateCount": 1,
+        "items": [
+          {
+            "duplicateId": "6ab9f910a15f24063b2c9444",
+            "chapter": "অধ্যায় ২: কমিউনিকেশন সিস্টেমস ও নেটওয়ার্কিং",
+            "type": "Exact Duplicate",
+            "createdAt": "2026-09-28T05:20:16.202Z"
+          }
+        ]
+      },
+      {
+        "originalId": "6ab9f90fa15f24063b2c9207",
+        "originalText": "সিনক্রোনাস ট্রান্সমিশনে ডেটা ক্যারেক্টারগুলোকে ভাগ করে নেয়—",
+        "chapter": "অধ্যায় ২: কমিউনিকেশন সিস্টেমস ও নেটওয়ার্কিং",
+        "createdAt": "2026-09-28T05:20:16.185Z",
+        "duplicateCount": 1,
+        "items": [
+          {
+            "duplicateId": "6ab9f910a15f24063b2c945b",
+            "chapter": "অধ্যায় ২: কমিউনিকেশন সিস্টেমস ও নেটওয়ার্কিং",
+            "type": "Exact Duplicate",
+            "createdAt": "2026-09-28T05:20:16.203Z"
+          }
+        ]
+      },
+      {
+        "originalId": "6ab9f90fa15f24063b2c921e",
+        "originalText": "গ্রাহকের সংখ্যা ও ডেটা গ্রহণের অধিকারের ওপর ভিত্তি করে ডেটা ট্রান্সমিশন মোডকে ভাগ করা যায় কত ভাগে?",
+        "chapter": "Communication Systems",
+        "createdAt": "2026-09-28T05:20:16.186Z",
+        "duplicateCount": 1,
+        "items": [
+          {
+            "duplicateId": "6ab9f910a15f24063b2c9473",
+            "chapter": "Communication Systems",
+            "type": "Exact Duplicate",
+            "createdAt": "2026-09-28T05:20:16.203Z"
+          }
+        ]
+      },
+      {
+        "originalId": "6ab9f90fa15f24063b2c9248",
+        "originalText": "এক Mbps বলতে বোঝায়—",
+        "chapter": "Communication Systems",
+        "createdAt": "2026-09-28T05:20:16.188Z",
+        "duplicateCount": 1,
+        "items": [
+          {
+            "duplicateId": "6ab9f910a15f24063b2c949a",
+            "chapter": "Communication Systems",
+            "type": "Exact Duplicate",
+            "createdAt": "2026-09-28T05:20:16.204Z"
+          }
+        ]
+      },
+      {
+        "originalId": "6ab9f90fa15f24063b2c924f",
+        "originalText": "ধীর গতি ডেটা স্থানান্তরের ক্ষেত্রে কোন ব্যান্ডউইথ ব্যবহার হয়?",
+        "chapter": "অধ্যায় ২: কমিউনিকেশন সিস্টেমস ও নেটওয়ার্কিং",
+        "createdAt": "2026-09-28T05:20:16.188Z",
+        "duplicateCount": 1,
+        "items": [
+          {
+            "duplicateId": "6ab9f910a15f24063b2c94a1",
+            "chapter": "অধ্যায় ২: কমিউনিকেশন সিস্টেমস ও নেটওয়ার্কিং",
+            "type": "Exact Duplicate",
+            "createdAt": "2026-09-28T05:20:16.204Z"
+          }
+        ]
+      },
+      {
+        "originalId": "6ab9f90fa15f24063b2c9259",
+        "originalText": "ভয়েস ব্যান্ড কোথায় ব্যবহৃত হয়?",
+        "chapter": "Communication Systems",
+        "createdAt": "2026-09-28T05:20:16.189Z",
+        "duplicateCount": 1,
+        "items": [
+          {
+            "duplicateId": "6ab9f910a15f24063b2c94ac",
+            "chapter": "Communication Systems",
+            "type": "Exact Duplicate",
+            "createdAt": "2026-09-28T05:20:16.204Z"
+          }
+        ]
+      },
+      {
+        "originalId": "6ab9f90fa15f24063b2c925d",
+        "originalText": "ভয়েস ব্যান্ডের সর্বোচ্চ গতি কত?",
+        "chapter": "Communication Systems",
+        "createdAt": "2026-09-28T05:20:16.189Z",
+        "duplicateCount": 1,
+        "items": [
+          {
+            "duplicateId": "6ab9f910a15f24063b2c94b0",
+            "chapter": "Communication Systems",
+            "type": "Exact Duplicate",
+            "createdAt": "2026-09-28T05:20:16.204Z"
+          }
+        ]
+      },
+      {
+        "originalId": "6ab9f90fa15f24063b2c925e",
+        "originalText": "টেলিফোন লাইনের ব্যবহারের ফ্রিকোয়েন্সি রেঞ্জ কত?",
+        "chapter": "Communication Systems",
+        "createdAt": "2026-09-28T05:20:16.189Z",
+        "duplicateCount": 1,
+        "items": [
+          {
+            "duplicateId": "6ab9f910a15f24063b2c94b1",
+            "chapter": "Communication Systems",
+            "type": "Exact Duplicate",
+            "createdAt": "2026-09-28T05:20:16.204Z"
+          }
+        ]
+      },
+      {
+        "originalId": "6ab9f90fa15f24063b2c92a4",
+        "originalText": "কো-অ্যাক্সিয়াল ক্যাবলের ডেটা প্রেরণের সাধারণ হার কত?",
+        "chapter": "Communication Systems",
+        "createdAt": "2026-09-28T05:20:16.191Z",
+        "duplicateCount": 1,
+        "items": [
+          {
+            "duplicateId": "6ab9f910a15f24063b2c9432",
+            "chapter": "Communication Systems",
+            "type": "Exact Duplicate",
+            "createdAt": "2026-09-28T05:20:16.202Z"
+          }
+        ]
+      },
+      {
+        "originalId": "6ab9f90fa15f24063b2c92a8",
+        "originalText": "ThickNet ক্যাবলের মাধ্যমে রিপিটার ছাড়া সংরক্ষিত কত মিটার দূরত্বে ডেটা আদান-প্রদান করা যায়?",
+        "chapter": "Communication Systems",
+        "createdAt": "2026-09-28T05:20:16.191Z",
+        "duplicateCount": 1,
+        "items": [
+          {
+            "duplicateId": "6ab9f910a15f24063b2c9436",
+            "chapter": "Communication Systems",
+            "type": "Exact Duplicate",
+            "createdAt": "2026-09-28T05:20:16.202Z"
+          }
+        ]
+      },
+      {
+        "originalId": "6ab9f90fa15f24063b2c92c7",
+        "originalText": "বর্তমানে জনপ্রিয় হটস্পট হলো—\ni. ওয়াই-ফাই\nii. ওয়াই-ম্যাক্স\niii. ব্লুটুথ\nনিচের কোনটি সঠিক?",
+        "chapter": "অধ্যায় ২: কমিউনিকেশন সিস্টেমস ও নেটওয়ার্কিং",
+        "createdAt": "2026-09-28T05:20:16.192Z",
+        "duplicateCount": 1,
+        "items": [
+          {
+            "duplicateId": "6ab9f90fa15f24063b2c93cd",
+            "chapter": "অধ্যায় ২: কমিউনিকেশন সিস্টেমস ও নেটওয়ার্কিং",
+            "type": "Exact Duplicate",
+            "createdAt": "2026-09-28T05:20:16.199Z"
+          }
+        ]
+      },
+      {
+        "originalId": "6ab9f90fa15f24063b2c92cd",
+        "originalText": "টেলিভিশনের রিমোট কন্ট্রোলে কোনটি ব্যবহৃত হয়?",
+        "chapter": "Communication Systems",
+        "createdAt": "2026-09-28T05:20:16.193Z",
+        "duplicateCount": 1,
+        "items": [
+          {
+            "duplicateId": "6ab9f90fa15f24063b2c93d4",
+            "chapter": "Communication Systems",
+            "type": "Exact Duplicate",
+            "createdAt": "2026-09-28T05:20:16.199Z"
+          }
+        ]
+      },
+      {
+        "originalId": "6ab9f90fa15f24063b2c92d0",
+        "originalText": "ব্লুটুথ এর কভারেজ এরিয়া কত?",
+        "chapter": "অধ্যায় ২: কমিউনিকেশন সিস্টেমস ও নেটওয়ার্কিং",
+        "createdAt": "2026-09-28T05:20:16.193Z",
+        "duplicateCount": 1,
+        "items": [
+          {
+            "duplicateId": "6ab9f90fa15f24063b2c93d7",
+            "chapter": "অধ্যায় ২: কমিউনিকেশন সিস্টেমস ও নেটওয়ার্কিং",
+            "type": "Exact Duplicate",
+            "createdAt": "2026-09-28T05:20:16.199Z"
+          }
+        ]
+      },
+      {
+        "originalId": "6ab9f90fa15f24063b2c9319",
+        "originalText": "GPRS-এর পূর্ণরূপ কী? /সি. বো. ১৭; সরকারি হাজী মুহাম্মদ মহসিন কলেজ, চট্টগ্রাম/",
+        "chapter": "Communication Systems",
+        "createdAt": "2026-09-28T05:20:16.195Z",
+        "duplicateCount": 1,
+        "items": [
+          {
+            "duplicateId": "6ab9f90fa15f24063b2c93bb",
+            "chapter": "Communication Systems",
+            "type": "Exact Duplicate",
+            "createdAt": "2026-09-28T05:20:16.199Z"
+          }
+        ]
+      },
+      {
+        "originalId": "6ab9f90fa15f24063b2c91e5",
+        "originalText": "চিঠির মাধ্যমে যোগাযোগের পরবর্তীকালে যেসব যোগাযোগ প্রক্রিয়া শুরু হয় তা হলো—\ni. টেলিগ্রাফ\nii. টেলিফো",
+        "chapter": "Communication Systems",
+        "createdAt": "2026-09-28T05:20:16.183Z",
+        "duplicateCount": 1,
+        "items": [
+          {
+            "duplicateId": "6ab9f910a15f24063b2c9475",
+            "chapter": "Communication Systems",
+            "type": "Exact Duplicate",
+            "createdAt": "2026-09-28T05:20:16.203Z"
+          }
+        ]
+      },
+      {
+        "originalId": "6ab9f90fa15f24063b2c91ef",
+        "originalText": "ডেটা কমিউনিকেশনের মূল উপাদান কয়টি?",
+        "chapter": "অধ্যায় ২: কমিউনিকেশন সিস্টেমস ও নেটওয়ার্কিং",
+        "createdAt": "2026-09-28T05:20:16.184Z",
+        "duplicateCount": 1,
+        "items": [
+          {
+            "duplicateId": "6ab9f910a15f24063b2c94c2",
+            "chapter": "অধ্যায় ২: কমিউনিকেশন সিস্টেমস ও নেটওয়ার্কিং",
+            "type": "Exact Duplicate",
+            "createdAt": "2026-09-28T05:20:16.205Z"
+          }
+        ]
+      },
+      {
+        "originalId": "6ab9f90fa15f24063b2c920e",
+        "originalText": "ফুল-ডুপ্লেক্স মোডে চলে—",
+        "chapter": "অধ্যায় ২: কমিউনিকেশন সিস্টেমস ও নেটওয়ার্কিং",
+        "createdAt": "2026-09-28T05:20:16.185Z",
+        "duplicateCount": 1,
+        "items": [
+          {
+            "duplicateId": "6ab9f910a15f24063b2c9462",
+            "chapter": "অধ্যায় ২: কমিউনিকেশন সিস্টেমস ও নেটওয়ার্কিং",
+            "type": "Exact Duplicate",
+            "createdAt": "2026-09-28T05:20:16.203Z"
+          }
+        ]
+      },
+      {
+        "originalId": "6ab9f90fa15f24063b2c9217",
+        "originalText": "ব্রডকাস্ট মোডের উদাহরণ হলো—",
+        "chapter": "Communication Systems",
+        "createdAt": "2026-09-28T05:20:16.186Z",
+        "duplicateCount": 1,
+        "items": [
+          {
+            "duplicateId": "6ab9f910a15f24063b2c946c",
+            "chapter": "Communication Systems",
+            "type": "Exact Duplicate",
+            "createdAt": "2026-09-28T05:20:16.203Z"
+          }
+        ]
+      },
+      {
+        "originalId": "6ab9f90fa15f24063b2c921c",
+        "originalText": "ডেটা প্রবাহের দিকের উপর ভিত্তি করে ডেটা ট্রান্সমিশন মোড কত প্রকার?",
+        "chapter": "Communication Systems",
+        "createdAt": "2026-09-28T05:20:16.186Z",
+        "duplicateCount": 1,
+        "items": [
+          {
+            "duplicateId": "6ab9f910a15f24063b2c9471",
+            "chapter": "Communication Systems",
+            "type": "Exact Duplicate",
+            "createdAt": "2026-09-28T05:20:16.203Z"
+          }
+        ]
+      },
+      {
+        "originalId": "6ab9f90fa15f24063b2c9229",
+        "originalText": "অ্যাসিনক্রোনাস ট্রান্সমিশনে একটি ডেটা বা ক্যারেক্টার প্রেরণের শুরুতে ও শেষে কী যুক্ত হয়?",
+        "chapter": "অধ্যায় ২: কমিউনিকেশন সিস্টেমস ও নেটওয়ার্কিং",
+        "createdAt": "2026-09-28T05:20:16.187Z",
+        "duplicateCount": 1,
+        "items": [
+          {
+            "duplicateId": "6ab9f910a15f24063b2c9487",
+            "chapter": "অধ্যায় ২: কমিউনিকেশন সিস্টেমস ও নেটওয়ার্কিং",
+            "type": "Exact Duplicate",
+            "createdAt": "2026-09-28T05:20:16.204Z"
+          }
+        ]
+      },
+      {
+        "originalId": "6ab9f90fa15f24063b2c922b",
+        "originalText": "সিনক্রোনাস ট্রান্সমিশনের প্রধান সুবিধা কোনটি?",
+        "chapter": "অধ্যায় ২: কমিউনিকেশন সিস্টেমস ও নেটওয়ার্কিং",
+        "createdAt": "2026-09-28T05:20:16.187Z",
+        "duplicateCount": 1,
+        "items": [
+          {
+            "duplicateId": "6ab9f910a15f24063b2c9489",
+            "chapter": "অধ্যায় ২: কমিউনিকেশন সিস্টেমস ও নেটওয়ার্কিং",
+            "type": "Exact Duplicate",
+            "createdAt": "2026-09-28T05:20:16.204Z"
+          }
+        ]
+      },
+      {
+        "originalId": "6ab9f90fa15f24063b2c9235",
+        "originalText": "উভয় দিকে ডেটা প্রবাহিত হওয়া সম্ভব হলেও একই সময়ে উভয় দিক থেকে ডেটা পাঠানো যায় না কোন মোডে?",
+        "chapter": "Communication Systems",
+        "createdAt": "2026-09-28T05:20:16.187Z",
+        "duplicateCount": 1,
+        "items": [
+          {
+            "duplicateId": "6ab9f910a15f24063b2c9493",
+            "chapter": "Communication Systems",
+            "type": "Exact Duplicate",
+            "createdAt": "2026-09-28T05:20:16.204Z"
+          }
+        ]
+      },
+      {
+        "originalId": "6ab9f90fa15f24063b2c9238",
+        "originalText": "দুইজন ব্যক্তির মোবাইল ফোনে কথোপকথনের ক্ষেত্রে কোন মোড কাজ করে?",
+        "chapter": "Communication Systems",
+        "createdAt": "2026-09-28T05:20:16.187Z",
+        "duplicateCount": 1,
+        "items": [
+          {
+            "duplicateId": "6ab9f910a15f24063b2c9496",
+            "chapter": "Communication Systems",
+            "type": "Exact Duplicate",
+            "createdAt": "2026-09-28T05:20:16.204Z"
+          }
+        ]
+      },
+      {
+        "originalId": "6ab9f90fa15f24063b2c923e",
+        "originalText": "কম্পিউটারের ভিতরের সার্কিটগুলো কোন ডেটা ট্রান্সমিশন পদ্ধতিতে কাজ করে?",
+        "chapter": "Communication Systems",
+        "createdAt": "2026-09-28T05:20:16.187Z",
+        "duplicateCount": 1,
+        "items": [
+          {
+            "duplicateId": "6ab9f910a15f24063b2c94b7",
+            "chapter": "Communication Systems",
+            "type": "Exact Duplicate",
+            "createdAt": "2026-09-28T05:20:16.205Z"
+          }
+        ]
+      },
+      {
+        "originalId": "6ab9f90fa15f24063b2c9240",
+        "originalText": "সিরিয়াল ডেটা ট্রান্সমিশনে কতটি তার ব্যবহৃত হয়?",
+        "chapter": "Communication Systems",
+        "createdAt": "2026-09-28T05:20:16.188Z",
+        "duplicateCount": 1,
+        "items": [
+          {
+            "duplicateId": "6ab9f910a15f24063b2c94b9",
+            "chapter": "Communication Systems",
+            "type": "Exact Duplicate",
+            "createdAt": "2026-09-28T05:20:16.205Z"
+          }
+        ]
+      },
+      {
+        "originalId": "6ab9f90fa15f24063b2c925c",
+        "originalText": "কম্পিউটার থেকে প্রিন্টারে ডেটা স্থানান্তরিত হয়—",
+        "chapter": "Communication Systems",
+        "createdAt": "2026-09-28T05:20:16.189Z",
+        "duplicateCount": 1,
+        "items": [
+          {
+            "duplicateId": "6ab9f910a15f24063b2c94af",
+            "chapter": "Communication Systems",
+            "type": "Exact Duplicate",
+            "createdAt": "2026-09-28T05:20:16.204Z"
+          }
+        ]
+      },
+      {
+        "originalId": "6ab9f90fa15f24063b2c926b",
+        "originalText": "ব্যান্ডউইথ পরিমাপের জন্য কোন একক ব্যবহার করা হয়?",
+        "chapter": "অধ্যায় ২: কমিউনিকেশন সিস্টেমস ও নেটওয়ার্কিং",
+        "createdAt": "2026-09-28T05:20:16.189Z",
+        "duplicateCount": 1,
+        "items": [
+          {
+            "duplicateId": "6ab9f910a15f24063b2c94d1",
+            "chapter": "অধ্যায় ২: কমিউনিকেশন সিস্টেমস ও নেটওয়ার্কিং",
+            "type": "Exact Duplicate",
+            "createdAt": "2026-09-28T05:20:16.205Z"
+          }
+        ]
+      },
+      {
+        "originalId": "6ab9f90fa15f24063b2c9273",
+        "originalText": "উদ্দীপক: নিচের উদ্দীপকটি পড়ো এবং ২০৯ ও ২১০ নং প্রশ্নের উত্তর দাও:\n'x' ক্যাবলটি তারতম্য কনবনবিশিষ্ট। ",
+        "chapter": "অধ্যায় ২: কমিউনিকেশন সিস্টেমস ও নেটওয়ার্কিং",
+        "createdAt": "2026-09-28T05:20:16.190Z",
+        "duplicateCount": 1,
+        "items": [
+          {
+            "duplicateId": "6ab9f910a15f24063b2c93f5",
+            "chapter": "অধ্যায় ২: কমিউনিকেশন সিস্টেমস ও নেটওয়ার্কিং",
+            "type": "Exact Duplicate",
+            "createdAt": "2026-09-28T05:20:16.200Z"
+          }
+        ]
+      }
+    ]
+  },
+  "missingTopicSummary": {
+    "totalFoundWithSpecificResolution": 409,
+    "sampleProposals": [
+      {
+        "qId": "6ab9f90fa15f24063b2c91e2",
+        "preview": "IoT (Internet of Things) প্রযুক্তির ব্যবহারিক ক্ষেত্রগুলো হচ্ছে—\ni. বি",
+        "currentChapter": "অধ্যায় ২: কমিউনিকেশন সিস্টেমস ও নেটওয়ার্কিং",
+        "currentTopic": "কমিউনিকেশন ও নেটওয়ার্কিং",
+        "suggestedTopic": "কম্পিউটার নেটওয়ার্ক (PAN, LAN, MAN, WAN)",
+        "confidence": "High",
+        "reason": "Matched characteristic syllabus keywords in question text"
+      },
+      {
+        "qId": "6ab9f90fa15f24063b2c9207",
+        "preview": "সিনক্রোনাস ট্রান্সমিশনে ডেটা ক্যারেক্টারগুলোকে ভাগ করে নেয়—",
+        "currentChapter": "অধ্যায় ২: কমিউনিকেশন সিস্টেমস ও নেটওয়ার্কিং",
+        "currentTopic": "কমিউনিকেশন ও নেটওয়ার্কিং",
+        "suggestedTopic": "ডেটা ট্রান্সমিশন মেথড",
+        "confidence": "High",
+        "reason": "Matched characteristic syllabus keywords in question text"
+      },
+      {
+        "qId": "6ab9f90fa15f24063b2c924f",
+        "preview": "ধীর গতি ডেটা স্থানান্তরের ক্ষেত্রে কোন ব্যান্ডউইথ ব্যবহার হয়?",
+        "currentChapter": "অধ্যায় ২: কমিউনিকেশন সিস্টেমস ও নেটওয়ার্কিং",
+        "currentTopic": "কমিউনিকেশন ও নেটওয়ার্কিং",
+        "suggestedTopic": "ব্যান্ডউইথ (Bandwidth)",
+        "confidence": "High",
+        "reason": "Matched characteristic syllabus keywords in question text"
+      },
+      {
+        "qId": "6ab9f90fa15f24063b2c92c7",
+        "preview": "বর্তমানে জনপ্রিয় হটস্পট হলো—\ni. ওয়াই-ফাই\nii. ওয়াই-ম্যাক্স\niii. ব্লু",
+        "currentChapter": "অধ্যায় ২: কমিউনিকেশন সিস্টেমস ও নেটওয়ার্কিং",
+        "currentTopic": "কমিউনিকেশন ও নেটওয়ার্কিং",
+        "suggestedTopic": "তারবিহীন মাধ্যম (Wireless Media)",
+        "confidence": "High",
+        "reason": "Matched characteristic syllabus keywords in question text"
+      },
+      {
+        "qId": "6ab9f90fa15f24063b2c92d0",
+        "preview": "ব্লুটুথ এর কভারেজ এরিয়া কত?",
+        "currentChapter": "অধ্যায় ২: কমিউনিকেশন সিস্টেমস ও নেটওয়ার্কিং",
+        "currentTopic": "কমিউনিকেশন ও নেটওয়ার্কিং",
+        "suggestedTopic": "তারবিহীন মাধ্যম (Wireless Media)",
+        "confidence": "High",
+        "reason": "Matched characteristic syllabus keywords in question text"
+      },
+      {
+        "qId": "6ab9f90fa15f24063b2c9328",
+        "preview": "তাদের নেটওয়ার্কটি কী ধরনের হবে?\n(একটি অফিসের আটতলা ভবনের বিভিন্ন তলায় ",
+        "currentChapter": "অধ্যায় ২: কমিউনিকেশন সিস্টেমস ও নেটওয়ার্কিং",
+        "currentTopic": "কমিউনিকেশন ও নেটওয়ার্কিং",
+        "suggestedTopic": "কম্পিউটার নেটওয়ার্ক (PAN, LAN, MAN, WAN)",
+        "confidence": "High",
+        "reason": "Matched characteristic syllabus keywords in question text"
+      },
+      {
+        "qId": "6ab9f90fa15f24063b2c920e",
+        "preview": "ফুল-ডুপ্লেক্স মোডে চলে—",
+        "currentChapter": "অধ্যায় ২: কমিউনিকেশন সিস্টেমস ও নেটওয়ার্কিং",
+        "currentTopic": "কমিউনিকেশন ও নেটওয়ার্কিং",
+        "suggestedTopic": "কম্পিউটার নেটওয়ার্ক (PAN, LAN, MAN, WAN)",
+        "confidence": "High",
+        "reason": "Matched characteristic syllabus keywords in question text"
+      },
+      {
+        "qId": "6ab9f90fa15f24063b2c9229",
+        "preview": "অ্যাসিনক্রোনাস ট্রান্সমিশনে একটি ডেটা বা ক্যারেক্টার প্রেরণের শুরুতে ও",
+        "currentChapter": "অধ্যায় ২: কমিউনিকেশন সিস্টেমস ও নেটওয়ার্কিং",
+        "currentTopic": "কমিউনিকেশন ও নেটওয়ার্কিং",
+        "suggestedTopic": "ডেটা ট্রান্সমিশন মেথড",
+        "confidence": "High",
+        "reason": "Matched characteristic syllabus keywords in question text"
+      },
+      {
+        "qId": "6ab9f90fa15f24063b2c922b",
+        "preview": "সিনক্রোনাস ট্রান্সমিশনের প্রধান সুবিধা কোনটি?",
+        "currentChapter": "অধ্যায় ২: কমিউনিকেশন সিস্টেমস ও নেটওয়ার্কিং",
+        "currentTopic": "কমিউনিকেশন ও নেটওয়ার্কিং",
+        "suggestedTopic": "ডেটা ট্রান্সমিশন মেথড",
+        "confidence": "High",
+        "reason": "Matched characteristic syllabus keywords in question text"
+      },
+      {
+        "qId": "6ab9f90fa15f24063b2c926b",
+        "preview": "ব্যান্ডউইথ পরিমাপের জন্য কোন একক ব্যবহার করা হয়?",
+        "currentChapter": "অধ্যায় ২: কমিউনিকেশন সিস্টেমস ও নেটওয়ার্কিং",
+        "currentTopic": "কমিউনিকেশন ও নেটওয়ার্কিং",
+        "suggestedTopic": "ব্যান্ডউইথ (Bandwidth)",
+        "confidence": "High",
+        "reason": "Matched characteristic syllabus keywords in question text"
+      },
+      {
+        "qId": "6ab9f90fa15f24063b2c9273",
+        "preview": "উদ্দীপক: নিচের উদ্দীপকটি পড়ো এবং ২০৯ ও ২১০ নং প্রশ্নের উত্তর দাও:\n'x' ",
+        "currentChapter": "অধ্যায় ২: কমিউনিকেশন সিস্টেমস ও নেটওয়ার্কিং",
+        "currentTopic": "কমিউনিকেশন ও নেটওয়ার্কিং",
+        "suggestedTopic": "তারযুক্ত মাধ্যম (Cable Media)",
+        "confidence": "High",
+        "reason": "Matched characteristic syllabus keywords in question text"
+      },
+      {
+        "qId": "6ab9f90fa15f24063b2c9294",
+        "preview": "অপটিক্যাল ফাইবারের কোরের ব্যাস কম হলে—\ni. আলোক সিগন্যালের বিকৃতি কম\nii",
+        "currentChapter": "অধ্যায় ২: কমিউনিকেশন সিস্টেমস ও নেটওয়ার্কিং",
+        "currentTopic": "কমিউনিকেশন ও নেটওয়ার্কিং",
+        "suggestedTopic": "তারযুক্ত মাধ্যম (Cable Media)",
+        "confidence": "High",
+        "reason": "Matched characteristic syllabus keywords in question text"
+      },
+      {
+        "qId": "6ab9f90fa15f24063b2c92c1",
+        "preview": "মাইক্রোওয়েভের বহন হচ্ছে—\ni. টেরিস্ট্রিয়াল\nii. স্যাটেলাইট\niii. রেডিও ও",
+        "currentChapter": "অধ্যায় ২: কমিউনিকেশন সিস্টেমস ও নেটওয়ার্কিং",
+        "currentTopic": "কমিউনিকেশন ও নেটওয়ার্কিং",
+        "suggestedTopic": "তারবিহীন মাধ্যম (Wireless Media)",
+        "confidence": "High",
+        "reason": "Matched characteristic syllabus keywords in question text"
+      },
+      {
+        "qId": "6ab9f90fa15f24063b2c92e9",
+        "preview": "মাইক্রোওয়েভের ফ্রিকোয়েন্সি রেঞ্জ কত?",
+        "currentChapter": "অধ্যায় ২: কমিউনিকেশন সিস্টেমস ও নেটওয়ার্কিং",
+        "currentTopic": "কমিউনিকেশন ও নেটওয়ার্কিং",
+        "suggestedTopic": "তারবিহীন মাধ্যম (Wireless Media)",
+        "confidence": "High",
+        "reason": "Matched characteristic syllabus keywords in question text"
+      },
+      {
+        "qId": "6ab9f90fa15f24063b2c92f0",
+        "preview": "কৃত্রিম উপগ্রহের মাধ্যমে মাইক্রোওয়েভে সিগন্যাল আদান-প্রদান শুরু হয় কত",
+        "currentChapter": "অধ্যায় ২: কমিউনিকেশন সিস্টেমস ও নেটওয়ার্কিং",
+        "currentTopic": "কমিউনিকেশন ও নেটওয়ার্কিং",
+        "suggestedTopic": "তারবিহীন মাধ্যম (Wireless Media)",
+        "confidence": "High",
+        "reason": "Matched characteristic syllabus keywords in question text"
+      },
+      {
+        "qId": "6ab9f90fa15f24063b2c92ff",
+        "preview": "উদ্দীপক: নিচের উদ্দীপকটি পড়ো এবং ৩৭০ ও ৩৭১ নং প্রশ্নের উত্তর দাও:\nটেকন",
+        "currentChapter": "অধ্যায় ২: কমিউনিকেশন সিস্টেমস ও নেটওয়ার্কিং",
+        "currentTopic": "কমিউনিকেশন ও নেটওয়ার্কিং",
+        "suggestedTopic": "তারবিহীন মাধ্যম (Wireless Media)",
+        "confidence": "High",
+        "reason": "Matched characteristic syllabus keywords in question text"
+      },
+      {
+        "qId": "6ab9f90fa15f24063b2c9281",
+        "preview": "অপটিক্যাল ফাইবার ক্যাবল কী আকৃতিতে বাকালে ডেটা পরিবহনে বিঘ্ন সৃষ্টি হয়",
+        "currentChapter": "অধ্যায় ২: কমিউনিকেশন সিস্টেমস ও নেটওয়ার্কিং",
+        "currentTopic": "কমিউনিকেশন ও নেটওয়ার্কিং",
+        "suggestedTopic": "তারযুক্ত মাধ্যম (Cable Media)",
+        "confidence": "High",
+        "reason": "Matched characteristic syllabus keywords in question text"
+      },
+      {
+        "qId": "6ab9f90fa15f24063b2c928a",
+        "preview": "ডেটা কমিউনিকেশন মাধ্যম হচ্ছে—\ni. টুইস্টেড পেয়ার ক্যাবল\nii. রেডিও ওয়েভ\n",
+        "currentChapter": "অধ্যায় ২: কমিউনিকেশন সিস্টেমস ও নেটওয়ার্কিং",
+        "currentTopic": "কমিউনিকেশন ও নেটওয়ার্কিং",
+        "suggestedTopic": "তারযুক্ত মাধ্যম (Cable Media)",
+        "confidence": "High",
+        "reason": "Matched characteristic syllabus keywords in question text"
+      },
+      {
+        "qId": "6ab9f90fa15f24063b2c9293",
+        "preview": "অপটিক্যাল ফাইবারের কোরের ব্যাস বেশি হলে—\ni. প্রযুক্তি তুলনামূলকভাবে সহ",
+        "currentChapter": "অধ্যায় ২: কমিউনিকেশন সিস্টেমস ও নেটওয়ার্কিং",
+        "currentTopic": "কমিউনিকেশন ও নেটওয়ার্কিং",
+        "suggestedTopic": "তারযুক্ত মাধ্যম (Cable Media)",
+        "confidence": "High",
+        "reason": "Matched characteristic syllabus keywords in question text"
+      },
+      {
+        "qId": "6ab9f90fa15f24063b2c929f",
+        "preview": "টুইস্টেড পেয়ার ক্যাবলের ব্যান্ডউইথ কত?",
+        "currentChapter": "অধ্যায় ২: কমিউনিকেশন সিস্টেমস ও নেটওয়ার্কিং",
+        "currentTopic": "কমিউনিকেশন ও নেটওয়ার্কিং",
+        "suggestedTopic": "ব্যান্ডউইথ (Bandwidth)",
+        "confidence": "High",
+        "reason": "Matched characteristic syllabus keywords in question text"
+      },
+      {
+        "qId": "6ab9f90fa15f24063b2c9320",
+        "preview": "নিচের উদ্দীপকটি পড়ো এবং পরবর্তী দুটি প্রশ্নের উত্তর দাও:\nএকটি বিশ্ববিদ",
+        "currentChapter": "অধ্যায় ২: কমিউনিকেশন সিস্টেমস ও নেটওয়ার্কিং",
+        "currentTopic": "কমিউনিকেশন ও নেটওয়ার্কিং",
+        "suggestedTopic": "তারবিহীন মাধ্যম (Wireless Media)",
+        "confidence": "High",
+        "reason": "Matched characteristic syllabus keywords in question text"
+      },
+      {
+        "qId": "6ab9f90fa15f24063b2c9329",
+        "preview": "উদ্দীপকে বর্ণিত নেটওয়ার্কটি কোন ধরনের?\n(আইসিটি ল্যাবের ২০টি কম্পিউটার ",
+        "currentChapter": "অধ্যায় ২: কমিউনিকেশন সিস্টেমস ও নেটওয়ার্কিং",
+        "currentTopic": "কমিউনিকেশন ও নেটওয়ার্কিং",
+        "suggestedTopic": "কম্পিউটার নেটওয়ার্ক (PAN, LAN, MAN, WAN)",
+        "confidence": "High",
+        "reason": "Matched characteristic syllabus keywords in question text"
+      },
+      {
+        "qId": "6ab9f90fa15f24063b2c9332",
+        "preview": "গেটওয়ে LAN-এর সাথে এবং CAN-এর সাথে একটি বিশেষভাবে তৈরি ডায়নামিক সম্মুখ",
+        "currentChapter": "অধ্যায় ২: কমিউনিকেশন সিস্টেমস ও নেটওয়ার্কিং",
+        "currentTopic": "কমিউনিকেশন ও নেটওয়ার্কিং",
+        "suggestedTopic": "কম্পিউটার নেটওয়ার্ক (PAN, LAN, MAN, WAN)",
+        "confidence": "High",
+        "reason": "Matched characteristic syllabus keywords in question text"
+      },
+      {
+        "qId": "6ab9f90fa15f24063b2c9206",
+        "preview": "সিনক্রোনাস ট্রান্সমিশন পদ্ধতিতে প্রাইমারি স্টোরেজ ডিভাইস হিসেবে ব্যবহৃ",
+        "currentChapter": "অধ্যায় ২: কমিউনিকেশন সিস্টেমস ও নেটওয়ার্কিং",
+        "currentTopic": "কমিউনিকেশন ও নেটওয়ার্কিং",
+        "suggestedTopic": "ডেটা ট্রান্সমিশন মেথড",
+        "confidence": "High",
+        "reason": "Matched characteristic syllabus keywords in question text"
+      },
+      {
+        "qId": "6ab9f90fa15f24063b2c9222",
+        "preview": "কিবোর্ড থেকে ডাটা আদান-প্রদানের ক্ষেত্রে অ্যাসিনক্রোনাস ট্রান্সমিশনের ",
+        "currentChapter": "অধ্যায় ২: কমিউনিকেশন সিস্টেমস ও নেটওয়ার্কিং",
+        "currentTopic": "কমিউনিকেশন ও নেটওয়ার্কিং",
+        "suggestedTopic": "ডেটা ট্রান্সমিশন মেথড",
+        "confidence": "High",
+        "reason": "Matched characteristic syllabus keywords in question text"
+      },
+      {
+        "qId": "6ab9f90fa15f24063b2c9251",
+        "preview": "ফোন কল (VOIP)-এর ব্যান্ডউইথ কত?",
+        "currentChapter": "অধ্যায় ২: কমিউনিকেশন সিস্টেমস ও নেটওয়ার্কিং",
+        "currentTopic": "কমিউনিকেশন ও নেটওয়ার্কিং",
+        "suggestedTopic": "ব্যান্ডউইথ (Bandwidth)",
+        "confidence": "High",
+        "reason": "Matched characteristic syllabus keywords in question text"
+      },
+      {
+        "qId": "6ab9f90fa15f24063b2c9290",
+        "preview": "অপটিক্যাল ফাইবার ক্যাবলের সুবিধা হলো—\ni. এর মাধ্যমে দ্রুতগতিতে ডেটা স্",
+        "currentChapter": "অধ্যায় ২: কমিউনিকেশন সিস্টেমস ও নেটওয়ার্কিং",
+        "currentTopic": "কমিউনিকেশন ও নেটওয়ার্কিং",
+        "suggestedTopic": "তারযুক্ত মাধ্যম (Cable Media)",
+        "confidence": "High",
+        "reason": "Matched characteristic syllabus keywords in question text"
+      },
+      {
+        "qId": "6ab9f90fa15f24063b2c92f3",
+        "preview": "8 ইঞ্চি ডায়ামিটার ফোনের মাধ্যমে ভৌগোলিক অবস্থান ঠাঁই পাওয়ার লম্বা করার",
+        "currentChapter": "অধ্যায় ২: কমিউনিকেশন সিস্টেমস ও নেটওয়ার্কিং",
+        "currentTopic": "কমিউনিকেশন ও নেটওয়ার্কিং",
+        "suggestedTopic": "কম্পিউটার নেটওয়ার্ক (PAN, LAN, MAN, WAN)",
+        "confidence": "High",
+        "reason": "Matched characteristic syllabus keywords in question text"
+      },
+      {
+        "qId": "6ab9f90fa15f24063b2c9325",
+        "preview": "উদ্দীপকে উল্লিখিত নেটওয়ার্ক হবে কোনটি?\n(একটি রুমে থাকা ল্যাপটপগুলো নেট",
+        "currentChapter": "অধ্যায় ২: কমিউনিকেশন সিস্টেমস ও নেটওয়ার্কিং",
+        "currentTopic": "কমিউনিকেশন ও নেটওয়ার্কিং",
+        "suggestedTopic": "কম্পিউটার নেটওয়ার্ক (PAN, LAN, MAN, WAN)",
+        "confidence": "High",
+        "reason": "Matched characteristic syllabus keywords in question text"
+      },
+      {
+        "qId": "6ab9f90fa15f24063b2c91e0",
+        "preview": "মডেমের অ্যানালগ সংকেতকে ডিজিটাল সংকেতে রূপান্তর করার প্রক্রিয়াকে কী ব",
+        "currentChapter": "অধ্যায় ২: কমিউনিকেশন সিস্টেমস ও নেটওয়ার্কিং",
+        "currentTopic": "কমিউনিকেশন ও নেটওয়ার্কিং",
+        "suggestedTopic": "ডেটা ট্রান্সমিশন মোড",
+        "confidence": "High",
+        "reason": "Matched characteristic syllabus keywords in question text"
+      },
+      {
+        "qId": "6ab9f90fa15f24063b2c9202",
+        "preview": "অ্যাসিনক্রোনাস ট্রান্সমিশনের বৈশিষ্ট্য হলো—",
+        "currentChapter": "অধ্যায় ২: কমিউনিকেশন সিস্টেমস ও নেটওয়ার্কিং",
+        "currentTopic": "কমিউনিকেশন ও নেটওয়ার্কিং",
+        "suggestedTopic": "ডেটা ট্রান্সমিশন মেথড",
+        "confidence": "High",
+        "reason": "Matched characteristic syllabus keywords in question text"
+      },
+      {
+        "qId": "6ab9f90fa15f24063b2c9252",
+        "preview": "স্ট্রিমিং ভিডিও সার্ভিসের জন্য প্রয়োজনীয় ব্যান্ডউইথ হলো—",
+        "currentChapter": "অধ্যায় ২: কমিউনিকেশন সিস্টেমস ও নেটওয়ার্কিং",
+        "currentTopic": "কমিউনিকেশন ও নেটওয়ার্কিং",
+        "suggestedTopic": "ব্যান্ডউইথ (Bandwidth)",
+        "confidence": "High",
+        "reason": "Matched characteristic syllabus keywords in question text"
+      },
+      {
+        "qId": "6ab9f90fa15f24063b2c9226",
+        "preview": "মহাব্যস্ত সমস্যা অসম বা অনির্ধারিত থাকে কোন ডেটা ট্রান্সমিশনে?",
+        "currentChapter": "অধ্যায় ২: কমিউনিকেশন সিস্টেমস ও নেটওয়ার্কিং",
+        "currentTopic": "কমিউনিকেশন ও নেটওয়ার্কিং",
+        "suggestedTopic": "ডেটা ট্রান্সমিশন মেথড",
+        "confidence": "High",
+        "reason": "Matched characteristic syllabus keywords in question text"
+      },
+      {
+        "qId": "6ab9f90fa15f24063b2c9243",
+        "preview": "বিট সিনক্রোনাইজেশনের উপর ভিত্তি করে সিরিয়াল ডেটা ট্রান্সমিশন পদ্ধতিকে",
+        "currentChapter": "অধ্যায় ২: কমিউনিকেশন সিস্টেমস ও নেটওয়ার্কিং",
+        "currentTopic": "কমিউনিকেশন ও নেটওয়ার্কিং",
+        "suggestedTopic": "ডেটা ট্রান্সমিশন মেথড",
+        "confidence": "High",
+        "reason": "Matched characteristic syllabus keywords in question text"
+      },
+      {
+        "qId": "6ab9f90fa15f24063b2c9269",
+        "preview": "একটি চ্যানেলের মধ্যে দিয়ে ৩ সেকেন্ডে ৮৪,০০০ বিট ডেটা স্থানান্তরিত হলে",
+        "currentChapter": "অধ্যায় ২: কমিউনিকেশন সিস্টেমস ও নেটওয়ার্কিং",
+        "currentTopic": "কমিউনিকেশন ও নেটওয়ার্কিং",
+        "suggestedTopic": "ব্যান্ডউইথ (Bandwidth)",
+        "confidence": "High",
+        "reason": "Matched characteristic syllabus keywords in question text"
+      },
+      {
+        "qId": "6ab9f90fa15f24063b2c9274",
+        "preview": "উদ্দীপক: কর্পোরেট সিগন্যাল বাস্তবায়ন হলে যে নেটওয়ার্ক তৈরি হবে—\ni. PAN",
+        "currentChapter": "অধ্যায় ২: কমিউনিকেশন সিস্টেমস ও নেটওয়ার্কিং",
+        "currentTopic": "কমিউনিকেশন ও নেটওয়ার্কিং",
+        "suggestedTopic": "কম্পিউটার নেটওয়ার্ক (PAN, LAN, MAN, WAN)",
+        "confidence": "High",
+        "reason": "Matched characteristic syllabus keywords in question text"
+      },
+      {
+        "qId": "6ab9f90fa15f24063b2c9295",
+        "preview": "অপটিক্যাল ফাইবার ক্যাবল—\ni. উচ্চগতি সম্পন্ন\nii. দামে সস্তা\niii. বিদ্যু",
+        "currentChapter": "অধ্যায় ২: কমিউনিকেশন সিস্টেমস ও নেটওয়ার্কিং",
+        "currentTopic": "কমিউনিকেশন ও নেটওয়ার্কিং",
+        "suggestedTopic": "তারযুক্ত মাধ্যম (Cable Media)",
+        "confidence": "High",
+        "reason": "Matched characteristic syllabus keywords in question text"
+      },
+      {
+        "qId": "6ab9f90fa15f24063b2c9300",
+        "preview": "উদ্দীপক: নিচের উদ্দীপকটি পড়ো এবং ৩৭০ ও ৩৭১ নং প্রশ্নের উত্তর দাও:\nটেকন",
+        "currentChapter": "অধ্যায় ২: কমিউনিকেশন সিস্টেমস ও নেটওয়ার্কিং",
+        "currentTopic": "কমিউনিকেশন ও নেটওয়ার্কিং",
+        "suggestedTopic": "তারবিহীন মাধ্যম (Wireless Media)",
+        "confidence": "High",
+        "reason": "Matched characteristic syllabus keywords in question text"
+      },
+      {
+        "qId": "6ab9f90fa15f24063b2c9327",
+        "preview": "জনাব আলম তার অফিসের সমস্ত কম্পিউটার কোন নেটওয়ার্কের মাধ্যমে সংযুক্ত কর",
+        "currentChapter": "অধ্যায় ২: কমিউনিকেশন সিস্টেমস ও নেটওয়ার্কিং",
+        "currentTopic": "কমিউনিকেশন ও নেটওয়ার্কিং",
+        "suggestedTopic": "কম্পিউটার নেটওয়ার্ক (PAN, LAN, MAN, WAN)",
+        "confidence": "High",
+        "reason": "Matched characteristic syllabus keywords in question text"
+      },
+      {
+        "qId": "6ab9f90fa15f24063b2c9333",
+        "preview": "WMAN-এর পূর্ণরূপ কী?",
+        "currentChapter": "অধ্যায় ২: কমিউনিকেশন সিস্টেমস ও নেটওয়ার্কিং",
+        "currentTopic": "কমিউনিকেশন ও নেটওয়ার্কিং",
+        "suggestedTopic": "কম্পিউটার নেটওয়ার্ক (PAN, LAN, MAN, WAN)",
+        "confidence": "High",
+        "reason": "Matched characteristic syllabus keywords in question text"
+      }
+    ]
+  }
+}

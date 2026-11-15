@@ -37,10 +37,18 @@ export const createQuestion = async (req, res) => {
       boardYear,
       difficulty,
       explanation,
-      isPublic
+      isPublic,
+      questionBn,
+      questionEn,
+      optionsBn,
+      optionsEn,
+      explanationBn,
+      explanationEn,
+      version
     } = req.body;
 
-    if (!question || !options || !correctAnswer || !chapter || !subject) {
+    const mainQuestion = (question || questionBn || questionEn || "").trim();
+    if (!mainQuestion || !options || !correctAnswer || !chapter || !subject) {
       return res.status(400).json({
         success: false,
         message: "Question, 4 options, correct answer, chapter, and subject are required."
@@ -64,6 +72,16 @@ export const createQuestion = async (req, res) => {
       });
     }
 
+    // Parse bilingual options if provided
+    let parsedBn = [];
+    if (optionsBn) {
+      try { parsedBn = typeof optionsBn === "string" ? JSON.parse(optionsBn) : optionsBn; } catch { parsedBn = optionsBn.split(",").map(o => o.trim()); }
+    }
+    let parsedEn = [];
+    if (optionsEn) {
+      try { parsedEn = typeof optionsEn === "string" ? JSON.parse(optionsEn) : optionsEn; } catch { parsedEn = optionsEn.split(",").map(o => o.trim()); }
+    }
+
     // Chapter 2 rule: Only allow approved 13 topics
     if (
       chapter === "Communication Systems" &&
@@ -81,7 +99,7 @@ export const createQuestion = async (req, res) => {
     const tutorId = req.user?._id?.toString() || "";
 
     const newQuestion = await Question.create({
-      question: question.trim(),
+      question: mainQuestion,
       options: parsedOptions,
       correctAnswer: correctAnswer.trim(),
       explanation: explanation ? explanation.trim() : "",
@@ -95,12 +113,124 @@ export const createQuestion = async (req, res) => {
       image: image || "",
       tutorId,
       organizationId,
-      isPublic: isPublic !== undefined ? Boolean(isPublic) : !organizationId
+      isPublic: isPublic !== undefined ? Boolean(isPublic) : !organizationId,
+      questionBn: questionBn ? questionBn.trim() : (version === "bangla" ? mainQuestion : ""),
+      questionEn: questionEn ? questionEn.trim() : (version === "english" ? mainQuestion : ""),
+      optionsBn: parsedBn.length === 4 ? parsedBn : [],
+      optionsEn: parsedEn.length === 4 ? parsedEn : [],
+      explanationBn: explanationBn ? explanationBn.trim() : "",
+      explanationEn: explanationEn ? explanationEn.trim() : "",
+      version: version || null
     });
 
     return res.status(201).json(newQuestion);
   } catch (err) {
     console.error("createQuestion error:", err);
+    return res.status(500).json({ success: false, error: err.message });
+  }
+};
+
+// =====================================================
+// UPDATE QUESTION
+// =====================================================
+export const updateQuestion = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const existing = await Question.findById(id);
+    if (!existing) {
+      return res.status(404).json({ success: false, message: "Question not found" });
+    }
+
+    // Tenancy & ownership check
+    const isSuperAdmin = req.user?.role === "super_admin";
+    const isOrgAdmin = req.user?.role === "org_admin" && String(existing.organizationId) === String(req.tenant?.orgId);
+    const isAuthor = existing.tutorId && String(existing.tutorId) === String(req.user?._id);
+    if (!isSuperAdmin && !isOrgAdmin && !isAuthor) {
+      return res.status(403).json({ success: false, message: "Not authorized to update this question" });
+    }
+
+    const {
+      question,
+      options,
+      correctAnswer,
+      chapter,
+      subject,
+      topic,
+      questionType,
+      boardName,
+      boardYear,
+      difficulty,
+      explanation,
+      isPublic,
+      questionBn,
+      questionEn,
+      optionsBn,
+      optionsEn,
+      explanationBn,
+      explanationEn,
+      version
+    } = req.body;
+
+    const updates = {};
+    if (question !== undefined) updates.question = question.trim();
+    if (chapter !== undefined) updates.chapter = chapter.trim();
+    if (subject !== undefined) updates.subject = subject.trim();
+    if (topic !== undefined) updates.topic = topic.trim();
+    if (difficulty !== undefined) updates.difficulty = difficulty;
+    if (questionType !== undefined) updates.questionType = questionType;
+    if (boardName !== undefined) updates.boardName = boardName;
+    if (boardYear !== undefined) updates.boardYear = boardYear;
+    if (explanation !== undefined) updates.explanation = explanation.trim();
+    if (isPublic !== undefined) updates.isPublic = Boolean(isPublic);
+
+    if (questionBn !== undefined) updates.questionBn = questionBn.trim();
+    if (questionEn !== undefined) updates.questionEn = questionEn.trim();
+    if (explanationBn !== undefined) updates.explanationBn = explanationBn.trim();
+    if (explanationEn !== undefined) updates.explanationEn = explanationEn.trim();
+    if (version !== undefined) updates.version = version;
+
+    if (options !== undefined) {
+      let parsedOptions = options;
+      if (typeof options === "string") {
+        try {
+          parsedOptions = JSON.parse(options);
+        } catch {
+          parsedOptions = options.split(",").map((o) => o.trim());
+        }
+      }
+      if (Array.isArray(parsedOptions) && parsedOptions.length === 4) {
+        updates.options = parsedOptions;
+      }
+    }
+
+    if (optionsBn !== undefined) {
+      let parsed = optionsBn;
+      if (typeof optionsBn === "string") {
+        try { parsed = JSON.parse(optionsBn); } catch { parsed = optionsBn.split(",").map(o => o.trim()); }
+      }
+      if (Array.isArray(parsed) && parsed.length === 4) updates.optionsBn = parsed;
+    }
+
+    if (optionsEn !== undefined) {
+      let parsed = optionsEn;
+      if (typeof optionsEn === "string") {
+        try { parsed = JSON.parse(optionsEn); } catch { parsed = optionsEn.split(",").map(o => o.trim()); }
+      }
+      if (Array.isArray(parsed) && parsed.length === 4) updates.optionsEn = parsed;
+    }
+
+    if (correctAnswer !== undefined) {
+      updates.correctAnswer = correctAnswer.trim();
+    }
+
+    if (req.file) {
+      updates.image = req.file.filename;
+    }
+
+    const updated = await Question.findByIdAndUpdate(id, { $set: updates }, { new: true, runValidators: true });
+    return res.json({ success: true, question: updated });
+  } catch (err) {
+    console.error("updateQuestion error:", err);
     return res.status(500).json({ success: false, error: err.message });
   }
 };

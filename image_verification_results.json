@@ -1,0 +1,165 @@
+{
+  "total": 186,
+  "accessibleCount": 183,
+  "brokenCount": 3,
+  "brokenList": [
+    {
+      "qId": "6ab9f910a15f24063b2c9466",
+      "chapter": "Communication Systems",
+      "rawImage": "https://res.cloudinary.com/dtz0urit6/image/upload/q_auto:best,f_jpg/cloudinary-tools-uploads/tplzhhgfuz5gdrok5xoy",
+      "testUrl": "https://res.cloudinary.com/dtz0urit6/image/upload/q_auto:best,f_jpg/cloudinary-tools-uploads/tplzhhgfuz5gdrok5xoy",
+      "isExternal": true,
+      "fileExistsOnDisk": false,
+      "httpStatus": 404,
+      "contentType": "text/plain; charset=utf-8",
+      "contentLength": 9,
+      "errorMsg": ""
+    },
+    {
+      "qId": "6ab9f910a15f24063b2c9468",
+      "chapter": "Communication Systems",
+      "rawImage": "https://res.cloudinary.com/dtz0urit6/image/upload/q_auto:best,f_jpg/cloudinary-tools-uploads/hslgmvshpdio32uwo7s1",
+      "testUrl": "https://res.cloudinary.com/dtz0urit6/image/upload/q_auto:best,f_jpg/cloudinary-tools-uploads/hslgmvshpdio32uwo7s1",
+      "isExternal": true,
+      "fileExistsOnDisk": false,
+      "httpStatus": 404,
+      "contentType": "text/plain; charset=utf-8",
+      "contentLength": 9,
+      "errorMsg": ""
+    },
+    {
+      "qId": "6ab9f910a15f24063b2c945f",
+      "chapter": "Communication Systems",
+      "rawImage": "https://res.cloudinary.com/dtz0urit6/image/upload/q_auto:best,f_jpg/cloudinary-tools-uploads/tplzhhgfuz5gdrok5xoy",
+      "testUrl": "https://res.cloudinary.com/dtz0urit6/image/upload/q_auto:best,f_jpg/cloudinary-tools-uploads/tplzhhgfuz5gdrok5xoy",
+      "isExternal": true,
+      "fileExistsOnDisk": false,
+      "httpStatus": 404,
+      "contentType": "text/plain; charset=utf-8",
+      "contentLength": 9,
+      "errorMsg": ""
+    }
+  ],
+  "sampleVerified": [
+    {
+      "qId": "6ab9f90fa15f24063b2c93ce",
+      "chapter": "Communication Systems",
+      "rawImage": "https://res.cloudinary.com/dycwm69nt/image/upload/v1790486423/ChatGPT_Image_Sep_27_2026_11_18_40_AM_zilznu.png",
+      "testUrl": "https://res.cloudinary.com/dycwm69nt/image/upload/v1790486423/ChatGPT_Image_Sep_27_2026_11_18_40_AM_zilznu.png",
+      "isExternal": true,
+      "fileExistsOnDisk": false,
+      "httpStatus": 200,
+      "contentType": "image/png",
+      "contentLength": 736478,
+      "errorMsg": ""
+    },
+    {
+      "qId": "6ab9f90fa15f24063b2c93cf",
+      "chapter": "Communication Systems",
+      "rawImage": "https://res.cloudinary.com/dycwm69nt/image/upload/v1790486423/ChatGPT_Image_Sep_27_2026_11_18_40_AM_zilznu.png",
+      "testUrl": "https://res.cloudinary.com/dycwm69nt/image/upload/v1790486423/ChatGPT_Image_Sep_27_2026_11_18_40_AM_zilznu.png",
+      "isExternal": true,
+      "fileExistsOnDisk": false,
+      "httpStatus": 200,
+      "contentType": "image/png",
+      "contentLength": 736478,
+      "errorMsg": ""
+    },
+    {
+      "qId": "6ab9f910a15f24063b2c95a7",
+      "chapter": "Board Questions",
+      "rawImage": "https://res.cloudinary.com/dlllluhli/image/upload/f_auto,q_auto/WhatsApp_Image_2026-05-20_at_4.04.48_PM_gkv3my",
+      "testUrl": "https://res.cloudinary.com/dlllluhli/image/upload/f_auto,q_auto/WhatsApp_Image_2026-05-20_at_4.04.48_PM_gkv3my",
+      "isExternal": true,
+      "fileExistsOnDisk": false,
+      "httpStatus": 200,
+      "contentType": "image/jpeg",
+      "contentLength": 93430,
+      "errorMsg": ""
+    },
+    {
+      "qId": "6ab9f910a15f24063b2c95e2",
+      "chapter": "Board Questions",
+      "rawImage": "https://res.cloudinary.com/dycwm69nt/image/upload/q_auto/f_auto/v1779588479/WhatsApp_Image_2026-05-24_at_8.06.24_AM_xmndkc.jpg",
+      "testUrl": "https://res.cloudinary.com/dycwm69nt/image/upload/q_auto/f_auto/v1779588479/WhatsApp_Image_2026-05-24_at_8.06.24_AM_xmndkc.jpg",
+      "isExternal": true,
+      "fileExistsOnDisk": false,
+      "httpStatus": 200,
+      "contentType": "image/jpeg",
+      "contentLength": 61717,
+      "errorMsg": ""
+    },
+    {
+      "qId": "6ab9f910a15f24063b2c9593",
+      "chapter": "Board Questions",
+      "rawImage": "https://res.cloudinary.com/dlllluhli/image/upload/f_auto,q_auto/WhatsApp_Image_2026-05-20_at_4.04.48_PM_1_skfosy",
+      "testUrl": "https://res.cloudinary.com/dlllluhli/image/upload/f_auto,q_auto/WhatsApp_Image_2026-05-20_at_4.04.48_PM_1_skfosy",
+      "isExternal": true,
+      "fileExistsOnDisk": false,
+      "httpStatus": 200,
+      "contentType": "image/jpeg",
+      "contentLength": 103378,
+      "errorMsg": ""
+    },
+    {
+      "qId": "6ab9f910a15f24063b2c95bf",
+      "chapter": "Board Questions",
+      "rawImage": "https://res.cloudinary.com/dlllluhli/image/upload/f_auto,q_auto/WhatsApp_Image_2026-05-20_at_5.59.34_PM_iubrah",
+      "testUrl": "https://res.cloudinary.com/dlllluhli/image/upload/f_auto,q_auto/WhatsApp_Image_2026-05-20_at_5.59.34_PM_iubrah",
+      "isExternal": true,
+      "fileExistsOnDisk": false,
+      "httpStatus": 200,
+      "contentType": "image/jpeg",
+      "contentLength": 54208,
+      "errorMsg": ""
+    },
+    {
+      "qId": "6ab9f910a15f24063b2c95c4",
+      "chapter": "Board Questions",
+      "rawImage": "https://res.cloudinary.com/dlllluhli/image/upload/v1779377367/ChatGPT_Image_May_21_2026_09_25_07_PM_fhbpil.png",
+      "testUrl": "https://res.cloudinary.com/dlllluhli/image/upload/v1779377367/ChatGPT_Image_May_21_2026_09_25_07_PM_fhbpil.png",
+      "isExternal": true,
+      "fileExistsOnDisk": false,
+      "httpStatus": 200,
+      "contentType": "image/png",
+      "contentLength": 808285,
+      "errorMsg": ""
+    },
+    {
+      "qId": "6ab9f910a15f24063b2c95d5",
+      "chapter": "Board Questions",
+      "rawImage": "https://res.cloudinary.com/dlllluhli/image/upload/v1779377973/Screenshot_2026-05-21_213904_zpaagm.png",
+      "testUrl": "https://res.cloudinary.com/dlllluhli/image/upload/v1779377973/Screenshot_2026-05-21_213904_zpaagm.png",
+      "isExternal": true,
+      "fileExistsOnDisk": false,
+      "httpStatus": 200,
+      "contentType": "image/png",
+      "contentLength": 41889,
+      "errorMsg": ""
+    },
+    {
+      "qId": "6ab9f910a15f24063b2c95dc",
+      "chapter": "Board Questions",
+      "rawImage": "https://res.cloudinary.com/dlllluhli/image/upload/v1779378094/Screenshot_2026-05-21_214105_qfxpks.png",
+      "testUrl": "https://res.cloudinary.com/dlllluhli/image/upload/v1779378094/Screenshot_2026-05-21_214105_qfxpks.png",
+      "isExternal": true,
+      "fileExistsOnDisk": false,
+      "httpStatus": 200,
+      "contentType": "image/png",
+      "contentLength": 40379,
+      "errorMsg": ""
+    },
+    {
+      "qId": "6ab9f910a15f24063b2c9612",
+      "chapter": "Board Questions",
+      "rawImage": "https://res.cloudinary.com/dlllluhli/image/upload/v1779722905/Screenshot_2026-05-25_212749_syn8ij.png",
+      "testUrl": "https://res.cloudinary.com/dlllluhli/image/upload/v1779722905/Screenshot_2026-05-25_212749_syn8ij.png",
+      "isExternal": true,
+      "fileExistsOnDisk": false,
+      "httpStatus": 200,
+      "contentType": "image/png",
+      "contentLength": 83613,
+      "errorMsg": ""
+    }
+  ]
+}

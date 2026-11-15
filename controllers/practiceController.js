@@ -337,6 +337,83 @@ export const getAvailableCount = async (req, res) => {
 };
 
 // ============================================================================
+// 3.1 GET TOPIC COUNTS & DIFFICULTY BREAKDOWN FOR A CHAPTER
+// ============================================================================
+export const getTopicCounts = async (req, res) => {
+  try {
+    const { chapter, subject = "ICT", version, topics } = req.query;
+    if (!chapter) {
+      return res.status(400).json({ success: false, message: "Chapter is required" });
+    }
+
+    const tenantFilter = getTenantFilter(req);
+    const filter = { ...tenantFilter };
+    if (subject && subject !== "All") filter.subject = subject;
+    applyVersionFilter(filter, version, chapter);
+
+    let topicList = [];
+    if (topics) {
+      if (Array.isArray(topics)) {
+        topicList = topics;
+      } else if (typeof topics === "string") {
+        if (topics.startsWith("[") && topics.endsWith("]")) {
+          try {
+            topicList = JSON.parse(topics);
+          } catch {
+            topicList = topics.includes("||") ? topics.split("||") : topics.split(",");
+          }
+        } else if (topics.includes("||")) {
+          topicList = topics.split("||");
+        } else {
+          topicList = topics.split(",");
+        }
+      }
+      topicList = topicList.map((t) => (typeof t === "string" ? t.trim() : String(t))).filter(Boolean);
+    }
+
+    if (!topicList.length) {
+      const distinct = await Question.distinct("topic", filter);
+      topicList = distinct.filter(Boolean);
+    }
+
+    const countPromises = topicList.map(async (topicName) => {
+      const subFilter = { ...filter };
+      applyTopicFilter(subFilter, topicName);
+      const count = await Question.countDocuments(subFilter);
+      return [topicName, count];
+    });
+
+    const entries = await Promise.all(countPromises);
+    const topicCounts = Object.fromEntries(entries);
+
+    // Also get difficulty counts for this chapter/filter
+    const [easyCount, medCount, hardCount, totalCount] = await Promise.all([
+      Question.countDocuments({ ...filter, difficulty: "easy" }),
+      Question.countDocuments({ ...filter, difficulty: "medium" }),
+      Question.countDocuments({ ...filter, difficulty: "hard" }),
+      Question.countDocuments(filter),
+    ]);
+    const unclassifiedCount = Math.max(0, totalCount - (easyCount + medCount + hardCount));
+
+    return res.json({
+      success: true,
+      chapter,
+      topicCounts,
+      stats: {
+        total: totalCount,
+        easy: easyCount,
+        medium: medCount,
+        hard: hardCount,
+        unclassified: unclassifiedCount,
+      },
+    });
+  } catch (error) {
+    console.error("getTopicCounts error:", error);
+    return res.status(500).json({ success: false, message: "Failed to get topic counts" });
+  }
+};
+
+// ============================================================================
 // 4. CREATE / GENERATE PRACTICE TEST
 // ============================================================================
 export const generatePracticeTest = async (req, res) => {

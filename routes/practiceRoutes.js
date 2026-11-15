@@ -3,6 +3,7 @@ import {
   getFilterMetadata,
   getQuestionBank,
   getAvailableCount,
+  getTopicCounts,
   generatePracticeTest,
   submitPracticeTest,
   getPracticeMistakes,
@@ -20,6 +21,7 @@ const router = express.Router();
 router.get("/metadata", resolveTenantContext, getFilterMetadata);
 router.get("/question-bank", optionalAuth, resolveTenantContext, getQuestionBank);
 router.get("/available-count", resolveTenantContext, getAvailableCount);
+router.get("/topic-counts", resolveTenantContext, getTopicCounts);
 
 // Practice Generation & Submissions
 router.post("/generate", optionalAuth, resolveTenantContext, generatePracticeTest);

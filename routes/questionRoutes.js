@@ -1,6 +1,7 @@
 import express from "express";
 import {
   createQuestion,
+  updateQuestion,
   getQuestions,
   getTopics,
   autoGenerateQuestions,
@@ -16,7 +17,7 @@ router.get("/topics", getTopics);
 router.get("/auto-generate", autoGenerateQuestions);
 router.get("/", resolveTenantContext, getQuestions);
 
-// Protected question authoring
+// Protected question authoring & editing
 router.post(
   "/",
   protect,
@@ -24,6 +25,15 @@ router.post(
   authorize("super_admin", "tutor", "org_admin", "teacher"),
   upload.single("image"),
   createQuestion
+);
+
+router.put(
+  "/:id",
+  protect,
+  resolveTenantContext,
+  authorize("super_admin", "tutor", "org_admin", "teacher"),
+  upload.single("image"),
+  updateQuestion
 );
 
 export default router;

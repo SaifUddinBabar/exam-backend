@@ -35,7 +35,7 @@ const questionSchema = new mongoose.Schema(
     // ==============================
     difficulty: {
       type: String,
-      enum: ["easy", "medium", "hard"],
+      enum: ["easy", "medium", "hard", "unclassified"],
       default: "medium",
       required: true
     },
@@ -199,6 +199,44 @@ const questionSchema = new mongoose.Schema(
       type: String,
       trim: true,
       default: ""
+    },
+
+    // ==============================
+    // BILINGUAL & MULTI-LANGUAGE
+    // ==============================
+    questionBn: {
+      type: String,
+      trim: true,
+      default: ""
+    },
+    questionEn: {
+      type: String,
+      trim: true,
+      default: ""
+    },
+    optionsBn: {
+      type: [String],
+      default: []
+    },
+    optionsEn: {
+      type: [String],
+      default: []
+    },
+    explanationBn: {
+      type: String,
+      trim: true,
+      default: ""
+    },
+    explanationEn: {
+      type: String,
+      trim: true,
+      default: ""
+    },
+    version: {
+      type: String,
+      enum: ["bangla", "english", "bilingual", null],
+      default: null,
+      index: true
     },
 
     // ==============================
