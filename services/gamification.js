@@ -5,7 +5,8 @@
 //   Battle:  win 30, draw 15, loss 10 (only if the player answered at least one
 //            question), plus 2 per correct answer.
 //   Exam:    2 per correct answer on the first attempt of an exam.
-//   Practice: 1 per correct answer, capped at 50 per session.
+//   Practice: 1 per correct answer in test-mode sessions only (answers hidden until
+//            submission), max 50 per session and 150 per day.
 // Rating (ranked 1v1 battles only): Elo, start 1000, K = 32, floor 100.
 // League is derived from rating:
 //   Bronze < 1100 ≤ Silver < 1250 ≤ Gold < 1400 ≤ Platinum < 1550 ≤ Diamond < 1700 ≤ Champion
@@ -30,6 +31,7 @@ export const XP_RULES = {
   examPerCorrect: 2,
   practicePerCorrect: 1,
   practiceCap: 50,
+  practiceDailyCap: 150,
 };
 
 export const ACHIEVEMENTS = {
@@ -103,6 +105,24 @@ export async function awardXp(userId, amount, { achievements = [] } = {}) {
   stats.xp += xp;
   stats.weeklyXp += xp;
   achievements.forEach((c) => addAchievement(stats, c));
+  await stats.save();
+  return { xp, stats };
+}
+
+/** Practice XP with a per-session cap and a daily cap (prevents farming easy sessions). */
+export async function awardPracticeXp(userId, correctCount) {
+  const stats = await getStats(userId);
+  touchActivity(stats);
+  const today = dhakaDay();
+  if (stats.practiceXpDay !== today) {
+    stats.practiceXpDay = today;
+    stats.practiceXpToday = 0;
+  }
+  const wanted = Math.min(XP_RULES.practiceCap, correctCount * XP_RULES.practicePerCorrect);
+  const xp = Math.max(0, Math.min(wanted, XP_RULES.practiceDailyCap - stats.practiceXpToday));
+  stats.practiceXpToday += xp;
+  stats.xp += xp;
+  stats.weeklyXp += xp;
   await stats.save();
   return { xp, stats };
 }

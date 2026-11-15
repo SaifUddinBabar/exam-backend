@@ -19,6 +19,8 @@ const playerStatsSchema = new mongoose.Schema(
     lastActiveDay: { type: String, default: "" }, // YYYY-MM-DD in Asia/Dhaka
     weekKey: { type: String, default: "" }, // ISO week, e.g. 2026-W46
     weeklyXp: { type: Number, default: 0 },
+    practiceXpDay: { type: String, default: "" },
+    practiceXpToday: { type: Number, default: 0 },
     achievements: [
       {
         _id: false,

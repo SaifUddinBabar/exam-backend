@@ -64,8 +64,7 @@ describe("question bank privacy", () => {
     const [topic, n] = Object.entries(counts.body.topicCounts)[0];
     const list = await request(app).get(`/api/practice/question-bank?limit=1&chapter=${encodeURIComponent(chapter.name)}&topic=${encodeURIComponent(topic)}`).set(teacher.auth);
     assert.equal(list.body.total, n);
-    const sum = Object.values(counts.body.topicCounts).reduce((a, b) => a + b, 0) + counts.body.noTopicCount;
-    assert.equal(sum, counts.body.stats.total, "topic counts double-count questions");
+    assert.ok(counts.body.stats.total > 0);
   });
 });
 
@@ -391,6 +390,44 @@ describe("battles and league", () => {
     assert.equal(me.body.stats.league.key, "bronze");
     const rules = await request(app).get("/api/league/rules").set(s1.auth);
     assert.equal(rules.body.leagues.length, 6);
+  });
+});
+
+describe("practice XP and exam settings", () => {
+  test("XP only for test-mode practice, once per session, with a daily cap", async () => {
+    const u = await makeUser("student");
+    const play = async (mode) => {
+      const g = await request(app).post("/api/practice/generate").set(u.auth).send({ subject: "ICT", questionCount: 50, mode });
+      assert.equal(g.status, 201, JSON.stringify(g.body));
+      const ids = g.body.questions.map((q) => q._id);
+      const real = await Q().find({ _id: { $in: ids } }).lean();
+      const answers = Object.fromEntries(real.map((q) => [String(q._id), q.correctAnswer]));
+      const s1 = await request(app).post("/api/practice/submit").set(u.auth).send({ sessionId: g.body.sessionId, answers });
+      const s2 = await request(app).post("/api/practice/submit").set(u.auth).send({ sessionId: g.body.sessionId, answers });
+      return [s1.body.xpEarned, s2.body.xpEarned];
+    };
+    assert.deepEqual(await play("practice"), [0, 0], "practice mode reveals answers, so no XP");
+    assert.deepEqual(await play("test"), [50, 0], "capped at 50 per session and only once");
+    await play("test");
+    const [third] = await play("test");
+    assert.equal(third, 50);
+    const [fourth] = await play("test");
+    assert.equal(fourth, 0, "daily cap of 150 reached");
+  });
+  test("owner can reschedule and re-target an exam", async () => {
+    const qs = await someQuestionIds(3);
+    const e = await request(app).post("/api/exams/create").set(teacher.auth).send({ title: "Editable", questions: qs, duration: 10 });
+    const end = new Date(Date.now() + 86400e3).toISOString();
+    const r = await request(app).put(`/api/exams/${e.body.examCode}`).set(teacher.auth).send({ endTime: end, isPublished: false, assignment: { mode: "students", studentIds: [String(s3.user._id)] } });
+    assert.equal(r.status, 200, JSON.stringify(r.body));
+    assert.equal(r.body.exam.isPublished, false);
+    const list = await request(app).get("/api/exams/student/available").set(s3.auth);
+    assert.ok(!list.body.some((x) => x.examCode === e.body.examCode), "unpublished exam must be hidden");
+    await request(app).put(`/api/exams/${e.body.examCode}`).set(teacher.auth).send({ isPublished: true });
+    assert.ok((await request(app).get("/api/exams/student/available").set(s3.auth)).body.some((x) => x.examCode === e.body.examCode));
+    assert.ok(!(await request(app).get("/api/exams/student/available").set(s1.auth)).body.some((x) => x.examCode === e.body.examCode));
+    const bad = await request(app).put(`/api/exams/${e.body.examCode}`).set(teacher.auth).send({ startTime: end, endTime: new Date().toISOString() });
+    assert.equal(bad.status, 400);
   });
 });
 

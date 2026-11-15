@@ -14,7 +14,7 @@ import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
 
 dotenv.config();
-const TEST_DB = "examino_local_test";
+const TEST_DB = "examino_ci_test"; // separate from the local dev database (examino_local_test)
 let mongod;
 
 function withDb(uri, db) {

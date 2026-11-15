@@ -3,6 +3,13 @@ import Bookmark from "../models/Bookmark.js";
 import PracticeSession from "../models/PracticeSession.js";
 import Submission from "../models/Submission.js";
 import { languageFilter } from "../utils/questionLanguage.js";
+import { awardPracticeXp } from "../services/gamification.js";
+import {
+  SYLLABUS_DATA,
+  findChapterConfig,
+  buildChapterRegex,
+  buildTopicQuery,
+} from "../utils/syllabusTopics.js";
 
 // Helper for tenant context filter
 const getTenantFilter = (req) => {
@@ -36,27 +43,26 @@ export const addAnd = (filter, clause) => {
 };
 
 export const getChapterQueryRegex = (chapter) => {
-  if (!chapter || chapter === "All") return null;
-  return chapter;
+  return buildChapterRegex(chapter);
 };
 
 export const applyVersionFilter = (filter, version, chapter) => {
-  if (chapter && chapter !== "All") filter.chapter = chapter;
+  if (chapter && chapter !== "All") {
+    const rx = buildChapterRegex(chapter);
+    if (rx) filter.chapter = rx;
+    else filter.chapter = chapter;
+  }
   addAnd(filter, languageFilter(version));
 };
 
 const listOf = (v) => (Array.isArray(v) ? v : String(v).split("||")).map((t) => String(t).trim()).filter(Boolean);
 
-/** Exact topic match. "__none__" selects questions with no topic. */
-export const applyTopicFilter = (filter, topic) => {
+/** Intelligent topic match with standard syllabus fallback and exact keyword support. */
+export const applyTopicFilter = (filter, topic, chapter) => {
   if (!topic || topic === "All") return;
-  const topics = listOf(topic);
-  if (!topics.length) return;
-  if (topics.includes("__none__")) {
-    const rest = topics.filter((t) => t !== "__none__");
-    addAnd(filter, { $or: [{ topic: { $in: ["", null, ...rest] } }, { topic: { $exists: false } }] });
-  } else {
-    filter.topic = topics.length === 1 ? topics[0] : { $in: topics };
+  const tQuery = buildTopicQuery(chapter, topic);
+  if (tQuery) {
+    addAnd(filter, tQuery);
   }
 };
 
@@ -78,33 +84,20 @@ export const getFilterMetadata = async (req, res) => {
 
     addAnd(matchFilter, languageFilter(version));
 
-    // Aggregate distinct combinations of Subject, Chapter, Topic
-    const metadata = await Question.aggregate([
-      { $match: matchFilter },
-      {
-        $group: {
-          _id: {
-            subject: "$subject",
-            chapter: "$chapter",
-          },
-          topics: { $addToSet: "$topic" },
-          count: { $sum: 1 },
-        },
-      },
-      {
-        $group: {
-          _id: "$_id.subject",
-          chapters: {
-            $push: {
-              chapter: "$_id.chapter",
-              topics: "$topics",
-              questionCount: "$count",
-            },
-          },
-          totalQuestions: { $sum: "$count" },
-        },
-      },
-    ]);
+    // Compute question count and topics for each standard syllabus chapter
+    const chapterPromises = SYLLABUS_DATA.map(async (c) => {
+      const chRx = buildChapterRegex(c.chapterName);
+      const chFilter = { ...matchFilter, chapter: chRx };
+      const count = await Question.countDocuments(chFilter);
+      return {
+        name: c.chapterName,
+        shortName: c.shortName,
+        questionCount: count,
+        topics: c.topics.map((t) => t.name),
+      };
+    });
+
+    const standardChapters = await Promise.all(chapterPromises);
 
     // Distinct boards and classes
     const [boards, boardYears, classes] = await Promise.all([
@@ -113,16 +106,15 @@ export const getFilterMetadata = async (req, res) => {
       Question.distinct("className", { ...matchFilter, className: { $ne: "" } }),
     ]);
 
-    // Format structure: { subjects: [{ name, total, chapters: [{ name, count, topics }] }], boards, boardYears, classes }
-    const formattedSubjects = metadata.map((s) => ({
-      name: s._id || "ICT",
-      totalQuestions: s.totalQuestions,
-      chapters: s.chapters.map((c) => ({
-        name: c.chapter,
-        questionCount: c.questionCount,
-        topics: c.topics.filter(Boolean).sort(),
-      })),
-    }));
+    const totalQuestions = standardChapters.reduce((sum, c) => sum + c.questionCount, 0);
+
+    const formattedSubjects = [
+      {
+        name: "ICT",
+        totalQuestions,
+        chapters: standardChapters.filter((c) => c.questionCount > 0),
+      },
+    ];
 
     return res.json({
       success: true,
@@ -164,7 +156,7 @@ export const getQuestionBank = async (req, res) => {
 
     if (subject && subject !== "All") filter.subject = subject;
     applyVersionFilter(filter, version, chapter);
-    applyTopicFilter(filter, topic);
+    applyTopicFilter(filter, topic, chapter);
     if (difficulty && difficulty !== "All") filter.difficulty = difficulty.toLowerCase();
     if (boardName && boardName !== "All") {
       filter.questionType = "board";
@@ -227,7 +219,7 @@ export const getAvailableCount = async (req, res) => {
 
     if (subject && subject !== "All") filter.subject = subject;
     applyVersionFilter(filter, version, chapter);
-    applyTopicFilter(filter, topic);
+    applyTopicFilter(filter, topic, chapter);
     if (difficulty && difficulty !== "mixed" && difficulty !== "All") {
       filter.difficulty = difficulty.toLowerCase();
     }
@@ -251,25 +243,48 @@ export const getTopicCounts = async (req, res) => {
     applyVersionFilter(filter, version, chapter);
     if (difficulty && !["All", "mixed"].includes(difficulty)) filter.difficulty = String(difficulty).toLowerCase();
 
-    // One aggregation: per-topic counts plus difficulty totals for the same filter.
+    const chConfig = findChapterConfig(chapter);
+
+    // If chapter matches syllabus, compute counts for each syllabus topic
+    let standardTopicCounts = {};
+    if (chConfig && chConfig.topics) {
+      const topicCountPromises = chConfig.topics.map(async (t) => {
+        const tFilter = { ...filter, $and: filter.$and ? [...filter.$and] : [] };
+        const q = buildTopicQuery(chapter, t.name);
+        if (q) addAnd(tFilter, q);
+        const count = await Question.countDocuments(tFilter);
+        return [t.name, count];
+      });
+      const topicResults = await Promise.all(topicCountPromises);
+      standardTopicCounts = Object.fromEntries(topicResults);
+    }
+
+    // Aggregation: per-topic counts plus difficulty totals for the same filter
     const [byTopic, byDifficulty] = await Promise.all([
       Question.aggregate([{ $match: filter }, { $group: { _id: { $ifNull: ["$topic", ""] }, n: { $sum: 1 } } }]),
       Question.aggregate([{ $match: filter }, { $group: { _id: "$difficulty", n: { $sum: 1 } } }]),
     ]);
 
-    const topicCounts = {};
+    const topicCounts = { ...standardTopicCounts };
     let noTopic = 0;
     byTopic.forEach((t) => {
-      if (t._id && String(t._id).trim()) topicCounts[t._id] = t.n;
-      else noTopic += t.n;
+      const name = String(t._id || "").trim();
+      if (!name) {
+        noTopic += t.n;
+      } else if (!chConfig && !topicCounts[name]) {
+        topicCounts[name] = t.n;
+      }
     });
+
     const d = Object.fromEntries(byDifficulty.map((x) => [x._id || "unclassified", x.n]));
     const total = byDifficulty.reduce((a, x) => a + x.n, 0);
 
     return res.json({
       success: true,
       chapter: chapter || null,
+      chapterConfig: chConfig ? { chapterId: chConfig.chapterId, chapterName: chConfig.chapterName, shortName: chConfig.shortName } : null,
       topicCounts,
+      standardTopics: chConfig ? chConfig.topics.map((t) => t.name) : Object.keys(topicCounts),
       noTopicCount: noTopic,
       stats: {
         total,
@@ -307,7 +322,7 @@ export const generatePracticeTest = async (req, res) => {
 
     if (subject && subject !== "All") filter.subject = subject;
     applyVersionFilter(filter, version, chapter);
-    applyTopicFilter(filter, topic);
+    applyTopicFilter(filter, topic, chapter);
 
     const requestedCount = Math.max(5, Math.min(100, parseInt(questionCount) || 20));
 
@@ -491,6 +506,14 @@ export const submitPracticeTest = async (req, res) => {
 
     const score = correctCount; // Standard 1 mark per correct practice question
 
+    // XP only for test-mode sessions (answers stay hidden until submission), once per session.
+    let xpEarned = 0;
+    const firstCompletion = session && !session.isCompleted;
+    if (firstCompletion && session.mode === "test" && correctCount > 0) {
+      const r = await awardPracticeXp(req.user._id, correctCount);
+      xpEarned = r.xp;
+    }
+
     if (session) {
       session.questions = sessionQuestions;
       session.score = score;
@@ -505,6 +528,7 @@ export const submitPracticeTest = async (req, res) => {
     return res.json({
       success: true,
       score,
+      xpEarned,
       totalQuestions: evaluatedQuestions.length,
       correctCount,
       wrongCount,
