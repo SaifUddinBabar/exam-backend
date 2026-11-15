@@ -1,3 +1,4 @@
+import { rateLimit } from "../middleware/rateLimit.js";
 import express from "express";
 import {
   createInvitation,
@@ -11,7 +12,7 @@ import { protect, authorize } from "../middleware/auth.js";
 const router = express.Router();
 
 // Public: check code
-router.get("/verify/:code", verifyInvitation);
+router.get("/verify/:code", rateLimit({ windowMs: 15 * 60_000, max: 30, key: "invite-verify", by: "ip" }), verifyInvitation);
 
 // Protected: accept invitation
 router.post("/accept", protect, acceptInvitation);

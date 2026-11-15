@@ -272,6 +272,8 @@ const questionSchema = new mongoose.Schema(
 // ==============================
 // INDEX FOR FAST FILTERING
 // ==============================
+// Question Bank listing: chapter filter + newest-first paging without an in-memory sort.
+questionSchema.index({ chapter: 1, createdAt: -1, _id: -1 });
 questionSchema.index({
   questionType: 1,
   boardName: 1,

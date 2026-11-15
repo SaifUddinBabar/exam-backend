@@ -4,12 +4,8 @@ import PracticeSession from "../models/PracticeSession.js";
 import Submission from "../models/Submission.js";
 import { languageFilter } from "../utils/questionLanguage.js";
 import { awardPracticeXp } from "../services/gamification.js";
-import {
-  SYLLABUS_DATA,
-  findChapterConfig,
-  buildChapterRegex,
-  buildTopicQuery,
-} from "../utils/syllabusTopics.js";
+import { ALL_CHAPTERS, UNCATEGORISED, findChapterConfig, chapterTopicNames } from "../utils/syllabusTopics.js";
+import { idsForTopics, tallyChapters, tallyTopics } from "../services/topicIndex.js";
 
 // Helper for tenant context filter
 const getTenantFilter = (req) => {
@@ -29,10 +25,10 @@ const getTenantFilter = (req) => {
   };
 };
 
-// Chapter, topic and language filters use the stored fields exactly, so the
-// counts shown in selectors always equal the number of questions a filter returns.
-// (The earlier keyword-regex topic matching counted one question under several
-// topics; uncategorised questions are tracked by the Phase 2 data-quality audit.)
+// Chapters: the six standard HSC chapters (+ Board Questions). A standard chapter
+// matches its stored naming variants exactly (e.g. "অধ্যায় ২…" and "Communication Systems").
+// Topics: every question resolves to exactly one standard topic or Uncategorised
+// (services/topicIndex.js), so topic counts always add up to the chapter total.
 const escapeRx = (s) => String(s).replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 
 export const addAnd = (filter, clause) => {
@@ -42,28 +38,30 @@ export const addAnd = (filter, clause) => {
   return filter;
 };
 
-export const getChapterQueryRegex = (chapter) => {
-  return buildChapterRegex(chapter);
+/** Mongo condition for a chapter: standard chapter → its stored aliases, else exact name. */
+export const chapterCondition = (chapter) => {
+  if (!chapter || chapter === "All") return null;
+  const c = findChapterConfig(chapter);
+  return c ? { $in: c.storedChapterNames } : chapter;
 };
+export const getChapterQueryRegex = chapterCondition; // backward-compatible name
 
 export const applyVersionFilter = (filter, version, chapter) => {
-  if (chapter && chapter !== "All") {
-    const rx = buildChapterRegex(chapter);
-    if (rx) filter.chapter = rx;
-    else filter.chapter = chapter;
-  }
+  const c = chapterCondition(chapter);
+  if (c) filter.chapter = c;
   addAnd(filter, languageFilter(version));
 };
 
 const listOf = (v) => (Array.isArray(v) ? v : String(v).split("||")).map((t) => String(t).trim()).filter(Boolean);
 
-/** Intelligent topic match with standard syllabus fallback and exact keyword support. */
-export const applyTopicFilter = (filter, topic, chapter) => {
+/** Restrict to questions resolved to the given standard topic(s). "__none__" = Uncategorised. */
+export const applyTopicFilter = async (filter, topic, chapter) => {
   if (!topic || topic === "All") return;
-  const tQuery = buildTopicQuery(chapter, topic);
-  if (tQuery) {
-    addAnd(filter, tQuery);
-  }
+  const topics = listOf(topic).map((t) => (t === "__none__" ? UNCATEGORISED : t));
+  if (!topics.length) return;
+  const ch = findChapterConfig(chapter);
+  const ids = await idsForTopics(topics, ch?.chapterId);
+  addAnd(filter, { _id: { $in: ids } });
 };
 
 export const applySearch = (filter, search) => {
@@ -84,20 +82,16 @@ export const getFilterMetadata = async (req, res) => {
 
     addAnd(matchFilter, languageFilter(version));
 
-    // Compute question count and topics for each standard syllabus chapter
-    const chapterPromises = SYLLABUS_DATA.map(async (c) => {
-      const chRx = buildChapterRegex(c.chapterName);
-      const chFilter = { ...matchFilter, chapter: chRx };
-      const count = await Question.countDocuments(chFilter);
-      return {
-        name: c.chapterName,
-        shortName: c.shortName,
-        questionCount: count,
-        topics: c.topics.map((t) => t.name),
-      };
-    });
-
-    const standardChapters = await Promise.all(chapterPromises);
+    // Count questions per standard chapter (one chapter per question).
+    const ids = await Question.find(matchFilter).distinct("_id");
+    const perChapter = await tallyChapters(ids);
+    const standardChapters = ALL_CHAPTERS.map((c) => ({
+      name: c.chapterName,
+      shortName: c.shortName,
+      chapterId: c.chapterId,
+      questionCount: perChapter[c.chapterId] || 0,
+      topics: chapterTopicNames(c.chapterId).filter((t) => t !== UNCATEGORISED),
+    }));
 
     // Distinct boards and classes
     const [boards, boardYears, classes] = await Promise.all([
@@ -106,7 +100,7 @@ export const getFilterMetadata = async (req, res) => {
       Question.distinct("className", { ...matchFilter, className: { $ne: "" } }),
     ]);
 
-    const totalQuestions = standardChapters.reduce((sum, c) => sum + c.questionCount, 0);
+    const totalQuestions = ids.length;
 
     const formattedSubjects = [
       {
@@ -156,7 +150,7 @@ export const getQuestionBank = async (req, res) => {
 
     if (subject && subject !== "All") filter.subject = subject;
     applyVersionFilter(filter, version, chapter);
-    applyTopicFilter(filter, topic, chapter);
+    await applyTopicFilter(filter, topic, chapter);
     if (difficulty && difficulty !== "All") filter.difficulty = difficulty.toLowerCase();
     if (boardName && boardName !== "All") {
       filter.questionType = "board";
@@ -174,7 +168,7 @@ export const getQuestionBank = async (req, res) => {
       Question.countDocuments(filter),
       Question.find(filter)
         .select("-__v")
-        .sort({ createdAt: -1 })
+        .sort({ createdAt: -1, _id: -1 })
         .skip(skip)
         .limit(limitNum)
         .lean(),
@@ -219,7 +213,7 @@ export const getAvailableCount = async (req, res) => {
 
     if (subject && subject !== "All") filter.subject = subject;
     applyVersionFilter(filter, version, chapter);
-    applyTopicFilter(filter, topic, chapter);
+    await applyTopicFilter(filter, topic, chapter);
     if (difficulty && difficulty !== "mixed" && difficulty !== "All") {
       filter.difficulty = difficulty.toLowerCase();
     }
@@ -244,37 +238,14 @@ export const getTopicCounts = async (req, res) => {
     if (difficulty && !["All", "mixed"].includes(difficulty)) filter.difficulty = String(difficulty).toLowerCase();
 
     const chConfig = findChapterConfig(chapter);
-
-    // If chapter matches syllabus, compute counts for each syllabus topic
-    let standardTopicCounts = {};
-    if (chConfig && chConfig.topics) {
-      const topicCountPromises = chConfig.topics.map(async (t) => {
-        const tFilter = { ...filter, $and: filter.$and ? [...filter.$and] : [] };
-        const q = buildTopicQuery(chapter, t.name);
-        if (q) addAnd(tFilter, q);
-        const count = await Question.countDocuments(tFilter);
-        return [t.name, count];
-      });
-      const topicResults = await Promise.all(topicCountPromises);
-      standardTopicCounts = Object.fromEntries(topicResults);
-    }
-
-    // Aggregation: per-topic counts plus difficulty totals for the same filter
-    const [byTopic, byDifficulty] = await Promise.all([
-      Question.aggregate([{ $match: filter }, { $group: { _id: { $ifNull: ["$topic", ""] }, n: { $sum: 1 } } }]),
+    const [ids, byDifficulty] = await Promise.all([
+      Question.find(filter).distinct("_id"),
       Question.aggregate([{ $match: filter }, { $group: { _id: "$difficulty", n: { $sum: 1 } } }]),
     ]);
-
-    const topicCounts = { ...standardTopicCounts };
-    let noTopic = 0;
-    byTopic.forEach((t) => {
-      const name = String(t._id || "").trim();
-      if (!name) {
-        noTopic += t.n;
-      } else if (!chConfig && !topicCounts[name]) {
-        topicCounts[name] = t.n;
-      }
-    });
+    const tally = await tallyTopics(ids);
+    const names = chConfig ? chapterTopicNames(chConfig.chapterId).filter((t) => t !== UNCATEGORISED) : Object.keys(tally).filter((t) => t !== UNCATEGORISED);
+    const topicCounts = Object.fromEntries(names.map((t) => [t, tally[t] || 0]));
+    const noTopic = tally[UNCATEGORISED] || 0;
 
     const d = Object.fromEntries(byDifficulty.map((x) => [x._id || "unclassified", x.n]));
     const total = byDifficulty.reduce((a, x) => a + x.n, 0);
@@ -284,7 +255,7 @@ export const getTopicCounts = async (req, res) => {
       chapter: chapter || null,
       chapterConfig: chConfig ? { chapterId: chConfig.chapterId, chapterName: chConfig.chapterName, shortName: chConfig.shortName } : null,
       topicCounts,
-      standardTopics: chConfig ? chConfig.topics.map((t) => t.name) : Object.keys(topicCounts),
+      standardTopics: names,
       noTopicCount: noTopic,
       stats: {
         total,
@@ -322,7 +293,7 @@ export const generatePracticeTest = async (req, res) => {
 
     if (subject && subject !== "All") filter.subject = subject;
     applyVersionFilter(filter, version, chapter);
-    applyTopicFilter(filter, topic, chapter);
+    await applyTopicFilter(filter, topic, chapter);
 
     const requestedCount = Math.max(5, Math.min(100, parseInt(questionCount) || 20));
 

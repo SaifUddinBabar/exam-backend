@@ -1011,7 +1011,7 @@ export const googleAuth = async (req, res) => {
 
       // Role security: Never allow "super_admin" via Google registration.
       // If client requests "org_admin", require organization name onboarding.
-      // If client requests "tutor", enforce secret teacher passcode 006985.
+      // If client requests "tutor", require the teacher passcode (TEACHER_PASSCODE).
       let validatedRole = "student";
 
       if (desiredRole === "org_admin") {
@@ -1520,8 +1520,14 @@ export const teacherPasscodeLogin = async (req, res) => {
         if (!isMatch) {
           return res.status(401).json({ success: false, message: "ভুল পাসওয়ার্ড।" });
         }
-        targetUser.role = "tutor";
-        await targetUser.save();
+        if (targetUser.isActive === false) {
+          return res.status(403).json({ success: false, message: "This account has been deactivated." });
+        }
+        // Only a student account is upgraded; centre admins and super admins keep their role.
+        if (["student", "user", "", undefined, null].includes(targetUser.role)) {
+          targetUser.role = "tutor";
+          await targetUser.save();
+        }
       } else {
         const salt = await bcrypt.genSalt(10);
         const passwordHash = await bcrypt.hash(password, salt);
@@ -1546,11 +1552,13 @@ export const teacherPasscodeLogin = async (req, res) => {
         message: "পাসওয়ার্ড অথবা Google দিয়ে সাইন ইন করুন। (Password or Google sign-in is required.)",
       });
     } else {
-      // Passcode-only direct teacher access
-      targetUser = await User.findOne({ role: "tutor" });
-      if (!targetUser) {
-        targetUser = await User.findOne({ email: "teacher@examino.edu.bd" });
+      // Passcode-only access opens ONLY the dedicated shared account. It used to open the
+      // first tutor found — a real teacher's private account — for anyone with the passcode.
+      // Set PASSCODE_ONLY_LOGIN=off to disable this shared login entirely.
+      if (String(process.env.PASSCODE_ONLY_LOGIN || "").toLowerCase() === "off") {
+        return res.status(403).json({ success: false, message: "Passcode-only sign-in is disabled. Sign in with your email and password or Google." });
       }
+      targetUser = await User.findOne({ email: "teacher@examino.edu.bd" });
       if (!targetUser) {
         const salt = await bcrypt.genSalt(10);
         const passwordHash = await bcrypt.hash("Teacher@006985", salt);
@@ -1566,6 +1574,9 @@ export const teacherPasscodeLogin = async (req, res) => {
       }
     }
 
+    if (targetUser.isActive === false) {
+      return res.status(403).json({ success: false, message: "This account has been deactivated." });
+    }
     const token = generateToken(targetUser._id);
     return res.json({
       success: true,

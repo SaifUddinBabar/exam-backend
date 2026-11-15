@@ -17,7 +17,8 @@ import practiceRoutes from "./routes/practiceRoutes.js";
 import invitationRoutes from "./routes/invitationRoutes.js";
 import batchRoutes from "./routes/batchRoutes.js";
 import noticeRoutes from "./routes/noticeRoutes.js";
-import { battleRouter, leagueRouter, studentRouter } from "./routes/gameRoutes.js";
+import { battleRouter, leagueRouter, studentRouter, tournamentRouter } from "./routes/gameRoutes.js";
+import { adminRouter, orgPortalRouter } from "./routes/adminRoutes.js";
 import { startBackupScheduler } from "./services/backupScheduler.js";
 
 // Initialize Database
@@ -79,6 +80,9 @@ app.use("/api/notices", noticeRoutes);
 app.use("/api/battles", battleRouter);
 app.use("/api/league", leagueRouter);
 app.use("/api/student", studentRouter);
+app.use("/api/tournament", tournamentRouter);
+app.use("/api/admin", adminRouter);
+app.use("/api/org", orgPortalRouter);
 
 // ==============================
 // 404 NOT FOUND HANDLER

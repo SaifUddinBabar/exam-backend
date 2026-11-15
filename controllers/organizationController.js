@@ -107,7 +107,10 @@ export const getOrganization = async (req, res) => {
       return res.status(404).json({ success: false, message: "Organization not found." });
     }
 
-    return res.json({ success: true, organization: org });
+    // Public endpoint (no login): only what a sign-up/landing page needs. Contact details,
+    // owner, plan, settings and the centre code stay private.
+    const { _id, name, slug, logoUrl, status, settings } = org;
+    return res.json({ success: true, organization: { _id, name, slug, logoUrl, status, brandColor: settings?.brandColor } });
   } catch (error) {
     return res.status(500).json({ success: false, message: "Error fetching organization." });
   }

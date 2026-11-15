@@ -160,7 +160,9 @@ export async function applyBattleResult(battle) {
       s.wins += 1;
       s.winStreak += 1;
       s.bestWinStreak = Math.max(s.bestWinStreak, s.winStreak);
-      xp += XP_RULES.battleWin;
+      // Anti-farming: a win handed over by a forfeit/disconnect earns win XP only if the
+      // winner actually answered something correctly (the win and rating still count).
+      xp += (p.correctCount || 0) > 0 ? XP_RULES.battleWin : 0;
       addAchievement(s, "first_win");
     } else if (outcome === 0.5) {
       s.draws += 1;
@@ -181,6 +183,36 @@ export async function applyBattleResult(battle) {
     if (s.rating >= 1250) addAchievement(s, "league_gold");
     await s.save();
     out.push({ ratingBefore: before, ratingAfter: s.rating, xpEarned: xp });
+  }
+  return out;
+}
+
+/**
+ * Group battles (3–6 players, unranked — no rating change). XP by placement:
+ * 1st 30, 2nd 20, others 10 (only if the player answered at least one question),
+ * plus 2 per correct answer. Players who left get only the per-correct XP.
+ * `ranked` is the players array already sorted best → worst.
+ */
+export async function applyGroupResult(battle, ranked) {
+  const out = new Map();
+  for (let i = 0; i < ranked.length; i++) {
+    const p = ranked[i];
+    const s = await getStats(p.userId);
+    touchActivity(s);
+    const participated = (p.answers || []).length > 0;
+    let xp = (p.correctCount || 0) * XP_RULES.battlePerCorrect;
+    if (participated && !p.leftAt) xp += i === 0 ? XP_RULES.battleWin : i === 1 ? 20 : XP_RULES.battleLoss;
+    s.battles += 1;
+    if (i === 0 && !battle.isDraw) {
+      s.wins += 1;
+      addAchievement(s, "first_win");
+    } else s.losses += 1;
+    s.xp += xp;
+    s.weeklyXp += xp;
+    addAchievement(s, "first_battle");
+    if (s.battles >= 10) addAchievement(s, "battles_10");
+    await s.save();
+    out.set(String(p.userId), xp);
   }
   return out;
 }

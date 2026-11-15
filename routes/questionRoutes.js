@@ -10,6 +10,7 @@ import {
   listReports,
   resolveReport,
 } from "../controllers/questionController.js";
+import { reviewQueue } from "../controllers/questionReviewController.js";
 import { upload } from "../middleware/upload.js";
 import { protect, authorize } from "../middleware/auth.js";
 import { resolveTenantContext } from "../middleware/tenantContext.js";
@@ -22,6 +23,7 @@ const staff = authorize("super_admin", "tutor", "org_admin");
 // Students receive questions only through authorised exam, practice or battle sessions.
 router.get("/topics", protect, staff, getTopics);
 router.get("/auto-generate", protect, staff, autoGenerateQuestions);
+router.get("/review", protect, staff, reviewQueue);
 router.get("/reports", protect, resolveTenantContext, staff, listReports);
 router.put("/reports/:reportId", protect, resolveTenantContext, staff, resolveReport);
 router.get("/", protect, resolveTenantContext, staff, getQuestions);

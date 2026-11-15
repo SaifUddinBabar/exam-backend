@@ -280,7 +280,7 @@ export const searchStudents = async (req, res) => {
     }
     const [total, users] = await Promise.all([
       User.countDocuments(filter),
-      User.find(filter).select("name email phone rollNumber avatar createdAt").sort({ name: 1 }).skip((page - 1) * limit).limit(limit).lean(),
+      User.find(filter).select("name email phone rollNumber avatar createdAt").sort({ name: 1, _id: 1 }).skip((page - 1) * limit).limit(limit).lean(),
     ]);
     // Which of my batches each student is already in
     const myBatches = await Batch.find({ ownerId: req.user._id, status: { $ne: "archived" } }).select("_id name").lean();

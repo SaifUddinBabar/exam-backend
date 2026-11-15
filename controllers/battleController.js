@@ -8,10 +8,14 @@
 // A player who leaves an active battle forfeits. When the server clock passes
 // endsAt, the battle is finalised on the next request from anyone.
 import crypto from "crypto";
+import mongoose from "mongoose";
 import Battle from "../models/Battle.js";
 import Question from "../models/Question.js";
-import { applyBattleResult, getStats, publicStats } from "../services/gamification.js";
+import { applyBattleResult, applyGroupResult, getStats, publicStats } from "../services/gamification.js";
 import { isStaff, toId } from "../utils/access.js";
+import { ALL_CHAPTERS, UNCATEGORISED, chapterTopicNames, findChapterConfig } from "../utils/syllabusTopics.js";
+import { idsForTopics, tallyChapters, getTopicIndex, unplayableIds } from "../services/topicIndex.js";
+import { battleEvents, notifyBattle } from "../services/battleEvents.js";
 
 const QUESTIONS_PER_BATTLE = 10;
 const SECONDS_PER_QUESTION = 20;
@@ -19,6 +23,41 @@ const COUNTDOWN_SECONDS = 3;
 const RANDOM_WAIT_SECONDS = 60;
 const FRIEND_WAIT_SECONDS = 15 * 60;
 const ANSWER_GRACE_MS = 2000;
+// Connection handling: a player with no heartbeat (stream tick, poll or answer) for
+// DISCONNECT_AFTER_MS is shown as reconnecting; after a further RECONNECT_GRACE_MS they
+// forfeit (1v1, only while the other player is still connected) or leave (group).
+const DISCONNECT_AFTER_MS = 12_000;
+const RECONNECT_GRACE_MS = 30_000;
+const STREAM_TICK_MS = 3_000;
+const STREAM_MAX_LIFE_MS = 20 * 60_000;
+// Rating-based matchmaking: start within ±150 rating, widen by 10 per second of waiting,
+// accept anyone after 40 s so nobody waits out the full minute.
+const BAND_BASE = 150;
+const BAND_PER_SECOND = 10;
+const BAND_OPEN_AFTER_SECONDS = 40;
+
+export const ratingBand = (waitedSeconds) => (waitedSeconds >= BAND_OPEN_AFTER_SECONDS ? Infinity : BAND_BASE + BAND_PER_SECOND * Math.max(0, waitedSeconds));
+const withinBand = (a, b, waitedSeconds) => a == null || b == null || Math.abs(a - b) <= ratingBand(waitedSeconds);
+async function ratingOf(userId) {
+  const st = await getStats(userId);
+  return st?.rating ?? 1000;
+}
+
+// Question payloads for a battle never change during it; cache them so polling and
+// streaming do not re-read the questions on every tick.
+const questionCache = new Map(); // battleId → { at, qs }
+const QUESTION_CACHE_MS = 30 * 60_000;
+async function battleQuestions(b) {
+  const k = String(b._id);
+  const hit = questionCache.get(k);
+  if (hit && Date.now() - hit.at < QUESTION_CACHE_MS) return hit.qs;
+  const qs = await Question.find({ _id: { $in: b.questionIds } })
+    .select("question options questionBn questionEn optionsBn optionsEn image chapter topic difficulty correctAnswer explanation explanationBn explanationEn")
+    .lean();
+  questionCache.set(k, { at: Date.now(), qs });
+  if (questionCache.size > 2000) questionCache.delete(questionCache.keys().next().value);
+  return qs;
+}
 
 const fail = (res, status, message, extra = {}) => res.status(status).json({ success: false, message, ...extra });
 
@@ -31,17 +70,26 @@ function cleanFilters(body = {}) {
   return { className: s(body.className, 40), subject: s(body.subject, 60), chapter: s(body.chapter), topic: s(body.topic), difficulty };
 }
 
-function questionMatch(f) {
+// Same standard chapters/topics as the Question Bank (utils/syllabusTopics.js).
+async function questionMatch(f) {
   const m = { ...BATTLE_POOL };
   if (f.className) m.className = f.className;
   if (f.subject) m.subject = f.subject;
-  if (f.chapter) m.chapter = f.chapter;
-  if (f.topic) m.topic = f.topic;
+  const ch = findChapterConfig(f.chapter);
+  if (f.chapter) m.chapter = ch ? { $in: ch.storedChapterNames } : f.chapter;
+  // Never serve a question that needs a missing passage/figure or is malformed (read-time check only).
+  const skip = await unplayableIds();
+  if (f.topic && f.topic !== UNCATEGORISED) {
+    const bad = new Set(skip.map(String));
+    m._id = { $in: (await idsForTopics([f.topic], ch?.chapterId)).filter((id) => !bad.has(String(id))) };
+  } else {
+    m._id = { $nin: skip };
+  }
   return m;
 }
 
-async function pickQuestions(f, n = QUESTIONS_PER_BATTLE) {
-  const base = questionMatch(f);
+export async function pickQuestions(f, n = QUESTIONS_PER_BATTLE) {
+  const base = await questionMatch(f);
   let picked = [];
   if (f.difficulty === "mixed") {
     const plan = [
@@ -84,9 +132,16 @@ function timing(now = new Date(), n = QUESTIONS_PER_BATTLE) {
 }
 
 /** Finalise an active battle exactly once (atomic status transition). */
-async function finalize(battleId, { forfeitUserId = null } = {}) {
+async function finalize(battleId, opts = {}) {
+  const r = await finalizeInner(battleId, opts);
+  notifyBattle(battleId);
+  return r;
+}
+
+async function finalizeInner(battleId, { forfeitUserId = null, forfeitReason = "forfeit" } = {}) {
   const b = await Battle.findOneAndUpdate({ _id: battleId, status: "active" }, { $set: { status: "finished", finishedAt: new Date() } }, { new: true });
   if (!b) return Battle.findById(battleId);
+  if (b.mode === "group") return finalizeGroup(b);
   const [a, c] = b.players;
   const used = (p) => {
     const last = p.answers.length ? Math.max(...p.answers.map((x) => new Date(x.answeredAt).getTime())) : b.endsAt.getTime();
@@ -96,7 +151,7 @@ async function finalize(battleId, { forfeitUserId = null } = {}) {
   let reason = "score";
   if (forfeitUserId) {
     winner = String(a.userId) === String(forfeitUserId) ? c : a;
-    reason = "forfeit";
+    reason = forfeitReason;
   } else if (a.score !== c.score) {
     winner = a.score > c.score ? a : c;
   } else if (a.answers.length + c.answers.length > 0 && used(a) !== used(c)) {
@@ -113,6 +168,32 @@ async function finalize(battleId, { forfeitUserId = null } = {}) {
     p.xpEarned = deltas[i].xpEarned;
   });
   b.markModified("players");
+  b.settledAt = new Date();
+  await b.save();
+  return b;
+}
+
+/** Seconds used by a player (server timestamps); players without answers count the full clock. */
+function usedMs(b, p) {
+  const last = p.answers.length ? Math.max(...p.answers.map((x) => new Date(x.answeredAt).getTime())) : b.endsAt.getTime();
+  return last - b.startedAt.getTime();
+}
+
+/** Group result: rank by score, then speed; players who left rank last. */
+async function finalizeGroup(b) {
+  const ranked = [...b.players].sort((x, y) => (x.leftAt ? 1 : 0) - (y.leftAt ? 1 : 0) || y.score - x.score || usedMs(b, x) - usedMs(b, y));
+  const [first, second] = ranked;
+  const tie = second && !first.leftAt && !second.leftAt && first.score === second.score && usedMs(b, first) === usedMs(b, second);
+  b.isDraw = Boolean(tie);
+  b.winnerId = tie ? null : first.userId;
+  b.resultReason = tie ? "draw" : "score";
+  const xp = await applyGroupResult(b, ranked);
+  b.players.forEach((p) => {
+    p.placement = ranked.findIndex((r) => String(r.userId) === String(p.userId)) + 1;
+    p.xpEarned = xp.get(String(p.userId)) || 0;
+  });
+  b.markModified("players");
+  b.settledAt = new Date();
   await b.save();
   return b;
 }
@@ -124,10 +205,102 @@ async function refresh(b) {
     await Battle.updateOne({ _id: b._id, status: "waiting" }, { $set: { status: "cancelled", resultReason: "no_opponent" } });
     return Battle.findById(b._id);
   }
+  if (b.status === "waiting" && b.mode === "random" && b.players.length === 1) {
+    const merged = await tryMerge(b, now);
+    if (merged) return merged;
+  }
   if (b.status === "active" && now.getTime() > b.endsAt.getTime() + ANSWER_GRACE_MS) {
     return finalize(b._id);
   }
+  if (b.status === "active" && now >= b.startedAt) {
+    const after = await applyDisconnects(b, now);
+    if (after) return after;
+  }
   return b;
+}
+
+/**
+ * Two players waiting in separate random rooms (their ratings were too far apart when
+ * they arrived) are paired once their widening bands overlap. The newer room merges
+ * into the older one; ordering by (createdAt, _id) means only one side ever merges.
+ */
+async function tryMerge(b, now) {
+  const me = b.players[0];
+  const older = await Battle.find({
+    _id: { $ne: b._id },
+    status: "waiting",
+    mode: "random",
+    matchKey: b.matchKey,
+    expiresAt: { $gt: now },
+    "players.0.userId": { $ne: me.userId },
+    "players.1": { $exists: false },
+    $or: [{ createdAt: { $lt: b.createdAt } }, { createdAt: b.createdAt, _id: { $lt: b._id } }],
+  })
+    .sort({ createdAt: 1 })
+    .limit(10)
+    .select("hostRating createdAt")
+    .lean();
+  for (const o of older) {
+    const waited = Math.max(now - b.createdAt, now - o.createdAt) / 1000;
+    if (!withinBand(b.hostRating, o.hostRating, waited)) continue;
+    const mine = await Battle.findOneAndUpdate({ _id: b._id, status: "waiting", "players.1": { $exists: false } }, { $set: { status: "cancelled", resultReason: "merged" } }, { new: true });
+    if (!mine) return Battle.findById(b._id);
+    const t = timing(now);
+    const joined = await Battle.findOneAndUpdate(
+      { _id: o._id, status: "waiting", "players.1": { $exists: false } },
+      { $push: { players: playerEntry({ _id: me.userId, name: me.name }) }, $set: { status: "active", startedAt: t.startedAt, endsAt: t.endsAt, expiresAt: null } },
+      { new: true }
+    );
+    if (joined) {
+      await Battle.updateOne({ _id: b._id }, { $set: { mergedInto: joined._id } });
+      notifyBattle(joined._id);
+      notifyBattle(b._id);
+      return Battle.findById(b._id);
+    }
+    // The older room was taken meanwhile: reopen ours and keep looking.
+    await Battle.updateOne({ _id: b._id, status: "cancelled", resultReason: "merged" }, { $set: { status: "waiting", resultReason: "" } });
+  }
+  return null;
+}
+
+const lastSeenMs = (p) => new Date(p.lastSeenAt || p.joinedAt || 0).getTime();
+const isConnected = (p, now = Date.now()) => now - lastSeenMs(p) <= DISCONNECT_AFTER_MS;
+
+/** Forfeit / remove players whose reconnect grace has run out. Returns the updated battle, or null if nothing changed. */
+async function applyDisconnects(b, now) {
+  const limit = now.getTime() - DISCONNECT_AFTER_MS - RECONNECT_GRACE_MS;
+  const total = b.questionIds.length;
+  // A player who already answered everything is done, not disconnected.
+  const gone = b.players.filter((p) => !p.leftAt && p.answers.length < total && lastSeenMs(p) < limit);
+  if (!gone.length) return null;
+  if (b.mode === "group") {
+    for (const p of gone) {
+      await Battle.updateOne({ _id: b._id, status: "active", players: { $elemMatch: { userId: p.userId, leftAt: null } } }, { $set: { "players.$.leftAt": now } });
+    }
+    const after = await Battle.findById(b._id);
+    const stillIn = after.players.filter((p) => !p.leftAt);
+    if (stillIn.length <= 1 || stillIn.every((p) => p.answers.length >= total)) return finalize(b._id);
+    notifyBattle(b._id);
+    return after;
+  }
+  // 1v1: only when the other player is still around; if both dropped, the clock ends it.
+  const here = b.players.filter((p) => !gone.includes(p));
+  if (gone.length === 1 && here.length === 1 && isConnected(here[0], now.getTime())) {
+    return finalize(b._id, { forfeitUserId: gone[0].userId, forfeitReason: "disconnect" });
+  }
+  return null;
+}
+
+const graceEndsAt = (p) => new Date(lastSeenMs(p) + DISCONNECT_AFTER_MS + RECONNECT_GRACE_MS);
+
+// finalize() claims the battle (status "finished") before ratings/XP/placements are written.
+// Until that second write lands, report it as still running so clients keep polling.
+// Battles finished before settledAt existed are treated as settled after 30 s.
+function settled(b) {
+  return Boolean(b.settledAt) || (b.finishedAt && Date.now() - new Date(b.finishedAt).getTime() > 30_000);
+}
+function shownStatus(b) {
+  return b.status === "finished" && !settled(b) ? "active" : b.status;
 }
 
 async function viewFor(b, userId) {
@@ -136,8 +309,8 @@ async function viewFor(b, userId) {
   const view = {
     _id: b._id,
     mode: b.mode,
-    status: b.status,
-    roomCode: b.mode === "friend" ? b.roomCode : undefined,
+    status: shownStatus(b),
+    roomCode: b.mode === "friend" || b.mode === "group" ? b.roomCode : undefined,
     filters: b.filters,
     secondsPerQuestion: b.secondsPerQuestion,
     totalQuestions: b.questionIds.length,
@@ -146,13 +319,16 @@ async function viewFor(b, userId) {
     expiresAt: b.expiresAt,
     serverNow: new Date(),
     me: me && { name: me.name, score: me.score, correctCount: me.correctCount, wrongCount: me.wrongCount, answered: me.answers.length, answers: me.answers, ratingBefore: me.ratingBefore, ratingAfter: me.ratingAfter, xpEarned: me.xpEarned },
-    opponent: opp ? { name: opp.name, score: opp.score, answered: opp.answers.length, ratingBefore: opp.ratingBefore, ratingAfter: opp.ratingAfter } : null,
-    result: b.status === "finished" ? { winner: b.isDraw ? "draw" : String(b.winnerId) === String(userId) ? "me" : "opponent", reason: b.resultReason } : null,
+    opponent: opp ? { name: opp.name, score: opp.score, answered: opp.answers.length, ratingBefore: opp.ratingBefore, ratingAfter: opp.ratingAfter, connected: Boolean(opp.leftAt) || isConnected(opp), graceEndsAt: !opp.leftAt && !isConnected(opp) ? graceEndsAt(opp) : null } : null,
+    mergedInto: b.mergedInto || null,
+    reconnectGraceSeconds: RECONNECT_GRACE_MS / 1000,
+    maxPlayers: b.maxPlayers || 2,
+    isHost: String(b.createdBy) === String(userId),
+    players: b.players.map((p) => ({ name: p.name, score: p.score, answered: p.answers.length, placement: p.placement, left: Boolean(p.leftAt), connected: Boolean(p.leftAt) || isConnected(p), isMe: String(p.userId) === String(userId) })),
+    result: shownStatus(b) === "finished" ? { winner: b.isDraw ? "draw" : String(b.winnerId) === String(userId) ? "me" : "opponent", reason: b.resultReason, placement: me?.placement || null } : null,
   };
   if (b.status === "active" || b.status === "finished") {
-    const qs = await Question.find({ _id: { $in: b.questionIds } })
-      .select("question options questionBn questionEn optionsBn optionsEn image chapter topic difficulty correctAnswer explanation explanationBn explanationEn")
-      .lean();
+    const qs = await battleQuestions(b);
     const map = new Map(qs.map((q) => [String(q._id), q]));
     const finished = b.status === "finished";
     view.questions = b.questionIds.map((id, i) => {
@@ -232,12 +408,27 @@ export const findMatch = async (req, res) => {
     const matchKey = matchKeyOf(f);
     const now = new Date();
     const t = timing(now);
-    const joined = await Battle.findOneAndUpdate(
-      { status: "waiting", mode: "random", matchKey, expiresAt: { $gt: now }, "players.0.userId": { $ne: req.user._id }, "players.1": { $exists: false } },
-      { $push: { players: playerEntry(req.user) }, $set: { status: "active", startedAt: t.startedAt, endsAt: t.endsAt, expiresAt: null } },
-      { new: true, sort: { createdAt: 1 } }
-    );
-    if (joined) return res.json({ success: true, battle: await viewFor(joined, req.user._id), matched: true });
+    const myRating = await ratingOf(req.user._id);
+    // Oldest compatible room first; compatibility widens with how long that room has waited.
+    const candidates = await Battle.find({ status: "waiting", mode: "random", matchKey, expiresAt: { $gt: now }, "players.0.userId": { $ne: req.user._id }, "players.1": { $exists: false } })
+      .sort({ createdAt: 1 })
+      .limit(25)
+      .select("hostRating createdAt")
+      .lean();
+    let joined = null;
+    for (const c of candidates) {
+      if (!withinBand(myRating, c.hostRating, (now - c.createdAt) / 1000)) continue;
+      joined = await Battle.findOneAndUpdate(
+        { _id: c._id, status: "waiting", "players.1": { $exists: false } },
+        { $push: { players: playerEntry(req.user) }, $set: { status: "active", startedAt: t.startedAt, endsAt: t.endsAt, expiresAt: null } },
+        { new: true }
+      );
+      if (joined) break;
+    }
+    if (joined) {
+      notifyBattle(joined._id);
+      return res.json({ success: true, battle: await viewFor(joined, req.user._id), matched: true });
+    }
 
     const questionIds = await pickQuestions(f);
     if (questionIds.length < 5) return fail(res, 400, "Not enough questions for this topic yet. Try a wider topic or another difficulty.");
@@ -247,6 +438,7 @@ export const findMatch = async (req, res) => {
       createdBy: req.user._id,
       filters: f,
       matchKey,
+      hostRating: myRating,
       questionIds,
       secondsPerQuestion: SECONDS_PER_QUESTION,
       players: [playerEntry(req.user)],
@@ -266,13 +458,16 @@ export const createFriendRoom = async (req, res) => {
     const existing = await ensureNoOpenBattle(req.user);
     if (existing) return res.json({ success: true, battle: await viewFor(existing, req.user._id), resumed: true });
     const f = cleanFilters(req.body);
+    const group = req.body?.group === true || req.body?.group === "true";
+    const maxPlayers = Math.max(3, Math.min(6, parseInt(req.body?.maxPlayers) || 4));
     const questionIds = await pickQuestions(f);
     if (questionIds.length < 5) return fail(res, 400, "Not enough questions for this topic yet. Try a wider topic or another difficulty.");
     let b;
     for (let i = 0; i < 5 && !b; i++) {
       try {
         b = await Battle.create({
-          mode: "friend",
+          mode: group ? "group" : "friend",
+          maxPlayers: group ? maxPlayers : 2,
           ranked: false,
           roomCode: crypto.randomBytes(3).toString("hex").toUpperCase(),
           createdBy: req.user._id,
@@ -304,13 +499,25 @@ export const joinFriendRoom = async (req, res) => {
     if (existing && existing.roomCode !== code) return fail(res, 409, "Finish or leave your current battle first.", { battleId: existing._id });
     if (existing) return res.json({ success: true, battle: await viewFor(existing, req.user._id) });
     const now = new Date();
+    const room = await Battle.findOne({ roomCode: code, status: "waiting", expiresAt: { $gt: now } }).select("mode maxPlayers").lean();
+    if (room?.mode === "group") {
+      const g = await Battle.findOneAndUpdate(
+        { roomCode: code, status: "waiting", expiresAt: { $gt: now }, "players.userId": { $ne: req.user._id }, $expr: { $lt: [{ $size: "$players" }, "$maxPlayers"] } },
+        { $push: { players: playerEntry(req.user) } },
+        { new: true }
+      );
+      if (!g) return fail(res, 409, "This group room is full or no longer open.");
+      notifyBattle(g._id);
+      return res.json({ success: true, battle: await viewFor(g, req.user._id) });
+    }
     const t = timing(now);
     const b = await Battle.findOneAndUpdate(
-      { roomCode: code, status: "waiting", expiresAt: { $gt: now }, "players.0.userId": { $ne: req.user._id }, "players.1": { $exists: false } },
+      { roomCode: code, mode: "friend", status: "waiting", expiresAt: { $gt: now }, "players.0.userId": { $ne: req.user._id }, "players.1": { $exists: false } },
       { $push: { players: playerEntry(req.user) }, $set: { status: "active", startedAt: t.startedAt, endsAt: t.endsAt, expiresAt: null } },
       { new: true }
     );
     if (!b) return fail(res, 404, "This room is not available. It may have expired or already started.");
+    notifyBattle(b._id);
     return res.json({ success: true, battle: await viewFor(b, req.user._id) });
   } catch (e) {
     console.error("joinFriendRoom:", e.message);
@@ -339,6 +546,7 @@ export const answerQuestion = async (req, res) => {
     if (b.status !== "active") return fail(res, 409, "This battle is not running.", { battle: await viewFor(b, req.user._id) });
     const now = new Date();
     if (now < b.startedAt) return fail(res, 425, "The battle has not started yet.");
+    if (b.players.find((p) => String(p.userId) === String(req.user._id))?.leftAt) return fail(res, 409, "You left this battle.");
     if (now.getTime() > b.endsAt.getTime() + ANSWER_GRACE_MS) return fail(res, 409, "Time is up.");
 
     const index = Number(req.body?.index);
@@ -360,6 +568,7 @@ export const answerQuestion = async (req, res) => {
       { _id: b._id, status: "active", players: { $elemMatch: { userId: req.user._id, "answers.index": { $ne: index } } } },
       {
         $push: { "players.$.answers": { index, answer: String(optionIndex), correct, points, answeredAt: now } },
+        $set: { "players.$.lastSeenAt": now },
         $inc: { "players.$.score": points, [correct ? "players.$.correctCount" : "players.$.wrongCount"]: 1 },
       },
       { new: true }
@@ -367,8 +576,11 @@ export const answerQuestion = async (req, res) => {
     if (!updated) return fail(res, 409, "You already answered this question.");
 
     let current = updated;
-    if (current.players.length === 2 && current.players.every((p) => p.answers.length >= current.questionIds.length)) {
+    const remaining = current.players.filter((p) => !p.leftAt);
+    if (current.players.length >= 2 && remaining.every((p) => p.answers.length >= current.questionIds.length)) {
       current = await finalize(current._id);
+    } else {
+      notifyBattle(current._id);
     }
     return res.json({ success: true, correct, points, correctIndex: (q?.options || []).indexOf(q?.correctAnswer), battle: await viewFor(current, req.user._id) });
   } catch (e) {
@@ -382,17 +594,130 @@ export const leaveBattle = async (req, res) => {
   try {
     const b = await loadParticipantBattle(req, res);
     if (!b) return;
+    if (b.mode === "group" && b.status === "waiting" && String(b.createdBy) !== String(req.user._id)) {
+      await Battle.updateOne({ _id: b._id, status: "waiting" }, { $pull: { players: { userId: req.user._id } } });
+      notifyBattle(b._id);
+      return res.json({ success: true, left: true });
+    }
+    if (b.mode === "group" && b.status === "active") {
+      await Battle.updateOne({ _id: b._id, status: "active", "players.userId": req.user._id }, { $set: { "players.$.leftAt": new Date() } });
+      const after = await Battle.findById(b._id);
+      const stillIn = after.players.filter((p) => !p.leftAt);
+      if (stillIn.length <= 1 || stillIn.every((p) => p.answers.length >= after.questionIds.length)) await finalize(after._id);
+      const fresh = await Battle.findById(b._id);
+      notifyBattle(b._id);
+      return res.json({ success: true, battle: await viewFor(fresh, req.user._id) });
+    }
     if (b.status === "waiting") {
       await Battle.updateOne({ _id: b._id, status: "waiting" }, { $set: { status: "cancelled", resultReason: "left" } });
     } else if (b.status === "active") {
       await finalize(b._id, { forfeitUserId: req.user._id });
     }
     const fresh = await Battle.findById(b._id);
+    notifyBattle(b._id);
     return res.json({ success: true, battle: await viewFor(fresh, req.user._id) });
   } catch (e) {
     console.error("leaveBattle:", e.message);
     return fail(res, 500, "Could not leave the battle.");
   }
+};
+
+// POST /api/battles/:id/start — host starts a group room (2+ players)
+export const startGroupBattle = async (req, res) => {
+  try {
+    const b = await loadParticipantBattle(req, res);
+    if (!b) return;
+    if (b.mode !== "group") return fail(res, 400, "Only group rooms are started by the host.");
+    if (String(b.createdBy) !== String(req.user._id)) return fail(res, 403, "Only the host can start the battle.");
+    if (b.players.length < 2) return fail(res, 400, "At least 2 players are needed.");
+    const t = timing(new Date());
+    const started = await Battle.findOneAndUpdate({ _id: b._id, status: "waiting" }, { $set: { status: "active", startedAt: t.startedAt, endsAt: t.endsAt, expiresAt: null } }, { new: true });
+    if (!started) return fail(res, 409, "This room has already started or closed.");
+    // Everyone in the room gets a fresh heartbeat so the reconnect grace starts now.
+    await Battle.updateOne({ _id: started._id }, { $set: { "players.$[].lastSeenAt": new Date() } });
+    notifyBattle(started._id);
+    return res.json({ success: true, battle: await viewFor(started, req.user._id) });
+  } catch (e) {
+    console.error("startGroupBattle:", e.message);
+    return fail(res, 500, "Could not start the battle.");
+  }
+};
+
+// GET /api/battles/:id/stream — Server-Sent Events. Read with fetch() so the token stays in
+// the Authorization header (never in the URL). Pushes the same view as GET /:id whenever
+// it changes: at once for changes made in this process, otherwise within STREAM_TICK_MS.
+// Each tick is also the player's heartbeat for the reconnect grace period.
+const openStreams = new Map(); // userId → number of open streams
+export const streamBattle = async (req, res) => {
+  const first = await loadParticipantBattle(req, res);
+  if (!first) return;
+  const uid = String(req.user._id);
+  if ((openStreams.get(uid) || 0) >= 3) return fail(res, 429, "Too many open battle connections.");
+  openStreams.set(uid, (openStreams.get(uid) || 0) + 1);
+  res.set({ "Content-Type": "text/event-stream", "Cache-Control": "no-cache, no-transform", Connection: "keep-alive", "X-Accel-Buffering": "no" });
+  res.flushHeaders?.();
+  const id = String(first._id);
+  let lastKey = "";
+  let closed = false;
+  let busy = false;
+  let again = false;
+  let lastBeat = 0;
+  const push = async () => {
+    if (closed) return;
+    if (busy) {
+      again = true;
+      return;
+    }
+    busy = true;
+    try {
+      let b = await Battle.findById(id);
+      if (!b) return end();
+      if ((b.status === "active" || b.status === "waiting") && Date.now() - lastBeat >= 5000) {
+        lastBeat = Date.now();
+        await Battle.updateOne({ _id: id, "players.userId": req.user._id }, { $set: { "players.$.lastSeenAt": new Date() } });
+        b = await Battle.findById(id);
+      }
+      b = await refresh(b);
+      const view = await viewFor(b, req.user._id);
+      const { serverNow, ...stable } = view; // eslint-disable-line no-unused-vars
+      const key = JSON.stringify(stable);
+      if (key !== lastKey) {
+        lastKey = key;
+        res.write(`data: ${JSON.stringify({ battle: view })}\n\n`);
+      } else {
+        res.write(": ping\n\n");
+      }
+      if (view.status === "finished" || view.status === "cancelled") end();
+    } catch (e) {
+      console.error("streamBattle:", e.message);
+      end();
+    } finally {
+      busy = false;
+      if (again && !closed) {
+        again = false;
+        push();
+      }
+    }
+  };
+  const onEvent = () => push();
+  battleEvents.on(id, onEvent);
+  // BATTLE_STREAM_TICK_MS can lengthen the cross-instance fallback tick (tests use it to
+  // prove that in-process changes are pushed, not picked up by the tick).
+  const timer = setInterval(push, Number(process.env.BATTLE_STREAM_TICK_MS) || STREAM_TICK_MS);
+  const maxLife = setTimeout(end, STREAM_MAX_LIFE_MS);
+  function end() {
+    if (closed) return;
+    closed = true;
+    clearInterval(timer);
+    clearTimeout(maxLife);
+    battleEvents.off(id, onEvent);
+    const n = (openStreams.get(uid) || 1) - 1;
+    if (n > 0) openStreams.set(uid, n);
+    else openStreams.delete(uid);
+    res.end();
+  }
+  req.on("close", end);
+  push();
 };
 
 // GET /api/battles/history
@@ -439,31 +764,30 @@ export const currentBattle = async (req, res) => {
 // GET /api/battles/topics — Subject → Chapter → Topic tree with question counts (no questions)
 export const battleTopics = async (req, res) => {
   try {
-    const rows = await Question.aggregate([
-      { $match: BATTLE_POOL },
-      { $group: { _id: { s: "$subject", c: "$chapter", t: "$topic" }, n: { $sum: 1 }, classes: { $addToSet: "$className" } } },
-    ]);
-    const subjects = new Map();
-    rows.forEach((r) => {
-      const s = r._id.s || "Other";
-      if (!subjects.has(s)) subjects.set(s, { name: s, count: 0, chapters: new Map() });
-      const sub = subjects.get(s);
-      sub.count += r.n;
-      const c = r._id.c || "General";
-      if (!sub.chapters.has(c)) sub.chapters.set(c, { name: c, count: 0, topics: [] });
-      const ch = sub.chapters.get(c);
-      ch.count += r.n;
-      if (r._id.t) ch.topics.push({ name: r._id.t, count: r.n });
+    const idx = await getTopicIndex();
+    // Count only questions the pickers can actually serve.
+    const ids = (await Question.find(BATTLE_POOL).distinct("_id")).filter((id) => !idx.get(String(id))?.issues?.length);
+    const perChapter = await tallyChapters(ids);
+    const perTopic = {};
+    ids.forEach((id) => {
+      const r = idx.get(String(id));
+      if (!r?.chapterId) return;
+      const k = r.chapterId + "|" + r.topic;
+      perTopic[k] = (perTopic[k] || 0) + 1;
     });
+    const chapters = ALL_CHAPTERS.map((c) => ({
+      name: c.chapterName,
+      count: perChapter[c.chapterId] || 0,
+      topics: chapterTopicNames(c.chapterId)
+        .filter((t) => t !== UNCATEGORISED)
+        .map((t) => ({ name: t, count: perTopic[c.chapterId + "|" + t] || 0 }))
+        .filter((t) => t.count > 0),
+    })).filter((c) => c.count > 0);
     const classes = (await Question.distinct("className", BATTLE_POOL)).filter(Boolean).sort();
     return res.json({
       success: true,
       classes,
-      subjects: [...subjects.values()].map((s) => ({
-        name: s.name,
-        count: s.count,
-        chapters: [...s.chapters.values()].map((c) => ({ ...c, topics: c.topics.sort((a, b) => b.count - a.count) })).sort((a, b) => a.name.localeCompare(b.name)),
-      })),
+      subjects: [{ name: "ICT", count: ids.length, chapters }],
     });
   } catch (e) {
     console.error("battleTopics:", e.message);

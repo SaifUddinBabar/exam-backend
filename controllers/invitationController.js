@@ -3,6 +3,15 @@ import Invitation from "../models/Invitation.js";
 import Organization from "../models/Organization.js";
 import OrganizationMembership from "../models/OrganizationMembership.js";
 
+/** True when the user administers the organization (owner, org_admin member or super admin). */
+async function administers(user, orgId) {
+  if (user.globalRole === "super_admin") return true;
+  const org = await Organization.findById(orgId).select("ownerId").lean();
+  if (!org) return false;
+  if (String(org.ownerId) === String(user._id)) return true;
+  return Boolean(await OrganizationMembership.exists({ organizationId: orgId, userId: user._id, role: "org_admin", status: "active" }));
+}
+
 // ============================================================================
 // 1. CREATE INVITATION (Org Admin only)
 // ============================================================================
@@ -196,6 +205,9 @@ export const acceptInvitation = async (req, res) => {
 export const listInvitations = async (req, res) => {
   try {
     const { orgId } = req.params;
+    if (!(await administers(req.user, orgId))) {
+      return res.status(403).json({ success: false, message: "You can only view invitations of your own organization." });
+    }
 
     const invitations = await Invitation.find({ organizationId: orgId })
       .populate("invitedBy", "name email")
@@ -217,6 +229,9 @@ export const revokeInvitation = async (req, res) => {
     const invite = await Invitation.findById(id);
     if (!invite) {
       return res.status(404).json({ success: false, message: "Invitation not found." });
+    }
+    if (!(await administers(req.user, invite.organizationId))) {
+      return res.status(403).json({ success: false, message: "You can only revoke invitations of your own organization." });
     }
 
     invite.status = "revoked";

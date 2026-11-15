@@ -64,7 +64,8 @@ describe("question bank privacy", () => {
     const [topic, n] = Object.entries(counts.body.topicCounts)[0];
     const list = await request(app).get(`/api/practice/question-bank?limit=1&chapter=${encodeURIComponent(chapter.name)}&topic=${encodeURIComponent(topic)}`).set(teacher.auth);
     assert.equal(list.body.total, n);
-    assert.ok(counts.body.stats.total > 0);
+    const sum = Object.values(counts.body.topicCounts).reduce((a, b) => a + b, 0) + counts.body.noTopicCount;
+    assert.equal(sum, counts.body.stats.total, "topic counts double-count questions");
   });
 });
 

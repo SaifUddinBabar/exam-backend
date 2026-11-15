@@ -1,58 +1,36 @@
-// READ-ONLY: evaluates the syllabus keyword topic matcher (utils/syllabusTopics.js)
-// against the production snapshot. Reports counts, overlap between topics and
-// samples of returned questions so their academic correctness can be checked.
+// READ-ONLY: evaluates the topic resolver (utils/syllabusTopics.js) on the production
+// snapshot: per-topic counts, how each question was classified (stored / keyword / board /
+// uncategorised) and samples so academic correctness can be checked by a person.
 //   node scripts/audit/topic_matcher_precision.mjs
 import fs from "fs";
 import path from "path";
 import { EJSON } from "bson";
-import { SYLLABUS_DATA, buildChapterRegex, buildTopicQuery } from "../../utils/syllabusTopics.js";
+import { ALL_CHAPTERS, UNCATEGORISED, chapterTopicNames, resolveQuestionTopic } from "../../utils/syllabusTopics.js";
 
 const qs = EJSON.parse(fs.readFileSync(".local-snapshot/questions.json", "utf8"), { relaxed: false });
-
-// Minimal evaluator for the Mongo filter shapes buildTopicQuery produces.
-const test = (rx, v) => (Array.isArray(v) ? v.some((x) => rx.test(String(x ?? ""))) : rx.test(String(v ?? "")));
-function matches(q, f) {
-  if (f.$or) return f.$or.some((c) => matches(q, c));
-  for (const [k, cond] of Object.entries(f)) {
-    if (cond instanceof RegExp) {
-      if (!test(cond, q[k])) return false;
-    } else if (cond && typeof cond === "object" && "$in" in cond) {
-      if (!cond.$in.includes(q[k] ?? null)) return false;
-    } else if (cond && typeof cond === "object" && "$exists" in cond) {
-      if ((q[k] !== undefined) !== cond.$exists) return false;
-    } else if (q[k] !== cond) return false;
-  }
-  return true;
-}
-
+const resolved = qs.map((q) => ({ q, r: resolveQuestionTopic(q) }));
 const report = [];
-for (const ch of SYLLABUS_DATA) {
-  const chRx = buildChapterRegex(ch.chapterName);
-  const inChapter = qs.filter((q) => chRx.test(q.chapter || ""));
-  const perQ = new Map(inChapter.map((q) => [String(q._id), []]));
-  const topics = ch.topics.map((t) => {
-    const f = buildTopicQuery(ch.chapterName, t.name);
-    const hits = inChapter.filter((q) => matches(q, f));
-    hits.forEach((q) => perQ.get(String(q._id)).push(t.name));
-    const viaExplanationOnly = hits.filter((q) => !t.rx.test(q.question || "") && !(q.options || []).some((o) => t.rx.test(o)) && !t.rx.test(q.topic || "")).length;
-    return { topic: t.name, count: hits.length, viaExplanationOnly, sample: hits.slice(0, 6).map((q) => (q.question || "").replace(/\s+/g, " ").slice(0, 110)) };
+for (const ch of ALL_CHAPTERS) {
+  const inCh = resolved.filter((x) => x.r.chapterId === ch.chapterId);
+  const methods = {};
+  inCh.forEach((x) => (methods[x.r.method] = (methods[x.r.method] || 0) + 1));
+  const topics = chapterTopicNames(ch.chapterId).map((t) => {
+    const hits = inCh.filter((x) => x.r.topic === t);
+    return {
+      topic: t,
+      count: hits.length,
+      byMethod: hits.reduce((a, x) => ((a[x.r.method] = (a[x.r.method] || 0) + 1), a), {}),
+      sample: hits.slice(0, 8).map((x) => `[${x.r.method}] ${(x.q.question || "").replace(/\s+/g, " ").slice(0, 100)}`),
+    };
   });
-  const counts = [...perQ.values()].map((a) => a.length);
-  report.push({
-    chapter: ch.chapterName,
-    questionsInChapter: inChapter.length,
-    sumOfTopicCounts: topics.reduce((a, t) => a + t.count, 0),
-    questionsInNoTopic: counts.filter((n) => n === 0).length,
-    questionsInOneTopic: counts.filter((n) => n === 1).length,
-    questionsInSeveralTopics: counts.filter((n) => n > 1).length,
-    maxTopicsForOneQuestion: Math.max(0, ...counts),
-    topics,
-  });
+  report.push({ chapter: ch.chapterName, questions: inCh.length, sumOfTopicCounts: topics.reduce((a, t) => a + t.count, 0), methods, topics });
 }
+const unmapped = resolved.filter((x) => !x.r.chapterId).length;
 const out = path.resolve("../reports/phase1/topic_matcher_precision.json");
 fs.mkdirSync(path.dirname(out), { recursive: true });
-fs.writeFileSync(out, JSON.stringify(report, null, 2));
+fs.writeFileSync(out, JSON.stringify({ engine: "one-topic-per-question resolver", generatedAt: new Date().toISOString(), totalQuestions: qs.length, unmappedChapter: unmapped, chapters: report }, null, 2));
+console.log(`total ${qs.length}, questions with a non-standard chapter: ${unmapped}`);
 for (const r of report) {
-  console.log(`\n${r.chapter}: ${r.questionsInChapter} questions, topic counts sum ${r.sumOfTopicCounts}; none ${r.questionsInNoTopic}, one ${r.questionsInOneTopic}, several ${r.questionsInSeveralTopics} (max ${r.maxTopicsForOneQuestion})`);
-  r.topics.forEach((t) => console.log(`   ${String(t.count).padStart(4)}  (expl-only ${String(t.viaExplanationOnly).padStart(3)})  ${t.topic}`));
+  console.log(`\n${r.chapter}: ${r.questions} questions = sum of topics ${r.sumOfTopicCounts}  methods ${JSON.stringify(r.methods)}`);
+  r.topics.forEach((t) => console.log(`   ${String(t.count).padStart(4)}  ${t.topic}`));
 }

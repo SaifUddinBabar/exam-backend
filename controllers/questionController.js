@@ -4,6 +4,7 @@ import QuestionReport from "../models/QuestionReport.js";
 import { isStaff, isSuperAdmin } from "../utils/access.js";
 import Question from "../models/Question.js";
 import { applyTopicFilter, getChapterQueryRegex } from "./practiceController.js";
+import { invalidateTopicIndex } from "../services/topicIndex.js";
 
 // =====================================================
 // CHAPTER 2 — APPROVED 13 TOPICS ONLY
@@ -127,6 +128,7 @@ export const createQuestion = async (req, res) => {
       version: version || null
     });
 
+    invalidateTopicIndex();
     return res.status(201).json(newQuestion);
   } catch (err) {
     if (err.name === "ValidationError") {
@@ -214,6 +216,7 @@ export const updateQuestion = async (req, res) => {
     await doc.validate();
     await QuestionRevision.create({ questionId: doc._id, editedBy: req.user._id, before, changedFields: changed });
     await doc.save();
+    invalidateTopicIndex();
     return res.json({ success: true, question: doc, changed });
   } catch (err) {
     if (err.name === "ValidationError") return res.status(400).json({ success: false, message: Object.values(err.errors).map((e) => e.message).join(" ") });
@@ -320,7 +323,7 @@ export const getQuestions = async (req, res) => {
     if (subject) query.subject = subject;
     if (chapter) query.chapter = getChapterQueryRegex(chapter);
     if (topic && topic !== "All") {
-      applyTopicFilter(query, topic);
+      await applyTopicFilter(query, topic, chapter);
     }
 
     if (difficulty) query.difficulty = difficulty;

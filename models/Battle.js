@@ -25,6 +25,8 @@ const playerSchema = new mongoose.Schema(
     ratingBefore: { type: Number, default: null },
     ratingAfter: { type: Number, default: null },
     xpEarned: { type: Number, default: 0 },
+    placement: { type: Number, default: null },
+    leftAt: { type: Date, default: null },
   },
   { _id: false }
 );
@@ -32,7 +34,8 @@ const playerSchema = new mongoose.Schema(
 // One 1v1 match. Every field that decides the result is written only by the server.
 const battleSchema = new mongoose.Schema(
   {
-    mode: { type: String, enum: ["random", "friend"], required: true },
+    mode: { type: String, enum: ["random", "friend", "group"], required: true },
+    maxPlayers: { type: Number, default: 2, min: 2, max: 6 },
     ranked: { type: Boolean, default: true },
     status: { type: String, enum: ["waiting", "active", "finished", "cancelled"], default: "waiting", index: true },
     roomCode: { type: String, uppercase: true, trim: true, default: undefined },
@@ -52,6 +55,9 @@ const battleSchema = new mongoose.Schema(
     startedAt: { type: Date, default: null },
     endsAt: { type: Date, default: null },
     finishedAt: { type: Date, default: null },
+    settledAt: { type: Date, default: null }, // set once ratings/XP/placements are written
+    hostRating: { type: Number, default: null }, // rating of the player who opened a random room (matchmaking band)
+    mergedInto: { type: mongoose.Schema.Types.ObjectId, ref: "Battle", default: null }, // random room merged into an older compatible one
     winnerId: { type: mongoose.Schema.Types.ObjectId, ref: "User", default: null },
     isDraw: { type: Boolean, default: false },
     resultReason: { type: String, default: "" },
@@ -63,5 +69,6 @@ const battleSchema = new mongoose.Schema(
 battleSchema.index({ status: 1, mode: 1, matchKey: 1, createdAt: 1 });
 battleSchema.index({ roomCode: 1 }, { unique: true, partialFilterExpression: { roomCode: { $type: "string" } } });
 battleSchema.index({ "players.userId": 1, createdAt: -1 });
+battleSchema.index({ "players.userId": 1, status: 1, finishedAt: -1 }); // battle history
 
 export default mongoose.model("Battle", battleSchema);
