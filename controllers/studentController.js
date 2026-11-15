@@ -21,7 +21,7 @@ export const dashboard = async (req, res) => {
 
     const [memberships, exams, notices, stats, subs, practice, battles] = await Promise.all([
       BatchMembership.find({ studentId: uid, status: "active" }).populate("batchId", "name classLevel academicYear subject status ownerId").lean(),
-      Exam.find(examFilter).select("title examCode duration startTime endTime examType questions subject allowRetake maxAttempts").sort({ createdAt: -1 }).limit(100).lean(),
+      Exam.find(examFilter).select("title examCode duration startTime endTime examType questions subject allowRetake maxAttempts createdAt").sort({ createdAt: -1 }).limit(100).lean(),
       Notice.find(noticeFilter).sort({ publishAt: -1 }).limit(5).populate("authorId", "name").lean(),
       getStats(uid),
       Submission.find({ studentId: uid }).select("examId examCode score totalQuestions correctCount createdAt").sort({ createdAt: -1 }).limit(50).populate("examId", "title").lean(),
@@ -42,11 +42,19 @@ export const dashboard = async (req, res) => {
         if (running.has(String(e._id))) status = "in_progress";
         else if (done >= limit || (done && w === "closed")) status = "completed";
         else if (w === "closed") status = "missed";
-        return { examCode: e.examCode, title: e.title, subject: e.subject, duration: e.duration, startTime: e.startTime, endTime: e.endTime, totalQuestions: e.questions?.length || 0, status };
+        return { examCode: e.examCode, title: e.title, subject: e.subject, duration: e.duration, startTime: e.startTime, endTime: e.endTime, totalQuestions: e.questions?.length || 0, status, createdAt: e.createdAt };
       })
       .filter((e) => ["in_progress", "active", "upcoming"].includes(e.status))
-      .sort((a, b) => ({ in_progress: 0, active: 1, upcoming: 2 })[a.status] - ({ in_progress: 0, active: 1, upcoming: 2 })[b.status] || new Date(a.startTime || 0) - new Date(b.startTime || 0))
-      .slice(0, 6);
+      .sort((a, b) => {
+        // Priority 1: in_progress attempt first so student can resume
+        if (a.status === "in_progress" && b.status !== "in_progress") return -1;
+        if (b.status === "in_progress" && a.status !== "in_progress") return 1;
+        // Priority 2: newest created exams first so newly published teacher exams are at the top!
+        const timeA = new Date(a.createdAt || 0).getTime();
+        const timeB = new Date(b.createdAt || 0).getTime();
+        return timeB - timeA;
+      })
+      .slice(0, 12);
 
     const reads = await NoticeRead.find({ userId: uid, noticeId: { $in: notices.map((n) => n._id) } }).distinct("noticeId");
     const readSet = new Set(reads.map(String));

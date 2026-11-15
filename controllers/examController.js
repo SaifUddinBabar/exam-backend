@@ -242,7 +242,6 @@ export const startExam = async (req, res) => {
   try {
     const exam = await findExamByCode(req.params.code);
     if (!exam || exam.archivedAt) return res.status(404).json({ success: false, message: "Exam not found." });
-    if (isStaff(req.user)) return res.status(403).json({ success: false, message: "Teacher accounts preview exams from the teacher dashboard." });
     if (!(await canStudentAccessExam(req.user, exam))) {
       return res.status(403).json({ success: false, message: "This exam is not assigned to you." });
     }
@@ -655,8 +654,9 @@ export const deleteExam = async (req, res) => {
 // ============================================================
 export const getStudentAvailableExams = async (req, res) => {
   try {
-    if (isStaff(req.user)) return res.json([]);
-    const filter = await studentExamFilter(req.user);
+    const filter = isStaff(req.user)
+      ? { isPublished: { $ne: false }, archivedAt: null, $or: [{ authorId: req.user._id }, { "assignment.mode": "all" }, { "assignment.mode": { $exists: false } }, { assignment: null }] }
+      : await studentExamFilter(req.user);
     const exams = await Exam.find(filter)
       .select("title description examCode duration examType allowRetake maxAttempts negativeMarkPerWrong startTime endTime createdAt questions subject authorId")
       .sort({ createdAt: -1 })
