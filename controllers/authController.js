@@ -19,6 +19,16 @@ import {
 import { verifyFirebaseToken, verifyFirebaseGoogleToken } from "../services/firebaseAdmin.js";
 import { sendPasswordResetEmail } from "../services/emailService.js";
 
+// Teacher passcode comes from TEACHER_PASSCODE. The old hard-coded value is kept as a
+// fallback only so existing teacher sign-in keeps working until the env var is set;
+// it is public in git history and should be rotated.
+const TEACHER_PASSCODE = String(process.env.TEACHER_PASSCODE || "006985").trim();
+const isTeacherPasscode = (v) => {
+  const a = Buffer.from(String(v ?? "").trim());
+  const b = Buffer.from(TEACHER_PASSCODE);
+  return a.length === b.length && crypto.timingSafeEqual(a, b);
+};
+
 const generateToken = (userId) => {
   return jwt.sign({ id: userId }, config.jwt.secret, {
     expiresIn: config.jwt.expiresIn,
@@ -990,7 +1000,7 @@ export const googleAuth = async (req, res) => {
         user.isEmailVerified = true;
         modified = true;
       }
-      if (req.body.teacherPasscode === "006985") {
+      if (isTeacherPasscode(req.body.teacherPasscode)) {
         user.role = "tutor";
         modified = true;
       }
@@ -1013,8 +1023,8 @@ export const googleAuth = async (req, res) => {
           });
         }
         validatedRole = "org_admin";
-      } else if (desiredRole === "tutor" || req.body.teacherPasscode === "006985") {
-        if (req.body.teacherPasscode === "006985") {
+      } else if (desiredRole === "tutor" || isTeacherPasscode(req.body.teacherPasscode)) {
+        if (isTeacherPasscode(req.body.teacherPasscode)) {
           validatedRole = "tutor";
         } else {
           validatedRole = "student";
@@ -1177,7 +1187,7 @@ export const registerEmail = async (req, res) => {
     const allowedRoles = ["student", "tutor", "org_admin"];
     let targetRole = allowedRoles.includes(role) ? role : "student";
 
-    if (targetRole === "tutor" && req.body.teacherPasscode !== "006985") {
+    if (targetRole === "tutor" && !isTeacherPasscode(req.body.teacherPasscode)) {
       targetRole = "student";
     }
 
@@ -1460,7 +1470,7 @@ export const teacherPasscodeLogin = async (req, res) => {
   try {
     const { teacherPasscode, email, password, idToken, name } = req.body;
 
-    if (String(teacherPasscode).trim() !== "006985") {
+    if (!isTeacherPasscode(teacherPasscode)) {
       return res.status(401).json({
         success: false,
         message: "ভুল শিক্ষক আইডি / পাসকোড। শুধুমাত্র অনুমোদিত শিক্ষক প্রবেশ করতে পারবেন।",
@@ -1526,25 +1536,15 @@ export const teacherPasscodeLogin = async (req, res) => {
         });
       }
     }
-    // C) Direct Passcode + Email instant access
+    // C) Email without password or Google token: REJECTED.
+    // This path used to return a login token for any existing account (and promote it
+    // to teacher) from the passcode + email alone — an account-takeover hole. The web
+    // app never used it; teachers sign in with email+password or Google.
     else if (email) {
-      targetUser = await User.findOne({ email: email.toLowerCase().trim() });
-      if (!targetUser) {
-        const salt = await bcrypt.genSalt(10);
-        const passwordHash = await bcrypt.hash("Teacher@006985", salt);
-        targetUser = await User.create({
-          name: name?.trim() || "Examino Teacher",
-          email: email.toLowerCase().trim(),
-          passwordHash,
-          role: "tutor",
-          globalRole: "user",
-          isEmailVerified: true,
-          metadata: { designation: "Chief Educator & Admin", institution: "Examino" },
-        });
-      } else {
-        targetUser.role = "tutor";
-        await targetUser.save();
-      }
+      return res.status(400).json({
+        success: false,
+        message: "পাসওয়ার্ড অথবা Google দিয়ে সাইন ইন করুন। (Password or Google sign-in is required.)",
+      });
     } else {
       // Passcode-only direct teacher access
       targetUser = await User.findOne({ role: "tutor" });
@@ -1598,7 +1598,7 @@ export const getTeacherStudentsList = async (req, res) => {
       return res.status(403).json({ success: false, message: "শিক্ষক বা অ্যাডমিন এক্সেস প্রয়োজন।" });
     }
 
-    const students = await User.find({ role: { $in: ["student", "user"] } })
+    const students = await User.find({ role: { $in: ["student", "user"] }, isActive: { $ne: false } })
       .select("name email phone avatar createdAt metadata isActive")
       .sort({ createdAt: -1 })
       .lean();
@@ -1796,8 +1796,10 @@ export const deleteTeacherStudent = async (req, res) => {
       return res.status(400).json({ success: false, message: "শিক্ষক বা অ্যাডমিন অ্যাকাউন্ট ডিলিট করা সম্ভব নয়।" });
     }
 
-    await User.findByIdAndDelete(studentId);
-    await Submission.deleteMany({ studentId });
+    // Deactivate instead of hard-deleting: the account can no longer sign in, but exam
+    // results and history are preserved and the action can be reversed.
+    target.isActive = false;
+    await target.save();
 
     return res.json({
       success: true,

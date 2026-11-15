@@ -12,22 +12,26 @@ import {
   getPracticeHistory,
   getPracticeAnalytics,
 } from "../controllers/practiceController.js";
-import { protect, optionalAuth } from "../middleware/auth.js";
+import { protect, authorize } from "../middleware/auth.js";
 import { resolveTenantContext } from "../middleware/tenantContext.js";
+import { rateLimit } from "../middleware/rateLimit.js";
 
 const router = express.Router();
+const staff = authorize("super_admin", "tutor", "org_admin");
 
-// Question Bank & Meta
-router.get("/metadata", resolveTenantContext, getFilterMetadata);
-router.get("/question-bank", optionalAuth, resolveTenantContext, getQuestionBank);
-router.get("/available-count", resolveTenantContext, getAvailableCount);
-router.get("/topic-counts", resolveTenantContext, getTopicCounts);
+// Subject / chapter / topic names and counts (no question content) — any signed-in user.
+router.get("/metadata", protect, resolveTenantContext, getFilterMetadata);
+router.get("/available-count", protect, resolveTenantContext, getAvailableCount);
+router.get("/topic-counts", protect, resolveTenantContext, getTopicCounts);
 
-// Practice Generation & Submissions
-router.post("/generate", optionalAuth, resolveTenantContext, generatePracticeTest);
-router.post("/submit", optionalAuth, resolveTenantContext, submitPracticeTest);
+// Full question bank browsing (includes answers) — teachers/admins only.
+router.get("/question-bank", protect, resolveTenantContext, staff, getQuestionBank);
 
-// Student Focused Drill
+// Practice sessions — signed-in students.
+router.post("/generate", protect, rateLimit({ windowMs: 60_000, max: 20, key: "practice-gen" }), resolveTenantContext, generatePracticeTest);
+router.post("/submit", protect, resolveTenantContext, submitPracticeTest);
+
+// Student focused drill
 router.get("/mistakes", protect, resolveTenantContext, getPracticeMistakes);
 router.get("/bookmarks", protect, resolveTenantContext, getBookmarks);
 router.post("/bookmarks/:questionId", protect, resolveTenantContext, toggleBookmark);

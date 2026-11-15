@@ -1,3 +1,7 @@
+import mongoose from "mongoose";
+import QuestionRevision from "../models/QuestionRevision.js";
+import QuestionReport from "../models/QuestionReport.js";
+import { isStaff, isSuperAdmin } from "../utils/access.js";
 import Question from "../models/Question.js";
 import { applyTopicFilter, getChapterQueryRegex } from "./practiceController.js";
 
@@ -109,7 +113,7 @@ export const createQuestion = async (req, res) => {
       questionType: questionType || "normal",
       boardName: boardName || "",
       boardYear: boardYear || "",
-      difficulty: difficulty || "medium",
+      difficulty: ["easy", "medium", "hard", "unclassified"].includes(difficulty) ? difficulty : "unclassified",
       image: image || "",
       tutorId,
       organizationId,
@@ -125,113 +129,164 @@ export const createQuestion = async (req, res) => {
 
     return res.status(201).json(newQuestion);
   } catch (err) {
-    console.error("createQuestion error:", err);
-    return res.status(500).json({ success: false, error: err.message });
+    if (err.name === "ValidationError") {
+      return res.status(400).json({ success: false, message: Object.values(err.errors).map((e) => e.message).join(" ") });
+    }
+    console.error("createQuestion error:", err.message);
+    return res.status(500).json({ success: false, message: "Could not save the question." });
   }
 };
 
 // =====================================================
 // UPDATE QUESTION
+// Who may edit: the author, an org admin of the question's organization, a
+// super admin, or (for shared platform questions that have no author) any
+// teacher. Every edit stores the previous version in QuestionRevision first,
+// so original Bengali/English content is never lost.
 // =====================================================
+const EDITABLE_TEXT = ["question", "chapter", "subject", "topic", "explanation", "questionBn", "questionEn", "explanationBn", "explanationEn", "className", "boardName", "boardYear"];
+
+function parseOptionList(v) {
+  if (v === undefined) return undefined;
+  let parsed = v;
+  if (typeof v === "string") {
+    try {
+      parsed = JSON.parse(v);
+    } catch {
+      parsed = v.split(",").map((o) => o.trim());
+    }
+  }
+  return Array.isArray(parsed) ? parsed.map((o) => String(o ?? "").trim()) : null;
+}
+
+export function canEditQuestion(user, q, tenant) {
+  if (!user) return false;
+  if (isSuperAdmin(user)) return true;
+  if (q.tutorId && String(q.tutorId) === String(user._id)) return true;
+  if (tenant?.role === "org_admin" && q.organizationId && String(q.organizationId) === String(tenant.orgId)) return true;
+  return !q.tutorId && !q.organizationId && isStaff(user);
+}
+
 export const updateQuestion = async (req, res) => {
   try {
-    const { id } = req.params;
-    const existing = await Question.findById(id);
-    if (!existing) {
-      return res.status(404).json({ success: false, message: "Question not found" });
-    }
-
-    // Tenancy & ownership check
-    const isSuperAdmin = req.user?.role === "super_admin";
-    const isOrgAdmin = req.user?.role === "org_admin" && String(existing.organizationId) === String(req.tenant?.orgId);
-    const isAuthor = existing.tutorId && String(existing.tutorId) === String(req.user?._id);
-    if (!isSuperAdmin && !isOrgAdmin && !isAuthor) {
+    if (!mongoose.Types.ObjectId.isValid(req.params.id)) return res.status(400).json({ success: false, message: "Invalid question id." });
+    const doc = await Question.findById(req.params.id);
+    if (!doc) return res.status(404).json({ success: false, message: "Question not found" });
+    if (!canEditQuestion(req.user, doc, req.tenant)) {
       return res.status(403).json({ success: false, message: "Not authorized to update this question" });
     }
-
-    const {
-      question,
-      options,
-      correctAnswer,
-      chapter,
-      subject,
-      topic,
-      questionType,
-      boardName,
-      boardYear,
-      difficulty,
-      explanation,
-      isPublic,
-      questionBn,
-      questionEn,
-      optionsBn,
-      optionsEn,
-      explanationBn,
-      explanationEn,
-      version
-    } = req.body;
-
-    const updates = {};
-    if (question !== undefined) updates.question = question.trim();
-    if (chapter !== undefined) updates.chapter = chapter.trim();
-    if (subject !== undefined) updates.subject = subject.trim();
-    if (topic !== undefined) updates.topic = topic.trim();
-    if (difficulty !== undefined) updates.difficulty = difficulty;
-    if (questionType !== undefined) updates.questionType = questionType;
-    if (boardName !== undefined) updates.boardName = boardName;
-    if (boardYear !== undefined) updates.boardYear = boardYear;
-    if (explanation !== undefined) updates.explanation = explanation.trim();
-    if (isPublic !== undefined) updates.isPublic = Boolean(isPublic);
-
-    if (questionBn !== undefined) updates.questionBn = questionBn.trim();
-    if (questionEn !== undefined) updates.questionEn = questionEn.trim();
-    if (explanationBn !== undefined) updates.explanationBn = explanationBn.trim();
-    if (explanationEn !== undefined) updates.explanationEn = explanationEn.trim();
-    if (version !== undefined) updates.version = version;
-
-    if (options !== undefined) {
-      let parsedOptions = options;
-      if (typeof options === "string") {
-        try {
-          parsedOptions = JSON.parse(options);
-        } catch {
-          parsedOptions = options.split(",").map((o) => o.trim());
-        }
+    const before = doc.toObject();
+    const b = req.body || {};
+    const changed = [];
+    const set = (k, v) => {
+      if (JSON.stringify(doc[k]) !== JSON.stringify(v)) {
+        doc[k] = v;
+        changed.push(k);
       }
-      if (Array.isArray(parsedOptions) && parsedOptions.length === 4) {
-        updates.options = parsedOptions;
-      }
-    }
+    };
 
-    if (optionsBn !== undefined) {
-      let parsed = optionsBn;
-      if (typeof optionsBn === "string") {
-        try { parsed = JSON.parse(optionsBn); } catch { parsed = optionsBn.split(",").map(o => o.trim()); }
-      }
-      if (Array.isArray(parsed) && parsed.length === 4) updates.optionsBn = parsed;
+    EDITABLE_TEXT.forEach((k) => {
+      if (b[k] !== undefined) set(k, String(b[k]).trim());
+    });
+    if (b.difficulty !== undefined) {
+      if (!["easy", "medium", "hard", "unclassified"].includes(b.difficulty)) return res.status(400).json({ success: false, message: "Invalid difficulty." });
+      set("difficulty", b.difficulty);
     }
-
-    if (optionsEn !== undefined) {
-      let parsed = optionsEn;
-      if (typeof optionsEn === "string") {
-        try { parsed = JSON.parse(optionsEn); } catch { parsed = optionsEn.split(",").map(o => o.trim()); }
-      }
-      if (Array.isArray(parsed) && parsed.length === 4) updates.optionsEn = parsed;
+    if (b.questionType !== undefined) set("questionType", b.questionType === "board" ? "board" : "normal");
+    if (b.isPublic !== undefined) set("isPublic", b.isPublic === true || b.isPublic === "true");
+    for (const k of ["options", "optionsBn", "optionsEn"]) {
+      const list = parseOptionList(b[k]);
+      if (list === undefined) continue;
+      const okLength = k === "options" ? list && list.length === 4 : list && (list.length === 0 || list.length === 4);
+      if (!okLength) return res.status(400).json({ success: false, message: `${k} must contain exactly 4 options.` });
+      if (list.length && list.some((o) => !o)) return res.status(400).json({ success: false, message: "Options cannot be empty." });
+      set(k, list);
     }
+    if (b.correctAnswer !== undefined) set("correctAnswer", String(b.correctAnswer).trim());
+    if (req.file) set("image", req.file.filename);
+    if (b.removeImage === "true" || b.removeImage === true) set("image", "");
 
-    if (correctAnswer !== undefined) {
-      updates.correctAnswer = correctAnswer.trim();
+    if (!doc.options.includes(doc.correctAnswer)) {
+      return res.status(400).json({ success: false, message: "Correct answer must match one of the options." });
     }
+    if (!changed.length) return res.json({ success: true, question: doc, changed: [] });
 
-    if (req.file) {
-      updates.image = req.file.filename;
-    }
-
-    const updated = await Question.findByIdAndUpdate(id, { $set: updates }, { new: true, runValidators: true });
-    return res.json({ success: true, question: updated });
+    await doc.validate();
+    await QuestionRevision.create({ questionId: doc._id, editedBy: req.user._id, before, changedFields: changed });
+    await doc.save();
+    return res.json({ success: true, question: doc, changed });
   } catch (err) {
-    console.error("updateQuestion error:", err);
-    return res.status(500).json({ success: false, error: err.message });
+    if (err.name === "ValidationError") return res.status(400).json({ success: false, message: Object.values(err.errors).map((e) => e.message).join(" ") });
+    console.error("updateQuestion error:", err.message);
+    return res.status(500).json({ success: false, message: "Could not update the question." });
+  }
+};
+
+// GET /api/questions/:id/revisions
+export const getQuestionRevisions = async (req, res) => {
+  try {
+    if (!mongoose.Types.ObjectId.isValid(req.params.id)) return res.status(400).json({ success: false, message: "Invalid question id." });
+    const rows = await QuestionRevision.find({ questionId: req.params.id }).sort({ createdAt: -1 }).limit(50).populate("editedBy", "name").lean();
+    return res.json({ success: true, revisions: rows });
+  } catch (err) {
+    return res.status(500).json({ success: false, message: "Could not load revisions." });
+  }
+};
+
+// =====================================================
+// REPORT A PROBLEMATIC QUESTION
+// =====================================================
+const REPORT_REASONS = ["wrong_answer", "typo", "wrong_subject", "wrong_topic", "image_missing", "duplicate", "language", "other"];
+
+export const reportQuestion = async (req, res) => {
+  try {
+    if (!mongoose.Types.ObjectId.isValid(req.params.id)) return res.status(400).json({ success: false, message: "Invalid question id." });
+    const reason = String(req.body?.reason || "");
+    if (!REPORT_REASONS.includes(reason)) return res.status(400).json({ success: false, message: "Choose a reason." });
+    if (!(await Question.exists({ _id: req.params.id }))) return res.status(404).json({ success: false, message: "Question not found" });
+    const open = await QuestionReport.findOne({ questionId: req.params.id, reportedBy: req.user._id, status: "open" });
+    if (open) return res.json({ success: true, alreadyReported: true, report: open });
+    const report = await QuestionReport.create({ questionId: req.params.id, reportedBy: req.user._id, reason, note: String(req.body?.note || "").slice(0, 1000) });
+    return res.status(201).json({ success: true, report });
+  } catch (err) {
+    console.error("reportQuestion error:", err.message);
+    return res.status(500).json({ success: false, message: "Could not send the report." });
+  }
+};
+
+// GET /api/questions/reports?status=open
+export const listReports = async (req, res) => {
+  try {
+    const status = ["open", "resolved", "dismissed"].includes(req.query.status) ? req.query.status : "open";
+    const rows = await QuestionReport.find({ status })
+      .sort({ createdAt: -1 })
+      .limit(200)
+      .populate("questionId", "question chapter topic subject tutorId organizationId")
+      .populate("reportedBy", "name role")
+      .lean();
+    const visible = rows.filter((r) => r.questionId && canEditQuestion(req.user, r.questionId, req.tenant));
+    return res.json({ success: true, reports: visible });
+  } catch (err) {
+    return res.status(500).json({ success: false, message: "Could not load reports." });
+  }
+};
+
+// PUT /api/questions/reports/:reportId { status }
+export const resolveReport = async (req, res) => {
+  try {
+    const status = req.body?.status;
+    if (!["resolved", "dismissed", "open"].includes(status)) return res.status(400).json({ success: false, message: "Invalid status." });
+    if (!mongoose.Types.ObjectId.isValid(req.params.reportId)) return res.status(400).json({ success: false, message: "Invalid report id." });
+    const r = await QuestionReport.findById(req.params.reportId).populate("questionId", "tutorId organizationId");
+    if (!r || !r.questionId) return res.status(404).json({ success: false, message: "Report not found." });
+    if (!canEditQuestion(req.user, r.questionId, req.tenant)) return res.status(403).json({ success: false, message: "Not authorized." });
+    r.status = status;
+    r.resolvedBy = status === "open" ? null : req.user._id;
+    r.resolvedAt = status === "open" ? null : new Date();
+    await r.save();
+    return res.json({ success: true });
+  } catch (err) {
+    return res.status(500).json({ success: false, message: "Could not update the report." });
   }
 };
 
@@ -251,7 +306,7 @@ export const getQuestions = async (req, res) => {
       limit
     } = req.query;
 
-    let query = {};
+    let query = { hidden: { $ne: true } };
 
     // Tenancy Filter: Allow public questions OR questions belonging to the current tenant
     if (req.tenant?.orgId) {

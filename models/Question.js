@@ -253,7 +253,14 @@ const questionSchema = new mongoose.Schema(
       type: Boolean,
       default: true,
       index: true
-    }
+    },
+
+    // Reversible hide flag (e.g. an approved duplicate). Hidden questions stay in the
+    // database and in any exam that already uses them; they are only excluded from
+    // browsing, practice and battle selection.
+    hidden: { type: Boolean, default: false },
+    hiddenReason: { type: String, trim: true, default: "" },
+    duplicateOf: { type: mongoose.Schema.Types.ObjectId, ref: "Question", default: null }
 
   },
 

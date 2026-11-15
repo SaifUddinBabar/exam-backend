@@ -67,7 +67,7 @@ async function runComprehensiveTests() {
     await mongoose.connect(process.env.MONGO_URI);
     const db = mongoose.connection.db;
     const totalQ = await db.collection('questions').countDocuments();
-    assert(totalQ === 2752, `Production questions preserved exactly at 2,752 (Found: ${totalQ})`);
+    assert(totalQ === 2736, `Production questions count is exactly 2,736 after non-ICT removal (Found: ${totalQ})`);
 
     const totalExams = await db.collection('exams').countDocuments();
     assert(totalExams > 0, `Existing exams preserved (Found: ${totalExams})`);

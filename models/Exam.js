@@ -77,6 +77,17 @@ const examSchema = new mongoose.Schema(
       type: Boolean,
       default: true,
     },
+    // Who may see / take the exam. Exams created before this field existed
+    // have no `assignment` and are treated as visible to all students
+    // (the previous behaviour) — see utils/access.js.
+    assignment: {
+      mode: { type: String, enum: ["all", "batches", "students"] },
+      batchIds: [{ type: mongoose.Schema.Types.ObjectId, ref: "Batch" }],
+      studentIds: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
+    },
+    subject: { type: String, trim: true, default: "" },
+    // Soft delete: archived exams disappear from lists but keep their results.
+    archivedAt: { type: Date, default: null },
   },
   {
     timestamps: true,
@@ -84,5 +95,8 @@ const examSchema = new mongoose.Schema(
 );
 
 examSchema.index({ organizationId: 1, createdAt: -1 });
+examSchema.index({ authorId: 1, createdAt: -1 });
+examSchema.index({ "assignment.mode": 1, "assignment.batchIds": 1 });
+examSchema.index({ "assignment.studentIds": 1 });
 
 export default mongoose.model("Exam", examSchema);
